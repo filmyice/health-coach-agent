@@ -103,6 +103,15 @@ def _load_nutrient_rules() -> dict:
     return {}
 
 
+def _load_food_rules() -> dict:
+    rules_path = (Path(__file__).parent.parent.parent /
+                  "food-recommender" / "references" / "food_rules.json")
+    if rules_path.exists():
+        with open(rules_path, encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+
 def build_json_result(
     health_plan: dict,
     price_comparison: dict | None,
@@ -171,6 +180,18 @@ def build_json_result(
                 existing_en.add(name_en)
                 added += 1
 
+    # 음식 추천에 goal_key 부여 + 2차 목표 음식 1개 보충
+    foods_out = [{**f, "goal_key": goal} for f in health_plan.get("foods", [])]
+    if secondary_goals:
+        food_rules = _load_food_rules()
+        existing_food_names = {f.get("name", "") for f in foods_out}
+        for sec_goal in secondary_goals[:1]:
+            for rule_f in food_rules.get(sec_goal, {}).get("foods", []):
+                f_name = rule_f.get("name", "")
+                if f_name and f_name not in existing_food_names:
+                    foods_out.append({**rule_f, "goal_key": sec_goal})
+                    break  # 최대 1개
+
     shopping_section: dict = {"available": False}
     if price_comparison:
         shopping_section = {
@@ -213,7 +234,7 @@ def build_json_result(
         },
         "top_warning": top_warning,
         "recommendations": {
-            "foods":     health_plan.get("foods", []),
+            "foods":     foods_out,
             "habits":    health_plan.get("habits", []),
             "nutrients": nutrients_out,
         },

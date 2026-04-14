@@ -218,7 +218,8 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
   display: flex; flex-direction: column; gap: .4rem;
 }
 .food-card-icon { font-size: 2rem; }
-.food-card-name { font-weight: 700; font-size: .95rem; color: var(--gray-800); }
+.food-card-name { font-weight: 700; font-size: .95rem; color: var(--gray-800); display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+.food-card.secondary-goal { border-left: 3px solid #eab308; }
 .food-card-reason { font-size: .82rem; color: var(--gray-600); line-height: 1.5; }
 .food-card-tip {
   margin-top: .25rem;

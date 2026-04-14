@@ -285,12 +285,27 @@ function renderResultCards(meta) {
 
   // 음식
   const foods = rec.foods || [];
+  const GOAL_LABEL_MAP_F = {
+    fatigue_management:'피로 관리', sleep_management:'수면 관리',
+    immunity_management:'면역 관리', eye_health:'눈 건강',
+    gut_health:'장 건강', bone_health:'뼈 건강',
+    skin_antioxidant:'피부·항산화', weight_management:'체중 관리',
+    blood_sugar_management:'혈당 관리', stress_management:'스트레스 관리',
+    exercise_recovery:'운동 관리', cardiovascular_health:'심혈관 건강',
+    hair_health:'모발 건강', liver_health:'간 건강',
+  };
+  const primaryKey = meta.health_goal || '';
+  const multiGoal  = (meta.goal_labels || []).length > 1;
   if (foods.length) {
     html += `<div class="result-section"><div class="result-section-title"><span>🥗</span> 추천 음식</div><div class="food-grid">`;
     for (const f of foods) {
-      html += `<div class="food-card">
+      const isSec = f.goal_key && f.goal_key !== primaryKey;
+      const foodBadge = isSec
+        ? `<span class="nutrient-goal-badge secondary">${GOAL_LABEL_MAP_F[f.goal_key] || f.goal_key}</span>`
+        : (multiGoal ? `<span class="nutrient-goal-badge primary">${GOAL_LABEL_MAP_F[primaryKey] || ''}</span>` : '');
+      html += `<div class="food-card${isSec ? ' secondary-goal' : ''}">
         <div class="food-card-icon">${foodIcon(f.name)}</div>
-        <div class="food-card-name">${f.name}</div>
+        <div class="food-card-name">${f.name} ${foodBadge}</div>
         <div class="food-card-reason">${f.reason || ''}</div>
         ${f.serving_suggestion ? `<div class="food-card-tip">🍽️ ${f.serving_suggestion}</div>` : ''}
       </div>`;

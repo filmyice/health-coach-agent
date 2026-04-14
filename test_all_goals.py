@@ -45,6 +45,13 @@ TEST_CASES = [
     {"health_goal": "심혈관 건강",  "age_group": "40대",     "gender": "남성"},
     {"health_goal": "모발 건강",    "age_group": "40대",     "gender": "여성"},
     {"health_goal": "간 건강",      "age_group": "30대",     "gender": "남성"},
+    # 다중 목표 시나리오 (2개 선택)
+    {"health_goal": "피로 관리",    "health_goals": ["피로 관리", "수면 관리"],
+     "age_group": "30대", "gender": "여성"},
+    {"health_goal": "면역 관리",    "health_goals": ["면역 관리", "장 건강"],
+     "age_group": "40대", "gender": "남성"},
+    {"health_goal": "체중 관리",    "health_goals": ["체중 관리", "스트레스 관리"],
+     "age_group": "30대", "gender": "여성"},
 ]
 
 # 각 테스트 후 확인할 필수 출력 파일
@@ -120,6 +127,25 @@ def validate_outputs(tc: dict) -> list[str]:
         if v_count > 0:
             errors.append(f"policy_guard: violations={v}")
 
+    # 6. 다중 목표 시나리오 추가 검증 (health_goals 2개인 경우)
+    goals_list = tc.get("health_goals", [])
+    if len(goals_list) >= 2:
+        result_path = PROJECT_ROOT / "output/final/user_result.json"
+        if result_path.exists():
+            with open(result_path, encoding="utf-8") as f:
+                res = json.load(f)
+            goal_labels = res.get("goal_labels", [])
+            if len(goal_labels) < 2:
+                errors.append(f"user_result: goal_labels {len(goal_labels)}개 (2개 기대)")
+            nutrients = res.get("recommendations", {}).get("nutrients", [])
+            goal_keys = {n.get("goal_key") for n in nutrients if n.get("goal_key")}
+            if len(goal_keys) < 2:
+                errors.append(f"user_result: 영양 성분 목표 출처 {len(goal_keys)}개 — 2차 목표 블렌딩 실패")
+            foods = res.get("recommendations", {}).get("foods", [])
+            food_goal_keys = {f.get("goal_key") for f in foods if f.get("goal_key")}
+            if len(food_goal_keys) < 2:
+                errors.append(f"user_result: 음식 목표 출처 {len(food_goal_keys)}개 — 2차 목표 음식 블렌딩 실패")
+
     return errors
 
 
@@ -178,7 +204,8 @@ def main():
 
     results = []
     for i, tc in enumerate(cases, 1):
-        label = f"{tc['health_goal']} / {tc['age_group']} {tc['gender']}"
+        goals_label = " + ".join(tc.get("health_goals", [tc["health_goal"]]))
+        label = f"{goals_label} / {tc['age_group']} {tc['gender']}"
         print(f"{CYAN}[{i}/{len(cases)}] {label}{RESET}")
 
         ok, elapsed, errors = run_pipeline(tc)
