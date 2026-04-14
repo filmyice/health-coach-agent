@@ -98,5 +98,5 @@ def run_pipeline():
 
 
 if __name__ == "__main__":
-    print("건강 코치 에이전트 서버 시작: http://localhost:5000")
-    app.run(debug=False, port=5000, threaded=True)
+    print("건강 코치 에이전트 서버 시작: http://localhost:8080")
+    app.run(debug=False, port=8080, threaded=True)
