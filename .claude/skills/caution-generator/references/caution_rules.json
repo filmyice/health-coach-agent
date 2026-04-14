@@ -1,0 +1,171 @@
+{
+  "Iron": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "공복 복용 시 위장 불편감(오심, 위통)이 생길 수 있습니다",
+      "변비를 유발할 수 있습니다. 물을 충분히 드세요",
+      "과다 복용 시 독성이 있을 수 있습니다"
+    ],
+    "interaction_flags": [
+      "칼슘 보충제와 동시 복용 시 흡수 감소 가능",
+      "일부 항생제(테트라사이클린, 퀴놀론)와 간격을 두고 복용 권장",
+      "비타민 C와 함께 복용 시 흡수 향상"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Vitamin B12": {
+    "caution_level": "info",
+    "short_cautions": [
+      "일반적으로 안전하나 과다 복용 시 드물게 피부 반응 가능",
+      "채식주의자나 노인의 경우 특히 중요한 영양소입니다"
+    ],
+    "interaction_flags": [
+      "메트포르민(당뇨약) 복용 중인 경우 흡수 저하 가능 — 의사 상담 권고"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Magnesium": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "과다 복용 시 설사, 구역감이 발생할 수 있습니다",
+      "신장 질환이 있으신 분은 복용 전 의사 상담이 필요합니다"
+    ],
+    "interaction_flags": [
+      "일부 항생제(테트라사이클린)와 간격을 두고 복용 권장",
+      "혈압약과 상호작용 가능 — 해당 약 복용 중이면 상담 권고"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Vitamin C": {
+    "caution_level": "info",
+    "short_cautions": [
+      "과다 복용(2,000mg 이상) 시 소화 불편, 설사 가능",
+      "신장 결석 이력이 있으신 분은 주의가 필요합니다"
+    ],
+    "interaction_flags": [
+      "항응고제(와파린) 고용량 복용 중인 경우 주의"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Vitamin D": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "과다 복용 시 고칼슘혈증(두통, 구역, 피로) 가능",
+      "신장 질환이 있으신 분은 전문가 지도 없이 고용량 복용을 피해주세요"
+    ],
+    "interaction_flags": [
+      "칼슘 보충제와 병용 시 용량 조절 필요",
+      "일부 심장약(디곡신)과 상호작용 가능"
+    ],
+    "duplicate_risk": true,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Zinc": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "공복 복용 시 구역감, 위장 불편 가능",
+      "장기 고용량 복용 시 구리 결핍 유발 가능"
+    ],
+    "interaction_flags": [
+      "철분과 동시 복용 시 흡수 경쟁 가능"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Lutein": {
+    "caution_level": "info",
+    "short_cautions": [
+      "지용성 성분이므로 식후 복용을 권장합니다"
+    ],
+    "interaction_flags": [],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Omega-3": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "혈액 응고에 영향을 줄 수 있으므로 수술 전 중단 권고",
+      "생선 알레르기가 있는 경우 식물성 오메가-3(algae oil) 고려"
+    ],
+    "interaction_flags": [
+      "항응고제(와파린, 아스피린 고용량) 복용 중인 경우 의사 상담 권고"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": true
+  },
+  "Probiotics": {
+    "caution_level": "info",
+    "short_cautions": [
+      "복용 초기 가스, 복부 팽만이 일시적으로 발생할 수 있습니다",
+      "면역 억제제 복용 중이거나 면역 저하 상태에서는 의사 상담 필요"
+    ],
+    "interaction_flags": [
+      "항생제와 함께 복용 시 효과 감소 가능 — 항생제 복용 2시간 후 섭취 권장"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Calcium": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "과다 복용 시 변비, 복부 팽만 가능",
+      "신장 결석 이력이 있으신 분은 주의가 필요합니다",
+      "심혈관 질환이 있으신 분은 의사 상담 후 복용 권장"
+    ],
+    "interaction_flags": [
+      "철분과 동시 복용 시 서로 흡수 방해 — 시간 간격 두고 복용 권장",
+      "일부 항생제(테트라사이클린, 퀴놀론)와 간격을 두고 복용 필요"
+    ],
+    "duplicate_risk": true,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Collagen": {
+    "caution_level": "info",
+    "short_cautions": [
+      "원료 확인 필수: 생선 콜라겐 → 생선 알레르기 주의, 돼지 콜라겐 → 종교적·개인 선호 확인"
+    ],
+    "interaction_flags": [],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "L-Theanine": {
+    "caution_level": "info",
+    "short_cautions": [
+      "일반적으로 안전하나 혈압 강하 효과가 있을 수 있습니다"
+    ],
+    "interaction_flags": [
+      "혈압약 복용 중인 경우 의사 상담 권고"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Dietary Fiber": {
+    "caution_level": "info",
+    "short_cautions": [
+      "갑자기 다량 섭취 시 가스·복부 팽만이 발생할 수 있습니다. 점진적으로 늘려가세요",
+      "물을 충분히 함께 마셔야 효과적입니다"
+    ],
+    "interaction_flags": [
+      "일부 약물의 흡수를 지연시킬 수 있으므로 약 복용 후 2시간 간격 권장"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  }
+}

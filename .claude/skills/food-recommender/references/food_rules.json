@@ -1,0 +1,162 @@
+{
+  "fatigue_management": {
+    "foods": [
+      {
+        "name": "시금치",
+        "category": "채소",
+        "reason": "철분과 엽산이 풍부하여 빈혈로 인한 피로 개선에 도움이 될 수 있습니다",
+        "serving_suggestion": "샐러드 또는 나물로 주 3회 이상"
+      },
+      {
+        "name": "달걀",
+        "category": "단백질",
+        "reason": "비타민 B12와 양질의 단백질이 에너지 대사에 도움이 될 수 있습니다",
+        "serving_suggestion": "하루 1~2개, 삶거나 스크램블로"
+      },
+      {
+        "name": "현미",
+        "category": "곡류",
+        "reason": "비타민 B군이 풍부하여 에너지 생성을 돕습니다",
+        "serving_suggestion": "매끼 현미밥으로 대체"
+      },
+      {
+        "name": "바나나",
+        "category": "과일",
+        "reason": "천연 당분과 칼륨이 빠른 에너지 보충에 도움이 될 수 있습니다",
+        "serving_suggestion": "간식으로 하루 1개"
+      }
+    ]
+  },
+  "sleep_management": {
+    "foods": [
+      {
+        "name": "체리",
+        "category": "과일",
+        "reason": "천연 멜라토닌이 함유되어 수면 리듬 조절에 도움이 될 수 있습니다",
+        "serving_suggestion": "저녁 식사 후 한 줌 (생 또는 무가당 주스)"
+      },
+      {
+        "name": "아몬드",
+        "category": "견과류",
+        "reason": "마그네슘이 풍부하여 근육 이완과 수면의 질 향상에 도움이 될 수 있습니다",
+        "serving_suggestion": "저녁 간식으로 10~15알"
+      },
+      {
+        "name": "따뜻한 우유",
+        "category": "유제품",
+        "reason": "트립토판이 세로토닌으로 전환되어 수면을 도울 수 있습니다",
+        "serving_suggestion": "취침 1시간 전 한 잔"
+      }
+    ]
+  },
+  "immunity_management": {
+    "foods": [
+      {
+        "name": "파프리카",
+        "category": "채소",
+        "reason": "비타민 C가 오렌지보다 풍부하여 면역 기능 유지에 도움이 될 수 있습니다",
+        "serving_suggestion": "생으로 또는 가볍게 볶아서 주 4회"
+      },
+      {
+        "name": "요거트",
+        "category": "발효식품",
+        "reason": "프로바이오틱스가 장 면역을 강화하는 데 도움이 될 수 있습니다",
+        "serving_suggestion": "무가당 플레인 요거트로 매일 1개"
+      },
+      {
+        "name": "마늘",
+        "category": "향신채",
+        "reason": "알리신 성분이 면역 기능 향상에 도움이 될 수 있습니다",
+        "serving_suggestion": "요리에 매일 1~2쪽씩 활용"
+      }
+    ]
+  },
+  "eye_health": {
+    "foods": [
+      {
+        "name": "당근",
+        "category": "채소",
+        "reason": "베타카로틴이 눈 건강 유지에 도움이 될 수 있습니다",
+        "serving_suggestion": "가볍게 볶거나 스틱으로 주 3회"
+      },
+      {
+        "name": "연어",
+        "category": "생선",
+        "reason": "오메가-3 지방산이 안구 건조 완화에 도움이 될 수 있습니다",
+        "serving_suggestion": "주 2회 구이 또는 샐러드"
+      },
+      {
+        "name": "시금치·케일",
+        "category": "채소",
+        "reason": "루테인과 지아잔틴이 망막 보호에 도움이 될 수 있습니다",
+        "serving_suggestion": "스무디 또는 나물로 주 3회"
+      }
+    ]
+  },
+  "gut_health": {
+    "foods": [
+      {
+        "name": "김치",
+        "category": "발효식품",
+        "reason": "유산균이 장내 환경 개선에 도움이 될 수 있습니다",
+        "serving_suggestion": "매끼 소량 (나트륨 과다 주의)"
+      },
+      {
+        "name": "고구마",
+        "category": "채소",
+        "reason": "식이섬유가 장 운동을 도와 변비 개선에 도움이 될 수 있습니다",
+        "serving_suggestion": "간식 또는 반찬으로 주 3회"
+      },
+      {
+        "name": "바나나",
+        "category": "과일",
+        "reason": "프리바이오틱스 성분이 유익균 성장을 돕습니다",
+        "serving_suggestion": "매일 1개 (덜 익은 바나나가 프리바이오틱스 효과 높음)"
+      }
+    ]
+  },
+  "bone_health": {
+    "foods": [
+      {
+        "name": "멸치",
+        "category": "생선",
+        "reason": "칼슘과 비타민 D가 풍부하여 뼈 건강 유지에 도움이 될 수 있습니다",
+        "serving_suggestion": "볶음 반찬으로 주 3~4회"
+      },
+      {
+        "name": "두부",
+        "category": "단백질",
+        "reason": "식물성 칼슘이 풍부하여 뼈 형성에 도움이 될 수 있습니다",
+        "serving_suggestion": "찌개나 구이로 주 4회"
+      },
+      {
+        "name": "브로콜리",
+        "category": "채소",
+        "reason": "비타민 K가 칼슘의 뼈 흡수를 도울 수 있습니다",
+        "serving_suggestion": "데쳐서 주 3회 이상"
+      }
+    ]
+  },
+  "skin_antioxidant": {
+    "foods": [
+      {
+        "name": "블루베리",
+        "category": "과일",
+        "reason": "안토시아닌 항산화 성분이 피부 노화 방지에 도움이 될 수 있습니다",
+        "serving_suggestion": "간식이나 요거트에 곁들여 주 4회"
+      },
+      {
+        "name": "토마토",
+        "category": "채소",
+        "reason": "라이코펜이 자외선 피해로부터 피부를 보호하는 데 도움이 될 수 있습니다",
+        "serving_suggestion": "생으로 또는 익혀서 매일"
+      },
+      {
+        "name": "아보카도",
+        "category": "과일",
+        "reason": "비타민 E와 건강한 지방이 피부 보습에 도움이 될 수 있습니다",
+        "serving_suggestion": "샐러드나 토스트에 주 3회"
+      }
+    ]
+  }
+}

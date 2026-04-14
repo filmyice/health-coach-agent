@@ -1,0 +1,65 @@
+{
+  "fatigue_management": {
+    "label": "피로 관리",
+    "recommendation_direction": {
+      "food_focus": ["철분 함유 식품", "비타민 B군 함유 식품", "단백질 식품"],
+      "habit_focus": ["수면 규칙화", "과로 방지", "적절한 휴식"],
+      "nutrient_focus": ["철분", "비타민 B12", "마그네슘", "코엔자임 Q10"]
+    },
+    "notes": "피로의 원인은 다양하므로 단순 피로라면 철분·B군 중심, 만성 피로라면 전문가 상담 권고"
+  },
+  "sleep_management": {
+    "label": "수면 관리",
+    "recommendation_direction": {
+      "food_focus": ["트립토판 함유 식품", "마그네슘 함유 식품", "체리"],
+      "habit_focus": ["취침 전 스크린 줄이기", "일정한 수면 시간 유지", "카페인 줄이기"],
+      "nutrient_focus": ["마그네슘", "멜라토닌", "L-테아닌"]
+    },
+    "notes": "수면제나 멜라토닌은 단기 사용 권장, 만성 불면은 전문가 상담 필요"
+  },
+  "immunity_management": {
+    "label": "면역 관리",
+    "recommendation_direction": {
+      "food_focus": ["비타민 C 함유 식품", "발효 식품", "색깔 채소"],
+      "habit_focus": ["규칙적 가벼운 운동", "충분한 수면", "스트레스 관리"],
+      "nutrient_focus": ["비타민 C", "비타민 D", "아연"]
+    },
+    "notes": "면역 강화는 생활습관 개선이 핵심이며 영양제는 보조 역할"
+  },
+  "eye_health": {
+    "label": "눈 건강",
+    "recommendation_direction": {
+      "food_focus": ["루테인 함유 식품", "오메가-3 함유 식품", "당근·시금치"],
+      "habit_focus": ["20-20-20 규칙 (20분마다 20초 먼 곳 보기)", "화면 밝기 조절", "눈 스트레칭"],
+      "nutrient_focus": ["루테인", "지아잔틴", "오메가-3"]
+    },
+    "notes": "실내 생활이 많을수록 비타민 D와 루테인 중요도 높아짐"
+  },
+  "gut_health": {
+    "label": "장 건강",
+    "recommendation_direction": {
+      "food_focus": ["식이섬유 풍부 식품", "발효 식품 (요거트·김치)", "수분 섭취"],
+      "habit_focus": ["규칙적인 식사 시간", "식후 가벼운 산책", "과식 피하기"],
+      "nutrient_focus": ["프로바이오틱스", "프리바이오틱스", "식이섬유"]
+    },
+    "notes": "장 건강은 식이 습관과 직결되므로 음식 추천이 특히 중요"
+  },
+  "bone_health": {
+    "label": "뼈 건강",
+    "recommendation_direction": {
+      "food_focus": ["칼슘 함유 식품", "비타민 K 함유 식품", "유제품"],
+      "habit_focus": ["체중 부하 운동 (걷기·스쿼트)", "햇볕 쬐기", "금연"],
+      "nutrient_focus": ["칼슘", "비타민 D", "마그네슘"]
+    },
+    "notes": "칼슘과 비타민 D는 함께 섭취 시 효율적이며, 칼슘 과다 섭취 주의"
+  },
+  "skin_antioxidant": {
+    "label": "피부·항산화",
+    "recommendation_direction": {
+      "food_focus": ["비타민 C 함유 식품", "항산화 식품 (블루베리·토마토)", "콜라겐 함유 식품"],
+      "habit_focus": ["자외선 차단제 사용", "충분한 수분 섭취", "수면 충분히"],
+      "nutrient_focus": ["비타민 C", "콜라겐", "글루타치온"]
+    },
+    "notes": "피부는 외인성·내인성 요인이 복합적이며 생활습관이 핵심"
+  }
+}

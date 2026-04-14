@@ -1,0 +1,51 @@
+{
+  "_note": "CSS 선택자는 플랫폼 업데이트로 변경될 수 있습니다. 크롤링 실패 시 이 파일을 먼저 확인하세요.",
+  "coupang": {
+    "item": "li.search-product",
+    "name": ".name",
+    "price": ".price-value",
+    "link": "a.search-product-link",
+    "seller": ".seller",
+    "wait_strategy": "domcontentloaded",
+    "delay_min_ms": 800,
+    "delay_max_ms": 2500,
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "bot_mitigation": ["random_delay", "realistic_user_agent", "viewport_set"]
+  },
+  "naver": {
+    "item": "div.product_item__MDtDF",
+    "name": "a.product_link__TrAac",
+    "price": "span.price_num__S2p_v",
+    "link": "a.product_link__TrAac",
+    "seller": "span.product_mall_name__Hk3_g",
+    "wait_strategy": "networkidle",
+    "delay_min_ms": 1500,
+    "delay_max_ms": 4000,
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "bot_mitigation": ["random_delay", "realistic_user_agent", "viewport_set", "locale_kr"]
+  },
+  "iherb": {
+    "item": "div.product-cell-container",
+    "name": ".product-title",
+    "price": ".price",
+    "link": "a",
+    "brand": ".product-brand-name",
+    "wait_strategy": "domcontentloaded",
+    "delay_min_ms": 800,
+    "delay_max_ms": 2000,
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "bot_mitigation": ["random_delay", "realistic_user_agent"]
+  },
+  "oliveyoung": {
+    "item": "li.flag-product-item",
+    "name": ".prd-name",
+    "price": ".price-2 strong",
+    "link": "a.prd-thumb",
+    "brand": ".prd-brand",
+    "wait_strategy": "domcontentloaded",
+    "delay_min_ms": 800,
+    "delay_max_ms": 2000,
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+    "bot_mitigation": ["random_delay", "realistic_user_agent"]
+  }
+}

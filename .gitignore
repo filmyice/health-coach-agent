@@ -1,0 +1,43 @@
+# 파이프라인 출력 (실행 시 생성됨)
+output/content/*
+output/decision/*
+output/final/*
+output/intake/*
+output/intent/*
+output/logs/*
+output/qa/*
+output/recommendation/*
+output/risk/*
+output/shopping/*
+!output/**/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# 환경
+.env
+.env.*
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Playwright 브라우저 캐시 (용량 큼)
+ms-playwright/

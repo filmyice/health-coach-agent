@@ -1,0 +1,156 @@
+{
+  "fatigue_management": {
+    "habits": [
+      {
+        "title": "취침·기상 시간 고정",
+        "description": "매일 같은 시간에 자고 일어나면 몸의 회복 리듬이 안정되어 피로 회복에 도움이 될 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "매일"
+      },
+      {
+        "title": "점심 후 10~15분 눈 감기",
+        "description": "짧은 휴식이 오후 집중력과 에너지 회복에 도움이 될 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "평일 매일"
+      },
+      {
+        "title": "카페인 오후 2시 이후 자제",
+        "description": "카페인은 수면의 질을 낮춰 만성 피로를 악화시킬 수 있습니다",
+        "difficulty": "보통",
+        "frequency": "매일"
+      }
+    ]
+  },
+  "sleep_management": {
+    "habits": [
+      {
+        "title": "취침 1시간 전 스크린 끄기",
+        "description": "블루라이트가 멜라토닌 분비를 억제하여 수면 진입을 방해할 수 있습니다",
+        "difficulty": "보통",
+        "frequency": "매일"
+      },
+      {
+        "title": "취침 전 짧은 스트레칭",
+        "description": "5~10분 가벼운 스트레칭이 근육 이완과 수면 준비에 도움이 될 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "매일"
+      },
+      {
+        "title": "침실 온도 18~20°C 유지",
+        "description": "서늘한 환경이 수면의 질 향상에 도움이 될 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "매일"
+      }
+    ]
+  },
+  "immunity_management": {
+    "habits": [
+      {
+        "title": "하루 30분 가벼운 걷기",
+        "description": "중간 강도 유산소 운동이 면역 세포 활성화에 도움이 될 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "주 5회 이상"
+      },
+      {
+        "title": "손 씻기 습관화",
+        "description": "외출 후, 식사 전 꼼꼼한 손 씻기가 감염 예방에 효과적입니다",
+        "difficulty": "쉬움",
+        "frequency": "매일"
+      },
+      {
+        "title": "하루 7~8시간 수면",
+        "description": "충분한 수면이 면역 기능 회복의 핵심입니다",
+        "difficulty": "보통",
+        "frequency": "매일"
+      }
+    ]
+  },
+  "eye_health": {
+    "habits": [
+      {
+        "title": "20-20-20 규칙 실천",
+        "description": "20분마다 20초간 6m(20피트) 거리의 물체를 바라보면 눈 피로 완화에 도움이 될 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "화면 사용 시 매일"
+      },
+      {
+        "title": "화면 밝기 주변 조도에 맞추기",
+        "description": "화면이 주변보다 너무 밝거나 어두우면 눈의 피로가 빨리 쌓입니다",
+        "difficulty": "쉬움",
+        "frequency": "매일"
+      },
+      {
+        "title": "의식적으로 자주 눈 깜빡이기",
+        "description": "집중할 때 눈 깜빡임이 줄어 안구 건조가 심해질 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "화면 사용 시 매일"
+      }
+    ]
+  },
+  "gut_health": {
+    "habits": [
+      {
+        "title": "규칙적인 식사 시간 지키기",
+        "description": "일정한 시간에 식사하면 장의 운동 리듬이 안정됩니다",
+        "difficulty": "보통",
+        "frequency": "매일"
+      },
+      {
+        "title": "식후 10~15분 가벼운 산책",
+        "description": "식후 걷기가 소화 촉진과 장 운동에 도움이 될 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "매일"
+      },
+      {
+        "title": "하루 1.5~2L 물 마시기",
+        "description": "충분한 수분이 장 운동과 변비 예방에 필수적입니다",
+        "difficulty": "쉬움",
+        "frequency": "매일"
+      }
+    ]
+  },
+  "bone_health": {
+    "habits": [
+      {
+        "title": "하루 15~30분 햇볕 쬐기",
+        "description": "자외선이 피부에서 비타민 D를 합성하여 칼슘 흡수를 돕습니다",
+        "difficulty": "쉬움",
+        "frequency": "매일 (가능한 경우)"
+      },
+      {
+        "title": "걷기 또는 계단 이용",
+        "description": "체중 부하 운동이 뼈 밀도 유지에 도움이 될 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "주 5회 이상"
+      },
+      {
+        "title": "탄산음료·카페인 줄이기",
+        "description": "과도한 카페인·탄산음료가 칼슘 흡수를 방해할 수 있습니다",
+        "difficulty": "보통",
+        "frequency": "매일"
+      }
+    ]
+  },
+  "skin_antioxidant": {
+    "habits": [
+      {
+        "title": "매일 자외선 차단제 바르기",
+        "description": "자외선이 피부 노화와 색소 침착의 주요 원인입니다",
+        "difficulty": "쉬움",
+        "frequency": "매일"
+      },
+      {
+        "title": "하루 8잔 이상 물 마시기",
+        "description": "충분한 수분 섭취가 피부 탄력 유지에 도움이 될 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "매일"
+      },
+      {
+        "title": "세안 후 즉시 보습",
+        "description": "세안 후 3분 이내 보습제를 바르면 피부 수분 손실을 줄일 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "매일"
+      }
+    ]
+  }
+}

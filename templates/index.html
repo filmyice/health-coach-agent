@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>건강 코치 에이전트</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+<header>
+  <span class="logo">🌿</span>
+  <span class="brand">건강 코치 에이전트</span>
+  <span class="tagline">AI 기반 맞춤 건강 추천</span>
+</header>
+
+<main>
+
+  <!-- ── 입력 폼 ──────────────────────────────── -->
+  <div id="form-section">
+
+    <!-- 건강 목표 -->
+    <div class="card">
+      <p class="section-label">Step 1</p>
+      <p class="section-title">어떤 건강 목표가 있으신가요?</p>
+      <div class="goal-grid">
+        <button class="goal-btn" data-value="피로 관리"   onclick="selectGoal(this)"><span class="icon">⚡</span>피로 관리</button>
+        <button class="goal-btn" data-value="수면 관리"   onclick="selectGoal(this)"><span class="icon">🌙</span>수면 관리</button>
+        <button class="goal-btn" data-value="면역 관리"   onclick="selectGoal(this)"><span class="icon">🛡️</span>면역 관리</button>
+        <button class="goal-btn" data-value="눈 건강"     onclick="selectGoal(this)"><span class="icon">👁️</span>눈 건강</button>
+        <button class="goal-btn" data-value="장 건강"     onclick="selectGoal(this)"><span class="icon">🌱</span>장 건강</button>
+        <button class="goal-btn" data-value="뼈 건강"     onclick="selectGoal(this)"><span class="icon">🦴</span>뼈 건강</button>
+        <button class="goal-btn" data-value="피부·항산화" onclick="selectGoal(this)"><span class="icon">✨</span>피부·항산화</button>
+      </div>
+    </div>
+
+    <!-- 연령대 -->
+    <div class="card">
+      <p class="section-label">Step 2</p>
+      <p class="section-title">연령대를 선택해주세요</p>
+      <div class="chip-group" id="age-group">
+        <button class="chip" data-value="10대"     onclick="selectChip('age', this)">10대</button>
+        <button class="chip" data-value="20대"     onclick="selectChip('age', this)">20대</button>
+        <button class="chip" data-value="30대"     onclick="selectChip('age', this)">30대</button>
+        <button class="chip" data-value="40대"     onclick="selectChip('age', this)">40대</button>
+        <button class="chip" data-value="50대 이상" onclick="selectChip('age', this)">50대 이상</button>
+      </div>
+    </div>
+
+    <!-- 성별 -->
+    <div class="card">
+      <p class="section-label">Step 3</p>
+      <p class="section-title">성별을 선택해주세요</p>
+      <div class="chip-group" id="gender-group">
+        <button class="chip" data-value="여성" onclick="selectChip('gender', this)">여성</button>
+        <button class="chip" data-value="남성" onclick="selectChip('gender', this)">남성</button>
+      </div>
+    </div>
+
+    <!-- 오류 -->
+    <div class="error-box" id="error-box"></div>
+
+    <!-- 실행 버튼 -->
+    <button class="btn-run" id="run-btn" onclick="runPipeline()" disabled>
+      <span>🔍</span> 맞춤 추천 받기
+    </button>
+  </div>
+
+  <!-- ── 로딩 ──────────────────────────────────── -->
+  <div class="card" id="loading">
+    <div class="spinner"></div>
+    <p class="loading-msg" id="loading-msg">건강 데이터를 분석하고 있습니다…</p>
+    <p class="loading-steps" id="loading-steps">음식 · 생활습관 · 영양 성분 추천 생성 중</p>
+  </div>
+
+  <!-- ── 결과 ──────────────────────────────────── -->
+  <div id="result">
+    <div class="card">
+      <div class="result-header">
+        <span class="result-badge">✅ 추천 완료</span>
+        <button class="btn-reset" onclick="reset()">← 다시 입력</button>
+      </div>
+      <div id="result-content"></div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const state = { goal: '', age: '', gender: '' };
+
+// ── 아이콘 맵 ────────────────────────────────────
+const FOOD_ICONS = {
+  '블루베리':'🫐','토마토':'🍅','아보카도':'🥑','연어':'🐟','고등어':'🐟',
+  '브로콜리':'🥦','시금치':'🥬','견과류':'🥜','아몬드':'🥜','호두':'🥜',
+  '달걀':'🥚','요거트':'🥛','우유':'🥛','따뜻한 우유':'🥛','치즈':'🧀',
+  '귤':'🍊','오렌지':'🍊','키위':'🥝','바나나':'🍌','사과':'🍎',
+  '포도':'🍇','딸기':'🍓','당근':'🥕','고구마':'🍠','현미':'🍚',
+  '오트밀':'🌾','두부':'🫘','콩':'🫘','김치':'🥗','녹차':'🍵',
+  '체리':'🍒','올리브유':'🫒','아마씨':'🌱','블루베리 스무디':'🫐',
+};
+const HABIT_KEYWORDS = [
+  ['걷기','🚶'],['달리기','🏃'],['운동','🏋️'],['스트레칭','🤸'],
+  ['수면','😴'],['취침','🌙'],['잠','😴'],['물','💧'],['수분','💧'],
+  ['자외선','☀️'],['선크림','☀️'],['보습','💆'],['세안','🧴'],
+  ['명상','🧘'],['호흡','🌬️'],['식사','🍽️'],['채소','🥗'],
+  ['금연','🚭'],['금주','🚫'],['햇빛','🌞'],['야외','🌿'],
+  ['스마트폰','📵'],['블루라이트','📵'],['스크린','📵'],['규칙적','⏰'],
+];
+const NUTRIENT_ICONS = {
+  '철분':'🩸','비타민 B12':'⚡','마그네슘':'💪','코엔자임 Q10':'🔋',
+  '멜라토닌':'🌙','L-테아닌':'🍵','비타민 C':'🍊','비타민 D':'☀️',
+  '아연':'🛡️','루테인':'👁️','지아잔틴':'👁️','오메가-3':'🐟',
+  '프로바이오틱스':'🌱','프리바이오틱스':'🌱','식이섬유':'🌾',
+  '칼슘':'🦴','콜라겐':'✨','글루타치온':'💎',
+};
+
+function foodIcon(name) { return FOOD_ICONS[name] || '🥗'; }
+function habitIcon(title) {
+  for (const [kw, ic] of HABIT_KEYWORDS) if (title.includes(kw)) return ic;
+  return '✅';
+}
+function nutrientIcon(name) { return NUTRIENT_ICONS[name] || '💊'; }
+
+// ── 선택 핸들러 ─────────────────────────────────
+function selectGoal(el) {
+  document.querySelectorAll('.goal-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  state.goal = el.dataset.value;
+  updateBtn();
+}
+function selectChip(type, el) {
+  const group = type === 'age' ? 'age-group' : 'gender-group';
+  document.querySelectorAll(`#${group} .chip`).forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  if (type === 'age') state.age = el.dataset.value;
+  else state.gender = el.dataset.value;
+  updateBtn();
+}
+function updateBtn() {
+  document.getElementById('run-btn').disabled = !(state.goal && state.age && state.gender);
+}
+
+// ── 로딩 애니메이션 ──────────────────────────────
+const LOADING_MSGS = [
+  ['건강 목표를 분석하고 있습니다…',     '목표 해석 · 프로필 정규화'],
+  ['맞춤 음식을 추천하고 있습니다…',     '음식 · 생활습관 추천 생성 중'],
+  ['영양 성분을 선정하고 있습니다…',     '영양 성분 · 주의사항 생성 중'],
+  ['최종 건강 플랜을 작성하고 있습니다…','위험 확인 · 품질 검증 중'],
+];
+let msgTimer = null;
+function startLoadingAnim() {
+  let i = 0;
+  (function next() {
+    const [msg, sub] = LOADING_MSGS[i % LOADING_MSGS.length];
+    document.getElementById('loading-msg').textContent = msg;
+    document.getElementById('loading-steps').textContent = sub;
+    i++;
+    msgTimer = setTimeout(next, 2000);
+  })();
+}
+
+// ── 카드 렌더링 ──────────────────────────────────
+function renderResultCards(meta) {
+  const el = document.getElementById('result-content');
+  const rec = meta.recommendations || {};
+  const prof = meta.profile || {};
+  const ranks = ['①','②','③','④','⑤'];
+
+  let html = '';
+
+  // 메타 배지
+  html += `<div class="result-meta-badges">`;
+  if (meta.goal_label) html += `<span class="meta-badge meta-badge-goal">🎯 ${meta.goal_label}</span>`;
+  if (prof.age_label)  html += `<span class="meta-badge meta-badge-age">${prof.age_label}</span>`;
+  if (prof.gender_label) html += `<span class="meta-badge meta-badge-gender">${prof.gender_label}</span>`;
+  html += `</div>`;
+
+  if (meta.top_warning) {
+    html += `<div class="warning-banner">⚠️ ${meta.top_warning}</div>`;
+  }
+
+  // 음식
+  const foods = rec.foods || [];
+  if (foods.length) {
+    html += `<div class="result-section">
+      <div class="result-section-title"><span>🥗</span> 추천 음식</div>
+      <div class="food-grid">`;
+    for (const f of foods) {
+      html += `<div class="food-card">
+        <div class="food-card-icon">${foodIcon(f.name)}</div>
+        <div class="food-card-name">${f.name}</div>
+        <div class="food-card-reason">${f.reason || ''}</div>
+        ${f.serving_suggestion ? `<div class="food-card-tip">🍽️ ${f.serving_suggestion}</div>` : ''}
+      </div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  // 습관
+  const habits = rec.habits || [];
+  if (habits.length) {
+    html += `<div class="result-section">
+      <div class="result-section-title"><span>🏃</span> 생활습관 제안</div>
+      <div class="habit-list">`;
+    for (const h of habits) {
+      const diffClass = h.difficulty === '쉬움' ? 'badge-easy' : 'badge-medium';
+      html += `<div class="habit-card">
+        <div class="habit-card-icon">${habitIcon(h.title)}</div>
+        <div class="habit-card-body">
+          <div class="habit-card-header">
+            <span class="habit-card-title">${h.title}</span>
+            ${h.difficulty ? `<span class="badge ${diffClass}">${h.difficulty}</span>` : ''}
+            ${h.frequency  ? `<span class="badge badge-freq">${h.frequency}</span>`   : ''}
+          </div>
+          <div class="habit-card-desc">${h.description || ''}</div>
+        </div>
+      </div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  // 영양 성분
+  const nutrients = rec.nutrients || [];
+  if (nutrients.length) {
+    html += `<div class="result-section">
+      <div class="result-section-title"><span>💊</span> 영양 성분 제안</div>
+      <div class="nutrient-list">`;
+    nutrients.forEach((n, i) => {
+      const caution  = n.cautions || {};
+      const lvl      = caution.level || 'info';
+      const lvlClass = { info:'caution-info', warning:'caution-warning', consult:'caution-consult' }[lvl] || 'caution-info';
+      const lvlIcon  = { info:'ℹ️', warning:'⚠️', consult:'🚨' }[lvl] || 'ℹ️';
+      const items    = caution.items || [];
+      const flags    = caution.interaction_flags || [];
+
+      html += `<div class="nutrient-card">
+        <div class="nutrient-card-header">
+          <div class="nutrient-card-icon">${nutrientIcon(n.name)}</div>
+          <div class="nutrient-card-meta">
+            <div class="nutrient-card-name">${n.name}</div>
+            ${n.name_en ? `<div class="nutrient-card-en">${n.name_en}</div>` : ''}
+          </div>
+          <span class="nutrient-card-rank">${ranks[i] || (i+1)}</span>
+        </div>
+        ${n.reason ? `<div class="nutrient-card-reason">${n.reason}</div>` : ''}`;
+
+      if (items.length) {
+        html += `<div class="nutrient-card-caution ${lvlClass}">
+          <div class="caution-title">${lvlIcon} 주의사항</div>
+          <ul class="caution-list">`;
+        for (const it of items) html += `<li>${it}</li>`;
+        html += `</ul>`;
+        if (flags.length) {
+          html += `<div class="interaction-note">🔗 ${flags.join(' / ')}</div>`;
+        }
+        html += `</div>`;
+      }
+      html += `</div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  // 쇼핑 검색 링크
+  if (nutrients.length) {
+    html += `<div class="result-section">
+      <div class="result-section-title"><span>🛒</span> 영양 성분 검색</div>
+      <table class="shop-table">
+        <thead><tr><th>성분</th><th>네이버 쇼핑</th><th>쿠팡</th><th>iHerb</th></tr></thead>
+        <tbody>`;
+    for (const n of nutrients) {
+      const qKo = encodeURIComponent(n.name);
+      const qEn = encodeURIComponent(n.name_en || n.name);
+      html += `<tr>
+        <td><strong>${nutrientIcon(n.name)} ${n.name}</strong></td>
+        <td><a class="shop-link shop-naver" href="https://search.shopping.naver.com/search/all?query=${qKo}" target="_blank">검색</a></td>
+        <td><a class="shop-link shop-coupang" href="https://www.coupang.com/np/search?q=${qKo}" target="_blank">검색</a></td>
+        <td>${n.name_en ? `<a class="shop-link shop-iherb" href="https://www.iherb.com/search?kw=${qEn}" target="_blank">검색</a>` : '-'}</td>
+      </tr>`;
+    }
+    html += `</tbody></table></div>`;
+  }
+
+  // 면책
+  html += `<div class="disclaimer-box">
+    ℹ️ 이 내용은 의료적 진단이 아닙니다. 복용 중인 약이나 임신·수유 중이라면 전문가 상담이 필요할 수 있어요.
+  </div>`;
+
+  el.innerHTML = html;
+}
+
+// ── 파이프라인 실행 ──────────────────────────────
+async function runPipeline() {
+  const err = document.getElementById('error-box');
+  err.style.display = 'none';
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('loading').style.display = 'flex';
+  document.getElementById('result').style.display = 'none';
+  startLoadingAnim();
+
+  try {
+    const res = await fetch('/api/run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ health_goal: state.goal, age_group: state.age, gender: state.gender }),
+    });
+    const data = await res.json();
+    clearTimeout(msgTimer);
+    document.getElementById('loading').style.display = 'none';
+
+    if (!res.ok || !data.success) {
+      showError(data.error || '알 수 없는 오류가 발생했습니다.');
+      return;
+    }
+
+    renderResultCards(data.meta);
+    document.getElementById('result').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  } catch (e) {
+    clearTimeout(msgTimer);
+    document.getElementById('loading').style.display = 'none';
+    showError('서버 연결에 실패했습니다: ' + e.message);
+  }
+}
+
+function showError(msg) {
+  const err = document.getElementById('error-box');
+  err.textContent = '⚠️ ' + msg;
+  err.style.display = 'block';
+  document.getElementById('form-section').style.display = 'block';
+}
+
+function reset() {
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('form-section').style.display = 'block';
+  document.querySelectorAll('.goal-btn, .chip').forEach(b => b.classList.remove('active'));
+  state.goal = ''; state.age = ''; state.gender = '';
+  updateBtn();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>

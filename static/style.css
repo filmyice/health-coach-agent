@@ -1,0 +1,343 @@
+/* ============================================================
+   건강 코치 에이전트 — 스타일시트
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green-50:  #f0fdf4;
+  --green-100: #dcfce7;
+  --green-400: #4ade80;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+  --green-700: #15803d;
+  --gray-50:   #f9fafb;
+  --gray-100:  #f3f4f6;
+  --gray-200:  #e5e7eb;
+  --gray-400:  #9ca3af;
+  --gray-600:  #4b5563;
+  --gray-700:  #374151;
+  --gray-800:  #1f2937;
+  --orange-400:#fb923c;
+  --blue-500:  #3b82f6;
+  --radius:    12px;
+  --shadow:    0 4px 24px rgba(0,0,0,.08);
+  --shadow-sm: 0 2px 8px  rgba(0,0,0,.06);
+}
+
+body {
+  font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  background: var(--gray-50);
+  color: var(--gray-800);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ── 헤더 ──────────────────────────────────────── */
+header {
+  background: white;
+  border-bottom: 1px solid var(--gray-200);
+  padding: 1.25rem 2rem;
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; gap: .75rem;
+}
+.logo { font-size: 1.75rem; }
+.brand { font-size: 1.25rem; font-weight: 700; color: var(--green-700); }
+.tagline { font-size: .85rem; color: var(--gray-400); margin-left: auto; }
+
+/* ── 레이아웃 ─────────────────────────────────── */
+main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+/* ── 섹션 제목 ────────────────────────────────── */
+.section-label {
+  font-size: .75rem; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--green-600);
+  margin-bottom: .75rem;
+}
+.section-title {
+  font-size: 1.35rem; font-weight: 700;
+  color: var(--gray-800); margin-bottom: 1.5rem;
+}
+
+/* ── 카드 ──────────────────────────────────────── */
+.card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ── 건강 목표 그리드 ─────────────────────────── */
+.goal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: .75rem;
+}
+.goal-btn {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: .4rem;
+  padding: 1rem .5rem;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius);
+  background: white;
+  cursor: pointer;
+  transition: all .18s ease;
+  font-size: .82rem; font-weight: 500; color: var(--gray-700);
+  text-align: center;
+}
+.goal-btn .icon { font-size: 1.75rem; }
+.goal-btn:hover  { border-color: var(--green-400); background: var(--green-50); }
+.goal-btn.active { border-color: var(--green-600); background: var(--green-100); color: var(--green-700); font-weight: 700; }
+
+/* ── 연령·성별 선택 ───────────────────────────── */
+.chip-group { display: flex; flex-wrap: wrap; gap: .6rem; }
+.chip {
+  padding: .45rem 1.1rem;
+  border: 2px solid var(--gray-200);
+  border-radius: 999px;
+  background: white;
+  cursor: pointer;
+  font-size: .88rem; font-weight: 500; color: var(--gray-600);
+  transition: all .15s ease;
+}
+.chip:hover  { border-color: var(--green-400); color: var(--green-700); }
+.chip.active { border-color: var(--green-600); background: var(--green-600); color: white; font-weight: 600; }
+
+/* ── 실행 버튼 ────────────────────────────────── */
+.btn-run {
+  width: 100%;
+  padding: 1rem;
+  background: var(--green-600);
+  color: white;
+  border: none; border-radius: var(--radius);
+  font-size: 1.05rem; font-weight: 700;
+  cursor: pointer;
+  transition: background .15s;
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+}
+.btn-run:hover:not(:disabled) { background: var(--green-700); }
+.btn-run:disabled { background: var(--gray-400); cursor: not-allowed; }
+
+/* ── 로딩 ──────────────────────────────────────── */
+#loading {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+.spinner {
+  width: 48px; height: 48px;
+  border: 4px solid var(--green-100);
+  border-top-color: var(--green-500);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-msg { color: var(--gray-600); font-size: .95rem; }
+.loading-steps { font-size: .8rem; color: var(--gray-400); }
+
+/* ── 결과 ──────────────────────────────────────── */
+#result { display: none; }
+
+.result-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--gray-200);
+}
+.result-badge {
+  background: var(--green-100);
+  color: var(--green-700);
+  border-radius: 999px;
+  padding: .3rem .9rem;
+  font-size: .8rem; font-weight: 600;
+}
+.btn-reset {
+  padding: .45rem 1rem;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  font-size: .85rem; cursor: pointer;
+  color: var(--gray-600);
+  transition: background .12s;
+}
+.btn-reset:hover { background: var(--gray-200); }
+
+/* ── 마크다운 렌더링 ──────────────────────────── */
+.md-body { font-size: .95rem; color: var(--gray-700); }
+.md-body h1 { font-size: 1.5rem; font-weight: 800; color: var(--gray-800); margin: 1.5rem 0 .75rem; }
+.md-body h2 { font-size: 1.15rem; font-weight: 700; color: var(--green-700); margin: 1.5rem 0 .6rem; border-left: 3px solid var(--green-500); padding-left: .6rem; }
+.md-body h3 { font-size: 1rem; font-weight: 700; color: var(--gray-700); margin: 1rem 0 .4rem; }
+.md-body p { margin-bottom: .75rem; }
+.md-body ul, .md-body ol { padding-left: 1.4rem; margin-bottom: .75rem; }
+.md-body li { margin-bottom: .3rem; }
+.md-body blockquote { border-left: 3px solid var(--green-400); background: var(--green-50); padding: .6rem 1rem; margin: .75rem 0; border-radius: 0 8px 8px 0; color: var(--gray-600); }
+.md-body strong { font-weight: 700; color: var(--gray-800); }
+.md-body em { color: var(--gray-600); }
+.md-body hr { border: none; border-top: 1px solid var(--gray-200); margin: 1.25rem 0; }
+.md-body code { background: var(--gray-100); padding: .15rem .4rem; border-radius: 4px; font-size: .88em; }
+.md-body table { width: 100%; border-collapse: collapse; margin: .75rem 0; font-size: .88rem; }
+.md-body th { background: var(--green-50); color: var(--green-700); font-weight: 600; padding: .5rem .75rem; border: 1px solid var(--gray-200); text-align: left; }
+.md-body td { padding: .45rem .75rem; border: 1px solid var(--gray-200); }
+.md-body tr:nth-child(even) td { background: var(--gray-50); }
+
+/* ── 오류 ──────────────────────────────────────── */
+.error-box {
+  background: #fef2f2; border: 1px solid #fecaca;
+  border-radius: var(--radius); padding: 1.25rem;
+  color: #b91c1c; font-size: .9rem;
+  display: none;
+}
+
+/* ── 결과 카드 공통 ───────────────────────────── */
+.result-section { margin-bottom: 2rem; }
+.result-section-title {
+  font-size: 1rem; font-weight: 700;
+  color: var(--green-700);
+  display: flex; align-items: center; gap: .5rem;
+  margin-bottom: 1rem;
+  padding-bottom: .5rem;
+  border-bottom: 2px solid var(--green-100);
+}
+
+/* ── 음식 카드 그리드 ─────────────────────────── */
+.food-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: .75rem;
+}
+.food-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 1rem;
+  display: flex; flex-direction: column; gap: .4rem;
+}
+.food-card-icon { font-size: 2rem; }
+.food-card-name { font-weight: 700; font-size: .95rem; color: var(--gray-800); }
+.food-card-reason { font-size: .82rem; color: var(--gray-600); line-height: 1.5; }
+.food-card-tip {
+  margin-top: .25rem;
+  font-size: .78rem; color: var(--green-700);
+  background: var(--green-50); border-radius: 6px;
+  padding: .3rem .5rem;
+}
+
+/* ── 습관 카드 ─────────────────────────────────── */
+.habit-list { display: flex; flex-direction: column; gap: .6rem; }
+.habit-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: .9rem 1rem;
+  display: flex; align-items: flex-start; gap: .75rem;
+}
+.habit-card-icon { font-size: 1.6rem; flex-shrink: 0; margin-top: .1rem; }
+.habit-card-body { flex: 1; }
+.habit-card-header { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-bottom: .25rem; }
+.habit-card-title { font-weight: 700; font-size: .92rem; color: var(--gray-800); }
+.badge {
+  font-size: .7rem; font-weight: 600; padding: .15rem .5rem;
+  border-radius: 999px;
+}
+.badge-easy   { background: var(--green-100); color: var(--green-700); }
+.badge-medium { background: #fef9c3; color: #92400e; }
+.badge-freq   { background: var(--gray-100); color: var(--gray-600); }
+.habit-card-desc { font-size: .82rem; color: var(--gray-600); line-height: 1.5; }
+
+/* ── 영양 성분 카드 ───────────────────────────── */
+.nutrient-list { display: flex; flex-direction: column; gap: .75rem; }
+.nutrient-card {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.nutrient-card-header {
+  display: flex; align-items: center; gap: .75rem;
+  padding: .9rem 1rem;
+  background: white;
+}
+.nutrient-card-icon { font-size: 1.8rem; flex-shrink: 0; }
+.nutrient-card-meta { flex: 1; }
+.nutrient-card-name { font-weight: 700; font-size: .95rem; color: var(--gray-800); }
+.nutrient-card-en   { font-size: .78rem; color: var(--gray-400); }
+.nutrient-card-rank {
+  font-size: .75rem; font-weight: 700;
+  background: var(--green-600); color: white;
+  border-radius: 999px; padding: .2rem .6rem;
+}
+.nutrient-card-reason {
+  padding: .5rem 1rem .7rem;
+  font-size: .83rem; color: var(--gray-600); line-height: 1.55;
+}
+.nutrient-card-caution {
+  margin: 0 .75rem .75rem;
+  border-radius: 8px;
+  padding: .6rem .9rem;
+  font-size: .8rem; line-height: 1.55;
+}
+.caution-info    { background: #eff6ff; border-left: 3px solid var(--blue-500);   color: #1e40af; }
+.caution-warning { background: #fff7ed; border-left: 3px solid var(--orange-400); color: #92400e; }
+.caution-consult { background: #fef2f2; border-left: 3px solid #ef4444;           color: #991b1b; }
+.caution-title { font-weight: 700; margin-bottom: .3rem; }
+.caution-list  { padding-left: 1rem; margin: .2rem 0 0; }
+.caution-list li { margin-bottom: .15rem; }
+.interaction-note { margin-top: .4rem; font-size: .77rem; opacity: .85; }
+
+/* ── 쇼핑 링크 테이블 ─────────────────────────── */
+.shop-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.shop-table th {
+  background: var(--green-50); color: var(--green-700);
+  font-weight: 600; padding: .5rem .75rem;
+  border: 1px solid var(--gray-200); text-align: left;
+}
+.shop-table td { padding: .5rem .75rem; border: 1px solid var(--gray-200); }
+.shop-table tr:nth-child(even) td { background: var(--gray-50); }
+.shop-link {
+  display: inline-block;
+  padding: .25rem .65rem;
+  border-radius: 6px;
+  font-size: .78rem; font-weight: 600;
+  text-decoration: none;
+  transition: opacity .15s;
+}
+.shop-link:hover { opacity: .8; }
+.shop-naver   { background: #03c75a; color: white; }
+.shop-coupang { background: #e62425; color: white; }
+.shop-iherb   { background: #7ab648; color: white; }
+
+/* ── 결과 헤더 배지 그룹 ─────────────────────── */
+.result-meta-badges { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.meta-badge {
+  padding: .35rem .9rem;
+  border-radius: 999px;
+  font-size: .82rem; font-weight: 600;
+}
+.meta-badge-goal   { background: var(--green-100); color: var(--green-700); }
+.meta-badge-age    { background: var(--gray-100); color: var(--gray-600); }
+.meta-badge-gender { background: var(--gray-100); color: var(--gray-600); }
+.warning-banner {
+  background: #fff7ed; border: 1px solid #fed7aa;
+  border-radius: 8px; padding: .7rem 1rem;
+  color: #92400e; font-size: .85rem; margin-bottom: 1rem;
+}
+.disclaimer-box {
+  margin-top: 1.5rem; padding: .8rem 1rem;
+  background: var(--gray-50); border-radius: 8px;
+  border: 1px solid var(--gray-200);
+  font-size: .8rem; color: var(--gray-500); line-height: 1.6;
+}
+
+/* ── 반응형 ────────────────────────────────────── */
+@media (max-width: 600px) {
+  main { padding: 1.5rem 1rem 3rem; }
+  .goal-grid { grid-template-columns: repeat(3, 1fr); }
+  header { padding: 1rem; }
+  .tagline { display: none; }
+  .food-grid { grid-template-columns: 1fr 1fr; }
+}
