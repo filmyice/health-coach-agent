@@ -29,13 +29,22 @@ RESET  = "\033[0m"
 
 # 테스트 케이스 정의
 TEST_CASES = [
-    {"health_goal": "피로 관리",    "age_group": "30대",    "gender": "여성"},
-    {"health_goal": "수면 관리",    "age_group": "40대",    "gender": "남성"},
-    {"health_goal": "면역 관리",    "age_group": "20대",    "gender": "여성"},
+    # 기존 7개
+    {"health_goal": "피로 관리",    "age_group": "30대",     "gender": "여성"},
+    {"health_goal": "수면 관리",    "age_group": "40대",     "gender": "남성"},
+    {"health_goal": "면역 관리",    "age_group": "20대",     "gender": "여성"},
     {"health_goal": "눈 건강",      "age_group": "50대 이상","gender": "남성"},
-    {"health_goal": "장 건강",      "age_group": "30대",    "gender": "남성"},
+    {"health_goal": "장 건강",      "age_group": "30대",     "gender": "남성"},
     {"health_goal": "뼈 건강",      "age_group": "50대 이상","gender": "여성"},
-    {"health_goal": "피부·항산화",  "age_group": "20대",    "gender": "여성"},
+    {"health_goal": "피부·항산화",  "age_group": "20대",     "gender": "여성"},
+    # 신규 7개
+    {"health_goal": "체중 관리",    "age_group": "30대",     "gender": "여성"},
+    {"health_goal": "혈당 관리",    "age_group": "50대 이상","gender": "남성"},
+    {"health_goal": "스트레스 관리","age_group": "20대",     "gender": "여성"},
+    {"health_goal": "운동 관리",    "age_group": "30대",     "gender": "남성"},
+    {"health_goal": "심혈관 건강",  "age_group": "40대",     "gender": "남성"},
+    {"health_goal": "모발 건강",    "age_group": "40대",     "gender": "여성"},
+    {"health_goal": "간 건강",      "age_group": "30대",     "gender": "남성"},
 ]
 
 # 각 테스트 후 확인할 필수 출력 파일
