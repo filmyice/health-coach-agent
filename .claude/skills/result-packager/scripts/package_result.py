@@ -90,6 +90,7 @@ def build_json_result(
     price_comparison: dict | None,
     risk_flags: dict,
     profile: dict,
+    extra_goals: list | None = None,
 ) -> dict:
     goal = health_plan.get("health_goal", "")
     nutrients_raw = health_plan.get("nutrients", [])
@@ -134,13 +135,21 @@ def build_json_result(
         "fatigue_management": "피로 관리", "sleep_management": "수면 관리",
         "immunity_management": "면역 관리", "eye_health": "눈 건강",
         "gut_health": "장 건강", "bone_health": "뼈 건강",
-        "skin_antioxidant": "피부·항산화",
+        "skin_antioxidant": "피부·항산화", "weight_management": "체중 관리",
+        "blood_sugar_management": "혈당 관리", "stress_management": "스트레스 관리",
+        "exercise_recovery": "운동 관리", "cardiovascular_health": "심혈관 건강",
+        "hair_health": "모발 건강", "liver_health": "간 건강",
     }
+
+    # Build goal_labels list (primary goal + any secondary goals)
+    all_goal_keys = [goal] + [g for g in (extra_goals or []) if g and g != goal]
+    goal_labels = [GOAL_LABEL.get(g, g) for g in all_goal_keys]
 
     return {
         "session_id":  str(uuid.uuid4()),
         "health_goal": goal,
         "goal_label":  GOAL_LABEL.get(goal, goal),
+        "goal_labels": goal_labels,
         "profile": {
             "age_group":    profile.get("age_group", ""),
             "gender":       profile.get("gender", ""),
@@ -205,6 +214,21 @@ def main():
     risk_flags = load_file(Path("output/risk/risk_flags.json"), required=False) or {}
     profile_raw = load_file(Path("output/intake/normalized_profile.json"), required=False) or {}
 
+    # 다중 목표 지원: raw_minimal_input.json에서 health_goals 읽기
+    raw_input = load_file(Path("output/intake/raw_minimal_input.json"), required=False) or {}
+    extra_goals_korean = raw_input.get("health_goals", [])
+    # 내부 코드값으로 변환 (GOAL_MAP은 normalize.py에 있으므로 인라인 처리)
+    GOAL_MAP_LOCAL = {
+        "피로 관리": "fatigue_management", "수면 관리": "sleep_management",
+        "면역 관리": "immunity_management", "눈 건강": "eye_health",
+        "장 건강": "gut_health", "뼈 건강": "bone_health",
+        "피부·항산화": "skin_antioxidant", "체중 관리": "weight_management",
+        "혈당 관리": "blood_sugar_management", "스트레스 관리": "stress_management",
+        "운동 관리": "exercise_recovery", "심혈관 건강": "cardiovascular_health",
+        "모발 건강": "hair_health", "간 건강": "liver_health",
+    }
+    extra_goals = [GOAL_MAP_LOCAL.get(g, g) for g in extra_goals_korean if g]
+
     # search_queries.json에서 nutrient_display 매핑 추출 (있을 경우)
     search_queries = load_file(Path("output/shopping/search_queries.json"), required=False)
     if search_queries and price_comparison:
@@ -213,7 +237,7 @@ def main():
             if "nutrient_display" not in comp:
                 comp["nutrient_display"] = display_map.get(comp.get("nutrient", ""), comp.get("nutrient", ""))
 
-    json_result = build_json_result(health_plan, price_comparison, risk_flags, profile_raw)
+    json_result = build_json_result(health_plan, price_comparison, risk_flags, profile_raw, extra_goals)
 
     summary_md = health_summary.get("content", "") if health_summary else ""
     md_result = build_md_result(json_result, summary_md)

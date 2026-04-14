@@ -61,5 +61,68 @@
       "nutrient_focus": ["비타민 C", "콜라겐", "글루타치온"]
     },
     "notes": "피부는 외인성·내인성 요인이 복합적이며 생활습관이 핵심"
+  },
+  "weight_management": {
+    "label": "체중 관리",
+    "recommendation_direction": {
+      "food_focus": ["고단백 저칼로리 식품", "식이섬유 풍부 식품", "포만감 유지 식품"],
+      "habit_focus": ["규칙적인 유산소 운동", "천천히 씹어 먹기", "야식 줄이기"],
+      "nutrient_focus": ["단백질 보충제", "녹차 추출물", "식이섬유"]
+    },
+    "notes": "체중 관리는 식사·운동 병행이 핵심이며 급격한 체중 감량은 건강에 해로울 수 있음"
+  },
+  "blood_sugar_management": {
+    "label": "혈당 관리",
+    "recommendation_direction": {
+      "food_focus": ["저GI 식품", "식이섬유 풍부 식품", "통곡물"],
+      "habit_focus": ["식후 가벼운 걷기", "규칙적인 식사 시간", "당분 음료 줄이기"],
+      "nutrient_focus": ["크롬", "베르베린", "알파리포산"]
+    },
+    "notes": "혈당 관리는 당뇨 진단과 무관하게 생활습관 개선이 우선이며, 혈당 관련 약 복용 중인 경우 의사 상담 필수"
+  },
+  "stress_management": {
+    "label": "스트레스 관리",
+    "recommendation_direction": {
+      "food_focus": ["마그네슘 함유 식품", "트립토판 함유 식품", "항산화 식품"],
+      "habit_focus": ["명상·호흡 운동", "규칙적인 운동", "취미 활동"],
+      "nutrient_focus": ["마그네슘", "아슈와간다", "L-테아닌"]
+    },
+    "notes": "만성 스트레스는 다양한 건강 문제와 연결되므로 지속될 경우 전문가 상담 권고"
+  },
+  "exercise_recovery": {
+    "label": "운동 관리",
+    "recommendation_direction": {
+      "food_focus": ["고단백 식품", "탄수화물 보충 식품", "항염 식품"],
+      "habit_focus": ["운동 후 스트레칭", "충분한 수면 확보", "점진적 운동 강도 증가"],
+      "nutrient_focus": ["단백질 보충제", "BCAA", "마그네슘"]
+    },
+    "notes": "운동 효율을 높이려면 운동 전후 영양 섭취와 충분한 회복이 중요"
+  },
+  "cardiovascular_health": {
+    "label": "심혈관 건강",
+    "recommendation_direction": {
+      "food_focus": ["오메가-3 함유 생선", "통곡물", "색깔 채소·과일"],
+      "habit_focus": ["유산소 운동 규칙화", "금연·금주", "혈압 체크 습관화"],
+      "nutrient_focus": ["오메가-3", "코엔자임 Q10", "마그네슘"]
+    },
+    "notes": "심혈관 건강은 생활습관 전반에 걸친 관리가 필요하며 고위험군은 전문가 지도 필수"
+  },
+  "hair_health": {
+    "label": "모발 건강",
+    "recommendation_direction": {
+      "food_focus": ["단백질 식품 (달걀·콩류)", "철분 함유 식품", "비오틴 함유 식품"],
+      "habit_focus": ["두피 마사지 습관", "지나친 열 도구 사용 줄이기", "스트레스 관리"],
+      "nutrient_focus": ["비오틴", "철분", "아연"]
+    },
+    "notes": "탈모의 원인은 다양(유전·호르몬·영양)하므로 심한 탈모는 전문가 상담 권고"
+  },
+  "liver_health": {
+    "label": "간 건강",
+    "recommendation_direction": {
+      "food_focus": ["십자화과 채소 (브로콜리·양배추)", "강황", "마늘"],
+      "habit_focus": ["절주 또는 금주", "과식 피하기", "규칙적인 운동"],
+      "nutrient_focus": ["밀크씨슬", "NAC", "비타민 E"]
+    },
+    "notes": "간 건강은 음주·과식 절제가 핵심이며, 간 기능 이상 의심 시 반드시 전문가 상담 필요"
   }
 }

@@ -158,5 +158,195 @@
         "serving_suggestion": "샐러드나 토스트에 주 3회"
       }
     ]
+  },
+  "weight_management": {
+    "foods": [
+      {
+        "name": "닭가슴살",
+        "category": "단백질",
+        "reason": "고단백 저지방으로 포만감을 유지하면서 근육 유지에 도움이 될 수 있습니다",
+        "serving_suggestion": "구이 또는 샐러드로 주 4~5회"
+      },
+      {
+        "name": "고구마",
+        "category": "복합탄수화물",
+        "reason": "낮은 GI와 풍부한 식이섬유로 혈당을 안정적으로 유지하는 데 도움이 될 수 있습니다",
+        "serving_suggestion": "밥 대신 간식으로 주 3~4회"
+      },
+      {
+        "name": "두부",
+        "category": "단백질",
+        "reason": "식물성 단백질로 포만감을 높이고 칼로리를 낮추는 데 도움이 될 수 있습니다",
+        "serving_suggestion": "찌개나 구이로 주 4회"
+      },
+      {
+        "name": "사과",
+        "category": "과일",
+        "reason": "펙틴 식이섬유가 포만감과 장 건강에 도움이 될 수 있습니다",
+        "serving_suggestion": "식전 간식으로 하루 1개"
+      }
+    ]
+  },
+  "blood_sugar_management": {
+    "foods": [
+      {
+        "name": "현미",
+        "category": "통곡물",
+        "reason": "백미보다 낮은 GI로 식후 혈당 급등을 완화하는 데 도움이 될 수 있습니다",
+        "serving_suggestion": "매끼 현미밥 또는 현미·백미 혼합"
+      },
+      {
+        "name": "브로콜리",
+        "category": "채소",
+        "reason": "식이섬유와 항산화 성분이 혈당 조절에 도움이 될 수 있습니다",
+        "serving_suggestion": "데쳐서 주 4회 이상"
+      },
+      {
+        "name": "견과류",
+        "category": "건강한 지방",
+        "reason": "불포화지방과 식이섬유가 혈당 급등 방지에 도움이 될 수 있습니다",
+        "serving_suggestion": "간식으로 한 줌 (30g) 매일"
+      },
+      {
+        "name": "귀리",
+        "category": "통곡물",
+        "reason": "베타글루칸이 식후 혈당 상승 억제에 도움이 될 수 있습니다",
+        "serving_suggestion": "아침 오트밀로 매일"
+      }
+    ]
+  },
+  "stress_management": {
+    "foods": [
+      {
+        "name": "다크초콜릿",
+        "category": "항산화 식품",
+        "reason": "플라보노이드와 마그네슘이 스트레스 호르몬 조절에 도움이 될 수 있습니다",
+        "serving_suggestion": "카카오 70% 이상, 하루 1~2조각"
+      },
+      {
+        "name": "아보카도",
+        "category": "건강한 지방",
+        "reason": "비타민 B군과 건강한 지방이 신경계 안정에 도움이 될 수 있습니다",
+        "serving_suggestion": "샐러드나 토스트에 주 3회"
+      },
+      {
+        "name": "연어",
+        "category": "생선",
+        "reason": "오메가-3가 코르티솔(스트레스 호르몬) 조절에 도움이 될 수 있습니다",
+        "serving_suggestion": "구이 또는 샐러드로 주 2~3회"
+      }
+    ]
+  },
+  "exercise_recovery": {
+    "foods": [
+      {
+        "name": "닭가슴살",
+        "category": "단백질",
+        "reason": "운동 후 근육 회복에 필요한 필수 아미노산을 공급합니다",
+        "serving_suggestion": "운동 후 30분 이내 섭취, 주 5회"
+      },
+      {
+        "name": "바나나",
+        "category": "탄수화물",
+        "reason": "운동 후 글리코겐 보충에 빠르게 도움이 될 수 있습니다",
+        "serving_suggestion": "운동 직후 1개"
+      },
+      {
+        "name": "달걀",
+        "category": "단백질",
+        "reason": "완전 단백질과 류신이 근육 단백질 합성을 돕습니다",
+        "serving_suggestion": "운동 후 2~3개, 삶거나 스크램블로"
+      },
+      {
+        "name": "체리",
+        "category": "항염 식품",
+        "reason": "안토시아닌이 운동 후 근육 통증과 염증 완화에 도움이 될 수 있습니다",
+        "serving_suggestion": "운동 후 한 줌 또는 무가당 주스"
+      }
+    ]
+  },
+  "cardiovascular_health": {
+    "foods": [
+      {
+        "name": "고등어",
+        "category": "생선",
+        "reason": "오메가-3 EPA/DHA가 중성지방 감소와 심혈관 건강에 도움이 될 수 있습니다",
+        "serving_suggestion": "구이로 주 2~3회"
+      },
+      {
+        "name": "귀리",
+        "category": "통곡물",
+        "reason": "베타글루칸이 LDL 콜레스테롤 감소에 도움이 될 수 있습니다",
+        "serving_suggestion": "아침 오트밀로 매일"
+      },
+      {
+        "name": "토마토",
+        "category": "채소",
+        "reason": "라이코펜이 심혈관 보호 효과가 있을 수 있습니다",
+        "serving_suggestion": "생으로 또는 익혀서 매일"
+      },
+      {
+        "name": "견과류",
+        "category": "건강한 지방",
+        "reason": "불포화지방산이 HDL 콜레스테롤 증가에 도움이 될 수 있습니다",
+        "serving_suggestion": "간식으로 한 줌 (30g) 매일"
+      }
+    ]
+  },
+  "hair_health": {
+    "foods": [
+      {
+        "name": "달걀",
+        "category": "단백질",
+        "reason": "비오틴과 단백질이 모발 성장과 강도 유지에 도움이 될 수 있습니다",
+        "serving_suggestion": "하루 1~2개"
+      },
+      {
+        "name": "시금치",
+        "category": "채소",
+        "reason": "철분과 엽산이 두피 혈액순환과 모낭 건강에 도움이 될 수 있습니다",
+        "serving_suggestion": "나물 또는 샐러드로 주 3회"
+      },
+      {
+        "name": "호두",
+        "category": "견과류",
+        "reason": "오메가-3와 비오틴이 모발 탄력에 도움이 될 수 있습니다",
+        "serving_suggestion": "간식으로 하루 4~5알"
+      },
+      {
+        "name": "연어",
+        "category": "생선",
+        "reason": "오메가-3 지방산이 두피 건강과 모발 윤기에 도움이 될 수 있습니다",
+        "serving_suggestion": "주 2회 구이 또는 샐러드"
+      }
+    ]
+  },
+  "liver_health": {
+    "foods": [
+      {
+        "name": "브로콜리",
+        "category": "십자화과 채소",
+        "reason": "글루코시놀레이트가 간 해독 효소 활성화에 도움이 될 수 있습니다",
+        "serving_suggestion": "데쳐서 주 4회 이상"
+      },
+      {
+        "name": "강황",
+        "category": "향신료",
+        "reason": "커큐민이 간세포 보호와 항염 작용에 도움이 될 수 있습니다",
+        "serving_suggestion": "요리에 1/2 티스푼씩 매일 활용"
+      },
+      {
+        "name": "마늘",
+        "category": "향신채",
+        "reason": "알리신이 간 해독과 지방간 예방에 도움이 될 수 있습니다",
+        "serving_suggestion": "요리에 매일 1~2쪽씩 활용"
+      },
+      {
+        "name": "녹차",
+        "category": "음료",
+        "reason": "카테킨이 간 지방 축적 억제와 항산화 작용에 도움이 될 수 있습니다",
+        "serving_suggestion": "하루 1~2잔 (카페인 과민 주의)"
+      }
+    ]
   }
 }

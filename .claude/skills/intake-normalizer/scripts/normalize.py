@@ -13,7 +13,10 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 # 허용 enum 정의
-ALLOWED_HEALTH_GOALS = ["피로 관리", "수면 관리", "면역 관리", "눈 건강", "장 건강", "뼈 건강", "피부·항산화"]
+ALLOWED_HEALTH_GOALS = [
+    "피로 관리", "수면 관리", "면역 관리", "눈 건강", "장 건강", "뼈 건강", "피부·항산화",
+    "체중 관리", "혈당 관리", "스트레스 관리", "운동 관리", "심혈관 건강", "모발 건강", "간 건강",
+]
 ALLOWED_AGE_GROUPS = ["10대", "20대", "30대", "40대", "50대 이상", "unknown"]
 ALLOWED_GENDERS = ["여성", "남성", "unknown"]
 
@@ -26,6 +29,13 @@ GOAL_MAP = {
     "장 건강": "gut_health",
     "뼈 건강": "bone_health",
     "피부·항산화": "skin_antioxidant",
+    "체중 관리": "weight_management",
+    "혈당 관리": "blood_sugar_management",
+    "스트레스 관리": "stress_management",
+    "운동 관리": "exercise_recovery",
+    "심혈관 건강": "cardiovascular_health",
+    "모발 건강": "hair_health",
+    "간 건강": "liver_health",
 }
 
 AGE_MAP = {

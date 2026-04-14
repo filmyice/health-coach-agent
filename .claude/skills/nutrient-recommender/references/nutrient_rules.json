@@ -154,5 +154,201 @@
         "caution_seed": ["동물성 원료 알레르기 확인 필요 (생선·돼지 콜라겐 원료)"]
       }
     ]
+  },
+  "weight_management": {
+    "nutrients": [
+      {
+        "name": "단백질 보충제",
+        "name_en": "Protein Supplement",
+        "priority": 1,
+        "reason_seed": "충분한 단백질 섭취가 근육 유지와 포만감 증가에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["신장 질환자는 고단백 보충제 주의", "식품으로 섭취가 우선"]
+      },
+      {
+        "name": "식이섬유",
+        "name_en": "Dietary Fiber",
+        "priority": 2,
+        "reason_seed": "포만감 유지와 혈당 안정화에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["갑자기 다량 섭취 시 소화 불편 가능", "충분한 수분과 함께 섭취"]
+      },
+      {
+        "name": "녹차 추출물",
+        "name_en": "Green Tea Extract",
+        "priority": 3,
+        "reason_seed": "카테킨과 카페인이 지방 산화 촉진에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["카페인 민감자 주의", "공복 복용 시 위 불편 가능"]
+      }
+    ]
+  },
+  "blood_sugar_management": {
+    "nutrients": [
+      {
+        "name": "크롬",
+        "name_en": "Chromium",
+        "priority": 1,
+        "reason_seed": "인슐린 기능을 보조하여 혈당 조절에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["당뇨약 복용 중인 경우 반드시 의사 상담 필요", "적정 용량 준수 권고"]
+      },
+      {
+        "name": "베르베린",
+        "name_en": "Berberine",
+        "priority": 2,
+        "reason_seed": "혈당과 지질 수치 개선에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["혈당 강하제와 병용 시 의사 상담 필수", "임산부 복용 금지"]
+      },
+      {
+        "name": "알파리포산",
+        "name_en": "Alpha-Lipoic Acid",
+        "priority": 3,
+        "reason_seed": "인슐린 감수성 개선과 항산화 작용에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["저혈당 주의 (당뇨약 병용 시)", "갑상선 질환자 주의"]
+      }
+    ]
+  },
+  "stress_management": {
+    "nutrients": [
+      {
+        "name": "마그네슘",
+        "name_en": "Magnesium",
+        "priority": 1,
+        "reason_seed": "신경계 안정과 코르티솔 조절에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["과다 복용 시 설사 가능", "신장 질환자 주의"]
+      },
+      {
+        "name": "아슈와간다",
+        "name_en": "Ashwagandha",
+        "priority": 2,
+        "reason_seed": "코르티솔 수치 감소와 스트레스 저항력 향상에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["임산부·수유부 복용 금지", "갑상선 질환자 의사 상담 필요", "자가면역 질환자 주의"]
+      },
+      {
+        "name": "L-테아닌",
+        "name_en": "L-Theanine",
+        "priority": 3,
+        "reason_seed": "이완 효과와 집중력 유지에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["혈압 강하제 복용 중인 경우 의사 상담 권고"]
+      }
+    ]
+  },
+  "exercise_recovery": {
+    "nutrients": [
+      {
+        "name": "단백질 보충제",
+        "name_en": "Protein Supplement",
+        "priority": 1,
+        "reason_seed": "운동 후 근육 회복과 성장에 필요한 아미노산을 공급합니다",
+        "target_profile": [],
+        "caution_seed": ["신장 질환자는 고단백 보충제 주의", "수분 섭취를 충분히 늘릴 것"]
+      },
+      {
+        "name": "BCAA",
+        "name_en": "BCAA",
+        "priority": 2,
+        "reason_seed": "분지사슬 아미노산이 근육 분해 방지와 회복에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["과다 복용 시 혈당 영향 가능", "신장 질환자 주의"]
+      },
+      {
+        "name": "마그네슘",
+        "name_en": "Magnesium",
+        "priority": 3,
+        "reason_seed": "근육 경련 예방과 회복에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["과다 복용 시 설사 가능", "신장 질환자 주의"]
+      }
+    ]
+  },
+  "cardiovascular_health": {
+    "nutrients": [
+      {
+        "name": "오메가-3",
+        "name_en": "Omega-3",
+        "priority": 1,
+        "reason_seed": "중성지방 감소와 혈관 건강 유지에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["항응고제 복용 중인 경우 의사 상담 필수", "생선 알레르기 있는 경우 식물성 오메가-3 고려"]
+      },
+      {
+        "name": "코엔자임 Q10",
+        "name_en": "CoQ10",
+        "priority": 2,
+        "reason_seed": "심장 근육 에너지 생성에 관여하며 항산화 작용을 합니다",
+        "target_profile": [],
+        "caution_seed": ["혈압약·항응고제 복용 중인 경우 의사 상담 권고", "지용성으로 식후 복용 권장"]
+      },
+      {
+        "name": "마그네슘",
+        "name_en": "Magnesium",
+        "priority": 3,
+        "reason_seed": "혈압 조절과 심장 리듬 유지에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["과다 복용 시 설사 가능", "신장 질환자 주의", "혈압약과 상호작용 가능"]
+      }
+    ]
+  },
+  "hair_health": {
+    "nutrients": [
+      {
+        "name": "비오틴",
+        "name_en": "Biotin",
+        "priority": 1,
+        "reason_seed": "케라틴 생성을 도와 모발 강도와 성장에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["고용량 복용 시 갑상선·호르몬 검사 결과에 영향 가능", "복용 전 의사에게 비오틴 복용 사실 고지 필요"]
+      },
+      {
+        "name": "철분",
+        "name_en": "Iron",
+        "priority": 2,
+        "reason_seed": "철 결핍성 탈모의 주요 원인이므로 보충이 도움이 될 수 있습니다",
+        "target_profile": ["female"],
+        "caution_seed": ["공복 복용 시 위장 불편감 가능", "과다 복용 주의"]
+      },
+      {
+        "name": "아연",
+        "name_en": "Zinc",
+        "priority": 3,
+        "reason_seed": "모낭 세포 기능 유지와 탈모 완화에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["장기 고용량 복용 시 구리 결핍 유발 가능", "공복 복용 시 구역감 가능"]
+      }
+    ]
+  },
+  "liver_health": {
+    "nutrients": [
+      {
+        "name": "밀크씨슬",
+        "name_en": "Milk Thistle",
+        "priority": 1,
+        "reason_seed": "실리마린 성분이 간세포 보호와 재생에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["임산부·수유부 복용 전 의사 상담 권고", "알레르기 반응 드물게 가능"]
+      },
+      {
+        "name": "NAC",
+        "name_en": "NAC (N-Acetyl Cysteine)",
+        "priority": 2,
+        "reason_seed": "글루타치온 전구체로 간 해독과 항산화 작용에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["천식 환자는 주의 필요", "혈전 용해제 복용 중인 경우 의사 상담 권고"]
+      },
+      {
+        "name": "비타민 E",
+        "name_en": "Vitamin E",
+        "priority": 3,
+        "reason_seed": "항산화 작용으로 간세포 산화 스트레스 감소에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["항응고제 복용 중인 경우 주의", "고용량(400IU 이상) 장기 복용 시 전문가 상담 권고"]
+      }
+    ]
   }
 }

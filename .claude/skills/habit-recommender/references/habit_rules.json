@@ -152,5 +152,159 @@
         "frequency": "매일"
       }
     ]
+  },
+  "weight_management": {
+    "habits": [
+      {
+        "title": "식사 시 천천히 20번 이상 씹기",
+        "description": "천천히 씹으면 포만감 신호가 뇌에 전달되어 과식 방지에 도움이 될 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "매끼"
+      },
+      {
+        "title": "하루 30분 이상 걷기",
+        "description": "꾸준한 유산소 운동이 체지방 감소와 기초대사량 유지에 도움이 될 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "주 5회 이상"
+      },
+      {
+        "title": "야식·음식 섭취 시간 제한",
+        "description": "저녁 식사 후 3시간 이내 취침 시 지방 축적 위험이 높아질 수 있습니다",
+        "difficulty": "보통",
+        "frequency": "매일"
+      }
+    ]
+  },
+  "blood_sugar_management": {
+    "habits": [
+      {
+        "title": "식후 10~15분 가벼운 걷기",
+        "description": "식후 걷기가 혈당 급등 완화에 도움이 될 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "매 식후"
+      },
+      {
+        "title": "당분 음료를 물로 대체하기",
+        "description": "음료 속 당분이 혈당을 빠르게 올리는 주요 원인 중 하나입니다",
+        "difficulty": "보통",
+        "frequency": "매일"
+      },
+      {
+        "title": "규칙적인 식사 시간 유지",
+        "description": "불규칙한 식사는 혈당 변동 폭을 키울 수 있습니다",
+        "difficulty": "보통",
+        "frequency": "매일"
+      }
+    ]
+  },
+  "stress_management": {
+    "habits": [
+      {
+        "title": "하루 10분 복식 호흡·명상",
+        "description": "깊은 호흡이 부교감신경을 활성화하여 스트레스 호르몬 감소에 도움이 될 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "매일"
+      },
+      {
+        "title": "하루 30분 가벼운 운동",
+        "description": "유산소 운동이 엔도르핀 분비를 촉진하여 스트레스 완화에 도움이 될 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "주 4회 이상"
+      },
+      {
+        "title": "디지털 디톡스 (취침 전 1시간)",
+        "description": "스마트폰 사용 줄이기가 정신적 피로와 수면의 질 개선에 도움이 될 수 있습니다",
+        "difficulty": "보통",
+        "frequency": "매일"
+      }
+    ]
+  },
+  "exercise_recovery": {
+    "habits": [
+      {
+        "title": "운동 후 5~10분 정적 스트레칭",
+        "description": "쿨다운 스트레칭이 근육통 완화와 유연성 유지에 도움이 될 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "운동 후 매번"
+      },
+      {
+        "title": "운동 후 충분한 수분 보충",
+        "description": "운동 중 손실된 수분과 전해질 보충이 회복에 필수적입니다",
+        "difficulty": "쉬움",
+        "frequency": "운동 후 매번"
+      },
+      {
+        "title": "근육 회복을 위한 7~9시간 수면",
+        "description": "수면 중 성장호르몬 분비가 근육 회복의 핵심입니다",
+        "difficulty": "보통",
+        "frequency": "매일"
+      }
+    ]
+  },
+  "cardiovascular_health": {
+    "habits": [
+      {
+        "title": "주 150분 이상 유산소 운동",
+        "description": "걷기·수영·자전거 등이 심장 기능 강화와 혈압 개선에 도움이 될 수 있습니다",
+        "difficulty": "보통",
+        "frequency": "주 5회 (회당 30분)"
+      },
+      {
+        "title": "금연 또는 간접흡연 피하기",
+        "description": "흡연은 심혈관 질환의 주요 위험 인자 중 하나입니다",
+        "difficulty": "어려움",
+        "frequency": "매일"
+      },
+      {
+        "title": "혈압·맥박 정기 체크",
+        "description": "자기 혈압을 파악하면 생활습관 변화의 효과를 확인할 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "주 1~2회"
+      }
+    ]
+  },
+  "hair_health": {
+    "habits": [
+      {
+        "title": "두피 마사지 (3~5분)",
+        "description": "두피 혈액순환 촉진이 모낭에 영양 공급을 도울 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "매일 (샴푸 시 활용)"
+      },
+      {
+        "title": "헤어 드라이어 열 줄이기",
+        "description": "지나친 열이 모발 단백질을 손상시킬 수 있습니다",
+        "difficulty": "쉬움",
+        "frequency": "매일"
+      },
+      {
+        "title": "스트레스 관리 (명상·운동)",
+        "description": "스트레스 호르몬이 탈모를 악화시킬 수 있습니다",
+        "difficulty": "보통",
+        "frequency": "매일"
+      }
+    ]
+  },
+  "liver_health": {
+    "habits": [
+      {
+        "title": "절주 또는 금주",
+        "description": "알코올은 간세포 손상의 주요 원인이며, 간 건강을 위해 음주량 줄이기가 필수입니다",
+        "difficulty": "어려움",
+        "frequency": "매일"
+      },
+      {
+        "title": "규칙적인 유산소 운동",
+        "description": "운동이 지방간 예방과 간 기능 개선에 도움이 될 수 있습니다",
+        "difficulty": "보통",
+        "frequency": "주 3~4회"
+      },
+      {
+        "title": "충분한 수분 섭취 (하루 1.5L 이상)",
+        "description": "수분이 간의 독소 배출 과정을 돕습니다",
+        "difficulty": "쉬움",
+        "frequency": "매일"
+      }
+    ]
   }
 }

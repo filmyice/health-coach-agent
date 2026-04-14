@@ -167,5 +167,147 @@
     "duplicate_risk": false,
     "consultation_needed": false,
     "female_consult": false
+  },
+  "Protein Supplement": {
+    "caution_level": "info",
+    "short_cautions": [
+      "신장 질환이 있으신 분은 고단백 보충제 복용 전 의사 상담이 필요합니다",
+      "충분한 수분 섭취와 함께 복용을 권장합니다"
+    ],
+    "interaction_flags": [],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Green Tea Extract": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "카페인 민감자는 두근거림·불면이 생길 수 있습니다",
+      "공복 복용 시 위 불편감 가능합니다"
+    ],
+    "interaction_flags": [
+      "혈액 희석제(항응고제) 복용 중인 경우 주의",
+      "철분 흡수를 방해할 수 있으므로 식사와 간격 두고 복용 권장"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Chromium": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "당뇨 치료제 복용 중인 경우 반드시 의사 상담 후 복용하세요",
+      "적정 용량(200~400mcg) 준수를 권장합니다"
+    ],
+    "interaction_flags": [
+      "인슐린·혈당 강하제와 병용 시 저혈당 위험 증가"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": true,
+    "female_consult": false
+  },
+  "Berberine": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "혈당 강하제, 혈압약 복용 중인 경우 의사 상담이 필수입니다",
+      "임산부·수유부는 복용을 피하세요"
+    ],
+    "interaction_flags": [
+      "당뇨약·혈압약·항응고제와 상호작용 가능 — 반드시 의사 상담"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": true,
+    "female_consult": false
+  },
+  "Alpha-Lipoic Acid": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "당뇨약과 병용 시 저혈당 위험이 있을 수 있습니다",
+      "갑상선 기능 저하증 환자는 주의가 필요합니다"
+    ],
+    "interaction_flags": [
+      "인슐린·혈당 강하제 복용 중인 경우 의사 상담 필요"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Ashwagandha": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "임산부·수유부는 복용을 피하세요",
+      "자가면역 질환(루푸스·류마티스 등)이 있는 경우 의사 상담이 필요합니다",
+      "갑상선 호르몬 수치에 영향을 줄 수 있습니다"
+    ],
+    "interaction_flags": [
+      "갑상선 약·면역억제제 복용 중인 경우 의사 상담 권고",
+      "진정제·수면제 효과 강화 가능"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": true
+  },
+  "BCAA": {
+    "caution_level": "info",
+    "short_cautions": [
+      "신장 질환자는 복용 전 의사 상담이 필요합니다",
+      "식품에서 충분한 단백질 섭취가 가능하다면 별도 보충이 불필요할 수 있습니다"
+    ],
+    "interaction_flags": [],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Biotin": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "고용량(10mg 이상) 복용 시 갑상선·심장 혈액 검사 결과에 영향을 줄 수 있습니다",
+      "혈액 검사 전 복용 사실을 의료진에게 반드시 알려주세요"
+    ],
+    "interaction_flags": [
+      "항경련제(발프로산 등) 복용 시 비오틴 흡수 감소 가능"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Milk Thistle": {
+    "caution_level": "info",
+    "short_cautions": [
+      "드물게 소화 불편, 두통이 발생할 수 있습니다",
+      "국화과 식물 알레르기가 있는 경우 주의가 필요합니다"
+    ],
+    "interaction_flags": [
+      "일부 약물(항암제·간 대사 약물) 대사에 영향 가능 — 복용 중인 약이 있다면 상담 권고"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "NAC (N-Acetyl Cysteine)": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "천식 환자는 기관지 경련 가능성이 있으므로 주의가 필요합니다",
+      "공복 복용 시 오심·구토가 발생할 수 있습니다"
+    ],
+    "interaction_flags": [
+      "혈전 용해제·항응고제 복용 중인 경우 의사 상담 권고"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Vitamin E": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "고용량(400IU 이상) 장기 복용 시 출혈 위험이 증가할 수 있습니다",
+      "지용성으로 과다 복용 시 체내 축적될 수 있습니다"
+    ],
+    "interaction_flags": [
+      "항응고제(와파린·아스피린 고용량) 복용 중인 경우 주의"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
   }
 }

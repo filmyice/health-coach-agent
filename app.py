@@ -30,9 +30,16 @@ def run_pipeline():
 
     try:
         data = request.get_json(force=True) or {}
-        health_goal = (data.get("health_goal") or "").strip()
-        age_group   = (data.get("age_group")   or "").strip()
-        gender      = (data.get("gender")       or "").strip()
+        # Support both array (health_goals) and legacy scalar (health_goal)
+        health_goals_raw = data.get("health_goals") or []
+        if not health_goals_raw:
+            single = (data.get("health_goal") or "").strip()
+            health_goals_raw = [single] if single else []
+        health_goals = [g.strip() for g in health_goals_raw if g and g.strip()]
+        health_goal  = health_goals[0] if health_goals else ""
+
+        age_group = (data.get("age_group") or "").strip()
+        gender    = (data.get("gender")    or "").strip()
 
         if not all([health_goal, age_group, gender]):
             return jsonify({"error": "모든 항목을 선택해주세요."}), 400
@@ -45,12 +52,17 @@ def run_pipeline():
             capture_output=True, cwd=PROJECT_ROOT, env=env,
         )
 
-        # 입력 파일 생성
+        # 입력 파일 생성 (primary goal만 파이프라인에 전달)
         intake_dir = PROJECT_ROOT / "output" / "intake"
         intake_dir.mkdir(parents=True, exist_ok=True)
         with open(intake_dir / "raw_minimal_input.json", "w", encoding="utf-8") as f:
             json.dump(
-                {"health_goal": health_goal, "age_group": age_group, "gender": gender},
+                {
+                    "health_goal":  health_goal,
+                    "health_goals": health_goals,
+                    "age_group":    age_group,
+                    "gender":       gender,
+                },
                 f, ensure_ascii=False,
             )
 
