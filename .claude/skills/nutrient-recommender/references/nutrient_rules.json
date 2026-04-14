@@ -38,9 +38,17 @@
         "caution_seed": ["과다 복용 시 설사 가능", "신장 질환자 주의"]
       },
       {
+        "name": "멜라토닌",
+        "name_en": "Melatonin",
+        "priority": 2,
+        "reason_seed": "수면 리듬 조절에 도움이 될 수 있습니다. 단기 사용을 권장합니다",
+        "target_profile": [],
+        "caution_seed": ["단기 사용 권장", "복용 후 운전 주의", "임산부·수유부는 의사 상담 필요"]
+      },
+      {
         "name": "L-테아닌",
         "name_en": "L-Theanine",
-        "priority": 2,
+        "priority": 3,
         "reason_seed": "녹차 유래 성분으로 긴장 완화와 수면 준비에 도움이 될 수 있습니다",
         "target_profile": [],
         "caution_seed": ["혈압 강하제 복용 중인 경우 의사 상담 권고"]
@@ -86,9 +94,17 @@
         "caution_seed": ["지용성 성분으로 식후 복용 권장"]
       },
       {
+        "name": "지아잔틴",
+        "name_en": "Zeaxanthin",
+        "priority": 2,
+        "reason_seed": "루테인과 함께 황반을 보호하여 눈 건강에 도움이 될 수 있습니다",
+        "target_profile": [],
+        "caution_seed": ["지용성 성분으로 식후 복용 권장", "루테인과 함께 복용 시 효과적"]
+      },
+      {
         "name": "오메가-3",
         "name_en": "Omega-3",
-        "priority": 2,
+        "priority": 3,
         "reason_seed": "안구 건조 완화와 망막 건강에 도움이 될 수 있습니다",
         "target_profile": [],
         "caution_seed": ["혈액 희석 효과 주의", "생선 알레르기 있는 경우 식물성 오메가-3 고려"]

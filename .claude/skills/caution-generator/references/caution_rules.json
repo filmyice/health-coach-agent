@@ -309,5 +309,46 @@
     "duplicate_risk": false,
     "consultation_needed": false,
     "female_consult": false
+  },
+  "CoQ10": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "혈압을 낮추는 효과가 있어 혈압약 복용 중인 경우 주의가 필요합니다",
+      "지용성이므로 식후 복용을 권장합니다"
+    ],
+    "interaction_flags": [
+      "항응고제(와파린) 복용 중인 경우 효과 감소 가능 — 의사 상담 권고",
+      "혈압강하제와 병용 시 혈압이 과도하게 낮아질 수 있습니다"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
+  },
+  "Melatonin": {
+    "caution_level": "warning",
+    "short_cautions": [
+      "단기 사용(3개월 이하)을 권장합니다",
+      "졸음을 유발할 수 있으므로 복용 후 운전·기계 조작을 피해주세요",
+      "임산부·수유부·소아는 복용 전 반드시 의사와 상담하세요"
+    ],
+    "interaction_flags": [
+      "수면제·항불안제와 병용 시 진정 효과 증가 가능",
+      "항응고제(와파린) 복용 중인 경우 의사 상담 권고",
+      "면역억제제 복용 중인 경우 주의 필요"
+    ],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": true
+  },
+  "Zeaxanthin": {
+    "caution_level": "info",
+    "short_cautions": [
+      "지용성 성분이므로 식후 복용을 권장합니다",
+      "루테인과 함께 복용 시 시너지 효과를 기대할 수 있습니다"
+    ],
+    "interaction_flags": [],
+    "duplicate_risk": false,
+    "consultation_needed": false,
+    "female_consult": false
   }
 }
