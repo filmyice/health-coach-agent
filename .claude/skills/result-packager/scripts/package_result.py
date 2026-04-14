@@ -85,6 +85,24 @@ NAME_EN_MAP = {
 }
 
 
+def _load_caution_rules() -> dict:
+    rules_path = (Path(__file__).parent.parent.parent /
+                  "caution-generator" / "references" / "caution_rules.json")
+    if rules_path.exists():
+        with open(rules_path, encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+
+def _load_nutrient_rules() -> dict:
+    rules_path = (Path(__file__).parent.parent.parent /
+                  "nutrient-recommender" / "references" / "nutrient_rules.json")
+    if rules_path.exists():
+        with open(rules_path, encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+
 def build_json_result(
     health_plan: dict,
     price_comparison: dict | None,
@@ -108,6 +126,7 @@ def build_json_result(
             "name":    name,
             "name_en": n.get("name_en") or NAME_EN_MAP.get(name, ""),
             "reason":  reason,
+            "goal_key": goal,
             "cautions": {
                 "level":               caution.get("caution_level", "info"),
                 "items":               caution.get("short_cautions", []),
@@ -115,6 +134,42 @@ def build_json_result(
                 "consultation_needed": caution.get("consultation_needed", False),
             },
         })
+
+    # 2번째 목표 영양 성분 보충 (중복 제외, 최대 2개)
+    secondary_goals = [g for g in (extra_goals or []) if g and g != goal]
+    if secondary_goals:
+        nutrient_rules = _load_nutrient_rules()
+        caution_rules  = _load_caution_rules()
+        existing_en = {n["name_en"] for n in nutrients_out}
+        added = 0
+        for sec_goal in secondary_goals[:1]:  # 1개 2차 목표만 처리
+            sec_label = sec_goal  # GOAL_LABEL은 아래에서 처리
+            for rule_n in sorted(
+                nutrient_rules.get(sec_goal, {}).get("nutrients", []),
+                key=lambda x: x.get("priority", 99),
+            ):
+                if added >= 2:
+                    break
+                name_en = rule_n.get("name_en", "")
+                if not name_en or name_en in existing_en:
+                    continue
+                cr = caution_rules.get(name_en, {})
+                reason = (REASON_TEMPLATE.get(sec_goal, {}).get(rule_n.get("name", ""), "")
+                          or rule_n.get("reason_seed", f"{rule_n.get('name', '')} 보충을 고려해 볼 수 있습니다."))
+                nutrients_out.append({
+                    "name":     rule_n.get("name", ""),
+                    "name_en":  name_en,
+                    "reason":   reason,
+                    "goal_key": sec_goal,
+                    "cautions": {
+                        "level":               cr.get("caution_level", "info"),
+                        "items":               cr.get("short_cautions", []),
+                        "interaction_flags":   cr.get("interaction_flags", []),
+                        "consultation_needed": cr.get("consultation_needed", False),
+                    },
+                })
+                existing_en.add(name_en)
+                added += 1
 
     shopping_section: dict = {"available": False}
     if price_comparison:
