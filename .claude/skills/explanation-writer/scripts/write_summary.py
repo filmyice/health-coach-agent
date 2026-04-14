@@ -16,6 +16,7 @@ from datetime import datetime, timezone
 HEALTH_PLAN_PATH = Path("output/recommendation/final_health_plan.json")
 RISK_FLAGS_PATH  = Path("output/risk/risk_flags.json")
 PROFILE_PATH     = Path("output/intake/normalized_profile.json")
+RAW_INPUT_PATH   = Path("output/intake/raw_minimal_input.json")
 OUTPUT_PATH      = Path("output/content/final_health_summary.md")
 
 GOAL_LABEL = {
@@ -204,16 +205,17 @@ def get_nutrient_reason(goal: str, name: str, reason_seed: str) -> str:
     return f"{name} 보충을 고려해 볼 수 있습니다."
 
 
-def build_header(profile: dict, plan: dict, risk_flags: dict) -> str:
+def build_header(profile: dict, plan: dict, risk_flags: dict, extra_goal_keys: list | None = None) -> str:
     goal_key = plan.get("health_goal", "")
-    goal_label = GOAL_LABEL.get(goal_key, goal_key)
+    all_goal_keys = [goal_key] + [g for g in (extra_goal_keys or []) if g and g != goal_key]
+    goal_labels_str = " + ".join(GOAL_LABEL.get(g, g) for g in all_goal_keys)
     age = AGE_LABEL.get(profile.get("age_group", "unknown"), "")
     gender = GENDER_LABEL.get(profile.get("gender", "unknown"), "")
     subject = f"{age} {gender}".strip()
 
     lines = [f"# 나를 위한 건강 제안\n"]
     if subject:
-        lines.append(f"> **대상**: {subject} | **목표**: {goal_label}")
+        lines.append(f"> **대상**: {subject} | **목표**: {goal_labels_str}")
 
     # 위험 플래그 상단 경고
     flags = risk_flags.get("flags", {})
@@ -327,10 +329,24 @@ def main():
     plan       = load_json(HEALTH_PLAN_PATH, required=True)
     risk_flags = load_json(RISK_FLAGS_PATH,  required=False)
     profile    = load_json(PROFILE_PATH,     required=False)
+    raw_input  = load_json(RAW_INPUT_PATH,   required=False) or {}
 
     goal = plan.get("health_goal", "")
 
-    header   = build_header(profile, plan, risk_flags)
+    # 다중 목표: raw_input에서 secondary goals 추출
+    GOAL_MAP_LOCAL = {
+        "피로 관리": "fatigue_management", "수면 관리": "sleep_management",
+        "면역 관리": "immunity_management", "눈 건강": "eye_health",
+        "장 건강": "gut_health", "뼈 건강": "bone_health",
+        "피부·항산화": "skin_antioxidant", "체중 관리": "weight_management",
+        "혈당 관리": "blood_sugar_management", "스트레스 관리": "stress_management",
+        "운동 관리": "exercise_recovery", "심혈관 건강": "cardiovascular_health",
+        "모발 건강": "hair_health", "간 건강": "liver_health",
+    }
+    raw_goals = raw_input.get("health_goals", [])
+    extra_goal_keys = [GOAL_MAP_LOCAL.get(g, g) for g in raw_goals if GOAL_MAP_LOCAL.get(g, g) != goal]
+
+    header   = build_header(profile, plan, risk_flags, extra_goal_keys)
     foods    = build_foods_section(plan.get("foods", []))
     habits   = build_habits_section(plan.get("habits", []))
     nutrients_list = plan.get("nutrients", [])

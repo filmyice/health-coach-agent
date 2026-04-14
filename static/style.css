@@ -340,9 +340,56 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 
 /* ── 반응형 ────────────────────────────────────── */
 @media (max-width: 600px) {
-  main { padding: 1.5rem 1rem 3rem; }
-  .goal-grid { grid-template-columns: repeat(3, 1fr); }
-  header { padding: 1rem; }
+  /* 레이아웃 */
+  main    { padding: 1rem .75rem 3rem; }
+  header  { padding: .75rem 1rem; }
   .tagline { display: none; }
-  .food-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Step 1 입력 */
+  .goal-grid { grid-template-columns: repeat(2, 1fr); gap: .5rem; }
+  .goal-btn  { padding: .55rem .4rem; font-size: .78rem; }
+  .multi-hint { font-size: .72rem; }
+  .goal-selected-display { flex-wrap: wrap; gap: .3rem; }
+  .age-gender-row { gap: .5rem; }
+  .age-gender-row select { font-size: .85rem; }
+  .run-btn { font-size: .95rem; padding: .75rem 1rem; }
+
+  /* 결과 카드 */
+  .result-meta-badges { flex-wrap: wrap; gap: .35rem; }
+  .meta-badge { font-size: .72rem; padding: .25rem .55rem; }
+  .result-section-title { font-size: 1rem; }
+
+  /* 음식 그리드 */
+  .food-grid { grid-template-columns: 1fr 1fr; gap: .6rem; }
+  .food-card { padding: .75rem; }
+  .food-card-icon { font-size: 1.6rem; }
+  .food-card-name { font-size: .85rem; }
+  .food-card-reason { font-size: .75rem; }
+
+  /* 습관 카드 */
+  .habit-card { padding: .65rem .75rem; }
+  .habit-card-icon { font-size: 1.4rem; }
+  .habit-card-title { font-size: .88rem; }
+  .habit-card-desc  { font-size: .78rem; }
+
+  /* 영양 성분 카드 */
+  .nutrient-card-header { gap: .6rem; }
+  .nutrient-card-icon   { font-size: 1.5rem; }
+  .nutrient-card-name   { font-size: .88rem; }
+  .nutrient-card-reason { font-size: .78rem; padding: .4rem .75rem .5rem; }
+  .nutrient-card-caution { margin: 0 .5rem .5rem; font-size: .75rem; }
+
+  /* 쇼핑 표 — 가로 스크롤 */
+  .shop-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .shop-table { min-width: 340px; font-size: .8rem; }
+  .shop-link  { padding: .2rem .45rem; font-size: .72rem; }
+
+  /* 하단 액션 버튼 */
+  .btn-actions { flex-direction: column; gap: .5rem; }
+  .btn-action  { width: 100%; justify-content: center; }
+
+  /* 로딩 */
+  .progress-steps { gap: .3rem; }
+  .pstep { font-size: .72rem; padding: .3rem .5rem; }
+  .progress-pct { font-size: .85rem; }
 }

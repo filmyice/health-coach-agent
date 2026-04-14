@@ -390,7 +390,7 @@ function renderResultCards(meta) {
   // 쇼핑 검색
   if (nutrients.length) {
     html += `<div class="result-section"><div class="result-section-title"><span>🛒</span> 영양 성분 검색</div>
-      <table class="shop-table"><thead><tr><th>성분</th><th>네이버</th><th>쿠팡</th><th>iHerb</th></tr></thead><tbody>`;
+      <div class="shop-table-wrap"><table class="shop-table"><thead><tr><th>성분</th><th>네이버</th><th>쿠팡</th><th>iHerb</th></tr></thead><tbody>`;
     for (const n of nutrients) {
       const qKo = encodeURIComponent(n.name), qEn = encodeURIComponent(n.name_en || n.name);
       html += `<tr>
@@ -400,7 +400,7 @@ function renderResultCards(meta) {
         <td>${n.name_en ? `<a class="shop-link shop-iherb" href="https://www.iherb.com/search?kw=${qEn}" target="_blank">검색</a>` : '-'}</td>
       </tr>`;
     }
-    html += `</tbody></table></div>`;
+    html += `</tbody></table></div></div>`;
   }
 
   html += `<div class="disclaimer-box">ℹ️ 이 내용은 의료적 진단이 아닙니다. 복용 중인 약이나 임신·수유 중이라면 전문가 상담이 필요할 수 있어요.</div>`;
