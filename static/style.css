@@ -91,6 +91,29 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 .goal-btn:hover  { border-color: var(--green-400); background: var(--green-50); }
 .goal-btn.active { border-color: var(--green-600); background: var(--green-100); color: var(--green-700); font-weight: 700; }
 
+/* ── 다중 목표 선택 표시 ──────────────────────── */
+.multi-hint {
+  font-size: .75rem; color: var(--gray-400);
+  font-weight: 400; margin-left: .35rem;
+}
+.goal-selected-display {
+  display: flex; align-items: center;
+  gap: .5rem; flex-wrap: wrap;
+  margin-top: 1.25rem;
+  padding: .75rem 1rem;
+  background: var(--green-50);
+  border: 1.5px solid var(--green-400);
+  border-radius: var(--radius);
+}
+.goal-chip-selected {
+  background: var(--green-600); color: white;
+  border-radius: 999px; padding: .35rem 1rem;
+  font-size: .82rem; font-weight: 700;
+}
+.goal-chip-arrow {
+  color: var(--green-500); font-size: 1rem; font-weight: 700;
+}
+
 /* ── 연령·성별 선택 ───────────────────────────── */
 .chip-group { display: flex; flex-wrap: wrap; gap: .6rem; }
 .chip {
@@ -121,24 +144,52 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 .btn-run:disabled { background: var(--gray-400); cursor: not-allowed; }
 
 /* ── 로딩 ──────────────────────────────────────── */
-#loading {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 3rem 2rem;
-  text-align: center;
+.loading-msg {
+  font-size: 1rem; font-weight: 600; color: var(--gray-700);
+  margin-bottom: .5rem; text-align: center;
 }
-.spinner {
-  width: 48px; height: 48px;
-  border: 4px solid var(--green-100);
-  border-top-color: var(--green-500);
-  border-radius: 50%;
-  animation: spin .8s linear infinite;
+.progress-header { width: 100%; margin-bottom: .75rem; }
+
+.progress-bar-wrap {
+  width: 100%;
+  display: flex; align-items: center; gap: .75rem;
+  margin-bottom: 1.25rem;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-msg { color: var(--gray-600); font-size: .95rem; }
-.loading-steps { font-size: .8rem; color: var(--gray-400); }
+.progress-bar-track {
+  flex: 1; height: 12px;
+  background: var(--green-100);
+  border-radius: 999px; overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green-500), var(--green-400));
+  border-radius: 999px;
+  transition: width .7s cubic-bezier(.4,0,.2,1);
+  width: 0%;
+}
+.progress-pct {
+  font-size: .88rem; font-weight: 700;
+  color: var(--green-600); min-width: 2.8rem; text-align: right;
+}
+.progress-steps {
+  display: flex; justify-content: center;
+  gap: .5rem; flex-wrap: wrap;
+}
+.pstep {
+  padding: .4rem .85rem; border-radius: 999px;
+  font-size: .8rem; font-weight: 500;
+  background: var(--gray-100); color: var(--gray-400);
+  transition: all .35s ease;
+  border: 2px solid transparent;
+}
+.pstep.active {
+  background: var(--green-50); color: var(--green-700);
+  border-color: var(--green-400); font-weight: 700;
+}
+.pstep.done {
+  background: var(--green-600); color: white;
+  font-weight: 700;
+}
 
 /* ── 결과 ──────────────────────────────────────── */
 #result { display: none; }
@@ -166,6 +217,50 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
   transition: background .12s;
 }
 .btn-reset:hover { background: var(--gray-200); }
+
+/* ── 결과 액션 버튼 ───────────────────────────── */
+.result-actions {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+}
+.btn-action {
+  padding: .4rem .85rem;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  font-size: .82rem; cursor: pointer;
+  color: var(--gray-700); font-weight: 500;
+  transition: background .12s;
+  display: flex; align-items: center; gap: .3rem;
+}
+.btn-action:hover { background: var(--gray-200); }
+
+/* ── 저장 배너 ─────────────────────────────────── */
+.saved-banner {
+  background: var(--green-50);
+  border: 1px solid var(--green-100);
+  border-radius: 8px; padding: .65rem 1rem;
+  font-size: .85rem; color: var(--green-700);
+  display: flex; align-items: center; gap: .5rem;
+  margin-bottom: 1rem; flex-wrap: wrap;
+}
+.banner-close {
+  margin-left: auto; background: none; border: none;
+  cursor: pointer; color: var(--gray-400);
+  font-size: .85rem; padding: .1rem .3rem;
+}
+.banner-close:hover { color: var(--gray-700); }
+
+/* ── Toast 알림 ────────────────────────────────── */
+.toast {
+  position: fixed; bottom: 2rem; left: 50%;
+  transform: translateX(-50%) translateY(1.5rem);
+  background: var(--gray-800); color: white;
+  padding: .7rem 1.5rem; border-radius: 999px;
+  font-size: .88rem; font-weight: 500;
+  opacity: 0; transition: all .3s ease;
+  z-index: 1000; white-space: nowrap; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ── 마크다운 렌더링 ──────────────────────────── */
 .md-body { font-size: .95rem; color: var(--gray-700); }
@@ -227,6 +322,54 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
   background: var(--green-50); border-radius: 6px;
   padding: .3rem .5rem;
 }
+/* ── 레시피 아코디언 ───────────────────────────── */
+.recipe-toggle {
+  display: inline-flex; align-items: center; gap: .3rem;
+  margin-top: .5rem;
+  padding: .28rem .7rem;
+  background: var(--green-50);
+  border: 1.5px solid var(--green-400);
+  border-radius: 999px;
+  font-size: .75rem; font-weight: 600;
+  color: var(--green-700); cursor: pointer;
+  transition: background .15s;
+}
+.recipe-toggle:hover { background: var(--green-100); }
+
+.recipe-box {
+  display: none;
+  margin-top: .6rem;
+  background: white;
+  border: 1px solid var(--green-100);
+  border-radius: 10px;
+  padding: .75rem .9rem;
+  animation: fadeSlide .2s ease;
+}
+.recipe-box.open { display: block; }
+
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.recipe-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: .5rem;
+}
+.recipe-name {
+  font-size: .82rem; font-weight: 700; color: var(--gray-800);
+}
+.recipe-time {
+  font-size: .74rem; color: var(--gray-400); white-space: nowrap;
+}
+.recipe-steps {
+  padding-left: 1.2rem; margin: 0;
+}
+.recipe-steps li {
+  font-size: .78rem; color: var(--gray-600);
+  line-height: 1.6; margin-bottom: .3rem;
+}
+.recipe-steps li:last-child { margin-bottom: 0; }
 
 /* ── 습관 카드 ─────────────────────────────────── */
 .habit-list { display: flex; flex-direction: column; gap: .6rem; }
@@ -281,6 +424,38 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
   padding: .5rem 1rem .7rem;
   font-size: .83rem; color: var(--gray-600); line-height: 1.55;
 }
+
+/* ── 권장 섭취량 · 복용 시간 ──────────────────── */
+.nutrient-info-row {
+  display: flex; flex-direction: column; gap: .5rem;
+  margin: 0 .75rem .75rem;
+  padding: .65rem .85rem;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+}
+.nutrient-info-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: .5rem;
+}
+.nutrient-info-label {
+  grid-row: 1; grid-column: 1;
+  font-size: .72rem; font-weight: 700;
+  color: var(--gray-500); white-space: nowrap;
+}
+.nutrient-info-value {
+  grid-row: 1; grid-column: 2;
+  font-size: .82rem; font-weight: 700;
+  color: var(--green-700);
+}
+.nutrient-info-note {
+  grid-row: 2; grid-column: 1 / -1;
+  font-size: .73rem; color: var(--gray-500); line-height: 1.5;
+  margin-top: .15rem;
+}
+
 .nutrient-card-caution {
   margin: 0 .75rem .75rem;
   border-radius: 8px;
@@ -339,58 +514,126 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
   font-size: .8rem; color: var(--gray-500); line-height: 1.6;
 }
 
+/* ── Step 4 추가 정보 ─────────────────────────── */
+.optional-label {
+  font-size: .7rem; color: var(--gray-400);
+  background: var(--gray-100); border-radius: 999px;
+  padding: .15rem .55rem; margin-left: .4rem; font-weight: 500;
+  vertical-align: middle;
+}
+.extra-hint {
+  display: block;
+  font-size: .8rem; color: var(--gray-400);
+  font-weight: 400; margin-top: .25rem;
+}
+.extra-card { border: 1.5px dashed var(--gray-200); }
+.extra-row {
+  margin-bottom: 1.1rem;
+}
+.extra-row:last-child { margin-bottom: 0; }
+.extra-label {
+  display: block;
+  font-size: .82rem; font-weight: 600;
+  color: var(--gray-600); margin-bottom: .5rem;
+}
+.chip-sm {
+  padding: .32rem .75rem;
+  font-size: .8rem;
+}
+.extra-input {
+  width: 100%; padding: .6rem .9rem;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius);
+  font-size: .88rem; color: var(--gray-700);
+  outline: none; transition: border-color .15s;
+  background: var(--gray-50);
+}
+.extra-input:focus { border-color: var(--green-400); background: white; }
+.extra-input::placeholder { color: var(--gray-400); }
+
 /* ── 반응형 ────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* 음식 그리드: 태블릿에서 2열 */
+  .food-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (max-width: 600px) {
-  /* 레이아웃 */
-  main    { padding: 1rem .75rem 3rem; }
-  header  { padding: .75rem 1rem; }
+  /* ── 레이아웃 ── */
+  main   { padding: .75rem .6rem 3rem; }
+  header { padding: .65rem .9rem; gap: .5rem; }
   .tagline { display: none; }
+  .brand { font-size: 1.1rem; }
+  .logo  { font-size: 1.4rem; }
+  .card  { padding: 1.25rem 1rem; margin-bottom: 1rem; }
 
-  /* Step 1 입력 */
-  .goal-grid { grid-template-columns: repeat(2, 1fr); gap: .5rem; }
-  .goal-btn  { padding: .55rem .4rem; font-size: .78rem; }
-  .multi-hint { font-size: .72rem; }
-  .goal-selected-display { flex-wrap: wrap; gap: .3rem; }
-  .age-gender-row { gap: .5rem; }
-  .age-gender-row select { font-size: .85rem; }
-  .run-btn { font-size: .95rem; padding: .75rem 1rem; }
+  /* ── Step 1 목표 선택 ── */
+  .section-title { font-size: 1.1rem; margin-bottom: 1rem; }
+  .goal-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: .45rem;
+  }
+  .goal-btn {
+    padding: .65rem .3rem;
+    font-size: .78rem;
+  }
+  .goal-btn .icon { font-size: 1.5rem; }
+  .multi-hint { font-size: .7rem; display: block; margin-left: 0; margin-top: .2rem; }
+  .goal-selected-display { padding: .6rem .75rem; gap: .35rem; margin-top: .9rem; }
+  .goal-chip-selected { font-size: .78rem; padding: .28rem .75rem; }
 
-  /* 결과 카드 */
-  .result-meta-badges { flex-wrap: wrap; gap: .35rem; }
-  .meta-badge { font-size: .72rem; padding: .25rem .55rem; }
-  .result-section-title { font-size: 1rem; }
+  /* ── Step 2·3 칩 ── */
+  .chip { font-size: .82rem; padding: .4rem .9rem; }
 
-  /* 음식 그리드 */
-  .food-grid { grid-template-columns: 1fr 1fr; gap: .6rem; }
-  .food-card { padding: .75rem; }
-  .food-card-icon { font-size: 1.6rem; }
-  .food-card-name { font-size: .85rem; }
-  .food-card-reason { font-size: .75rem; }
+  /* ── 실행 버튼 ── */
+  .btn-run { font-size: .95rem; padding: .85rem; }
 
-  /* 습관 카드 */
-  .habit-card { padding: .65rem .75rem; }
-  .habit-card-icon { font-size: 1.4rem; }
-  .habit-card-title { font-size: .88rem; }
-  .habit-card-desc  { font-size: .78rem; }
-
-  /* 영양 성분 카드 */
-  .nutrient-card-header { gap: .6rem; }
-  .nutrient-card-icon   { font-size: 1.5rem; }
-  .nutrient-card-name   { font-size: .88rem; }
-  .nutrient-card-reason { font-size: .78rem; padding: .4rem .75rem .5rem; }
-  .nutrient-card-caution { margin: 0 .5rem .5rem; font-size: .75rem; }
-
-  /* 쇼핑 표 — 가로 스크롤 */
-  .shop-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .shop-table { min-width: 340px; font-size: .8rem; }
-  .shop-link  { padding: .2rem .45rem; font-size: .72rem; }
-
-  /* 하단 액션 버튼 */
-  .btn-actions { flex-direction: column; gap: .5rem; }
-  .btn-action  { width: 100%; justify-content: center; }
-
-  /* 로딩 */
+  /* ── 로딩 ── */
+  .loading-msg { font-size: .9rem; }
+  .progress-bar-track { height: 9px; }
+  .progress-pct { font-size: .8rem; }
   .progress-steps { gap: .3rem; }
-  .pstep { font-size: .72rem; padding: .3rem .5rem; }
-  .progress-pct { font-size: .85rem; }
+  .pstep { font-size: .72rem; padding: .3rem .55rem; }
+
+  /* ── 결과 헤더 ── */
+  .result-header { flex-wrap: wrap; gap: .6rem; }
+  .result-actions { flex-wrap: wrap; gap: .35rem; }
+  .btn-action { font-size: .78rem; padding: .35rem .65rem; }
+  .btn-reset  { font-size: .78rem; padding: .35rem .75rem; }
+  .result-meta-badges { gap: .35rem; }
+  .meta-badge { font-size: .72rem; padding: .25rem .55rem; }
+
+  /* ── 음식 카드 ── */
+  .food-grid { grid-template-columns: 1fr 1fr; gap: .5rem; }
+  .food-card { padding: .7rem .65rem; gap: .3rem; }
+  .food-card-icon { font-size: 1.5rem; }
+  .food-card-name { font-size: .82rem; }
+  .food-card-reason { font-size: .74rem; }
+  .food-card-tip { font-size: .72rem; }
+
+  /* ── 습관 카드 ── */
+  .habit-card { padding: .65rem .7rem; gap: .55rem; }
+  .habit-card-icon  { font-size: 1.3rem; }
+  .habit-card-title { font-size: .86rem; }
+  .habit-card-desc  { font-size: .76rem; }
+  .badge { font-size: .66rem; }
+
+  /* ── 영양 성분 카드 ── */
+  .nutrient-card-header { gap: .5rem; padding: .75rem .85rem; }
+  .nutrient-card-icon   { font-size: 1.4rem; }
+  .nutrient-card-name   { font-size: .86rem; }
+  .nutrient-card-en     { font-size: .72rem; }
+  .nutrient-card-reason { font-size: .76rem; padding: .4rem .85rem .55rem; }
+  .nutrient-card-caution { margin: 0 .5rem .5rem; font-size: .74rem; padding: .5rem .75rem; }
+  .caution-list li { font-size: .73rem; }
+
+  /* ── 쇼핑 표 ── */
+  .shop-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius); }
+  .shop-table { min-width: 320px; font-size: .78rem; }
+  .shop-link  { padding: .18rem .4rem; font-size: .7rem; }
+
+  /* ── 면책 박스 ── */
+  .disclaimer-box { font-size: .74rem; padding: .65rem .8rem; }
+
+  /* ── Toast ── */
+  .toast { font-size: .82rem; padding: .6rem 1.1rem; bottom: 1.25rem; }
 }
