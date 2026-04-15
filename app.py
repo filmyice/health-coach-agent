@@ -75,11 +75,28 @@ def run_pipeline():
         )
 
         if result.returncode != 0:
-            return jsonify({"error": f"파이프라인 실행 실패\n{result.stderr[-500:]}"}), 500
+            # stdout/stderr 모두에서 에러 메시지 추출
+            combined = result.stdout + result.stderr
+            # normalize.py가 stdout에 JSON 에러를 출력하는 경우 파싱
+            for line in result.stdout.splitlines():
+                try:
+                    obj = json.loads(line)
+                    if obj.get("error") == "INPUT_VALIDATION_FAILED":
+                        details = obj.get("details", [])
+                        return jsonify({"error": "입력값이 올바르지 않습니다: " + ", ".join(details)}), 400
+                except (ValueError, AttributeError):
+                    pass
+            err_lines = [l.strip() for l in combined.splitlines()
+                         if any(k in l for k in ("[ERROR]", "허용되지 않은", "필수 필드"))]
+            err_msg = err_lines[0] if err_lines else "파이프라인 실행에 실패했습니다. 잠시 후 다시 시도해주세요."
+            return jsonify({"error": err_msg}), 400
 
         # 결과 읽기
         md_path   = PROJECT_ROOT / "output" / "final" / "user_result.md"
         json_path = PROJECT_ROOT / "output" / "final" / "user_result.json"
+
+        if not json_path.exists():
+            return jsonify({"error": "결과 파일을 생성하지 못했습니다. 입력값을 확인해주세요."}), 500
 
         markdown = ""
         if md_path.exists():
@@ -87,9 +104,8 @@ def run_pipeline():
                 markdown = f.read()
 
         meta = {}
-        if json_path.exists():
-            with open(json_path, encoding="utf-8") as f:
-                meta = json.load(f)
+        with open(json_path, encoding="utf-8") as f:
+            meta = json.load(f)
 
         return jsonify({"success": True, "markdown": markdown, "meta": meta})
 

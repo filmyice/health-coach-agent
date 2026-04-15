@@ -456,6 +456,9 @@ def main():
             err(f"Step {step['id']} 실패. 파이프라인 중단.")
             break
 
+    # 실패 시 non-zero exit code
+    failed = any(results.get(s["id"]) == "error" for s in target_steps)
+
     # 최종 요약
     header("실행 요약")
     for step in target_steps:
@@ -473,6 +476,9 @@ def main():
     final = PROJECT_ROOT / "output/final/user_result.json"
     if final.exists():
         print(f"\n{GREEN}{BOLD}최종 결과 파일: {final}{RESET}")
+
+    if failed:
+        sys.exit(1)
 
 
 if __name__ == "__main__":
