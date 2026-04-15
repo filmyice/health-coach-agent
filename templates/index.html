@@ -145,6 +145,7 @@
       <div class="result-header">
         <span class="result-badge">✅ 추천 완료</span>
         <div class="result-actions">
+          <button class="btn-action" onclick="showWorkflow()" title="워크플로우">📋 워크플로우</button>
           <button class="btn-action" onclick="shareResult()" title="링크 복사">🔗 공유</button>
           <button class="btn-action" onclick="saveResult()" title="저장">💾 저장</button>
           <button class="btn-reset" onclick="reset()">← 다시 입력</button>
@@ -160,6 +161,17 @@
   </div>
 
 </main>
+
+<!-- ── 워크플로우 모달 ──────────────────────────── -->
+<div id="workflow-modal" class="wf-overlay" style="display:none" onclick="closeWorkflowOutside(event)">
+  <div class="wf-modal">
+    <div class="wf-modal-header">
+      <span class="wf-modal-title">📋 추천 워크플로우</span>
+      <button class="wf-close" onclick="closeWorkflow()">✕</button>
+    </div>
+    <div class="wf-modal-body" id="wf-body"></div>
+  </div>
+</div>
 
 <script>
 const state = { goals: [], age: '', gender: '', allergy: [], condition: [], medication: [] };
@@ -593,6 +605,108 @@ function reset() {
   updateGoalDisplay();
   updateBtn();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── 워크플로우 모달 ──────────────────────────────
+const WF_STEPS = [
+  { id:1,  icon:'📥', label:'입력 수집',          desc:'health_goal · age_group · gender 수신', type:'script' },
+  { id:2,  icon:'🔧', label:'입력 정규화',         desc:'연령대·성별·목표 코드 변환 및 스키마 검증', type:'script' },
+  { id:3,  icon:'🎯', label:'건강 목표 해석',      desc:'1차 목표 분석 → primary_health_goal.json', type:'agent' },
+  { id:4,  icon:'🥗', label:'음식 추천 생성',      desc:'목표별 추천 음식 후보 선정', type:'script' },
+  { id:5,  icon:'🏃', label:'생활습관 추천 생성',  desc:'목표별 운동·생활습관 후보 선정', type:'script' },
+  { id:6,  icon:'💊', label:'영양 성분 추천 생성', desc:'목표별 핵심 성분 후보 선정', type:'script' },
+  { id:7,  icon:'⚠️', label:'주의사항 초안 생성',  desc:'성분별 주의사항·복용 정보 생성', type:'script' },
+  { id:8,  icon:'🤔', label:'보정 질문 여부 판단', desc:'추가 정보 필요 여부 자동 판단', type:'agent' },
+  { id:9,  icon:'💬', label:'동적 보정 질문',      desc:'필요 시 추가 입력 요청 (조건부)', type:'cond' },
+  { id:10, icon:'🔄', label:'추천 보정',           desc:'추가 정보 반영해 추천 결과 정제', type:'script' },
+  { id:11, icon:'🛡️', label:'위험 플래그 확인',   desc:'고위험 조합·알레르기·약물 상호작용 검토', type:'script' },
+  { id:12, icon:'📋', label:'최종 통합 추천 생성', desc:'음식·습관·영양 성분 최종 플랜 확정', type:'script' },
+  { id:13, icon:'✍️', label:'건강 요약 생성',      desc:'자연어 건강 요약 작성 (AI 생성)', type:'agent' },
+  { id:19, icon:'📦', label:'최종 결과 병합',      desc:'user_result.json · user_result.md 생성', type:'script' },
+  { id:20, icon:'✅', label:'품질 검증',           desc:'비의료적 표현·정책 준수 최종 검토', type:'script' },
+];
+
+function showWorkflow() {
+  if (!lastMeta) return;
+  const prof  = lastMeta.profile || {};
+  const goals = lastMeta.goal_labels || [lastMeta.goal_label];
+  const multi = goals.length > 1;
+
+  let html = '';
+
+  // 입력 요약 칩
+  html += `<div class="wf-input-summary">`;
+  goals.filter(Boolean).forEach(g => html += `<span class="wf-chip wf-chip-goal">🎯 ${g}</span>`);
+  if (prof.age_label)    html += `<span class="wf-chip wf-chip-meta">${prof.age_label}</span>`;
+  if (prof.gender_label) html += `<span class="wf-chip wf-chip-meta">${prof.gender_label}</span>`;
+  if (multi)             html += `<span class="wf-chip wf-chip-multi">⊕ 다중 목표 블렌딩</span>`;
+  html += `</div>`;
+
+  // 범례
+  html += `<div class="wf-legend">
+    <span class="wf-leg wf-leg-script">스크립트</span>
+    <span class="wf-leg wf-leg-agent">AI 에이전트</span>
+    <span class="wf-leg wf-leg-cond">조건부</span>
+    <span class="wf-leg wf-leg-skip">쇼핑 생략</span>
+  </div>`;
+
+  // 단계 목록
+  html += `<div class="wf-steps">`;
+  WF_STEPS.forEach((s, idx) => {
+    const isSkip = s.id === 9;  // refinement: conditional
+    const typeClass = { script:'wf-type-script', agent:'wf-type-agent', cond:'wf-type-cond' }[s.type] || '';
+    const connector = idx < WF_STEPS.length - 1 ? `<div class="wf-connector"></div>` : '';
+    html += `
+      <div class="wf-step ${typeClass}">
+        <div class="wf-step-num">${s.id}</div>
+        <div class="wf-step-icon">${s.icon}</div>
+        <div class="wf-step-info">
+          <div class="wf-step-label">${s.label}</div>
+          <div class="wf-step-desc">${s.desc}</div>
+        </div>
+        <div class="wf-step-badge wf-badge-${s.type}">${{script:'스크립트',agent:'AI',cond:'조건부'}[s.type]}</div>
+      </div>${connector}`;
+  });
+
+  // 쇼핑 단계 (생략됨)
+  html += `
+    <div class="wf-connector"></div>
+    <div class="wf-step wf-step-skip">
+      <div class="wf-step-num">15~18</div>
+      <div class="wf-step-icon">🛒</div>
+      <div class="wf-step-info">
+        <div class="wf-step-label">쇼핑 검색</div>
+        <div class="wf-step-desc">Playwright 크롤링 (현재 생략됨)</div>
+      </div>
+      <div class="wf-step-badge wf-badge-skip">생략</div>
+    </div>`;
+
+  // 다중 목표 블렌딩 설명
+  if (multi) {
+    html += `<div class="wf-blend-note">
+      <span class="wf-blend-icon">⊕</span>
+      <div>
+        <strong>다중 목표 블렌딩 적용됨</strong><br>
+        2차 목표의 영양 성분(최대 2개)·음식(1개)·습관(1개)을 1차 목표 결과에 추가합니다.
+        각 항목에 출처 목표 배지가 표시됩니다.
+      </div>
+    </div>`;
+  }
+
+  html += `</div>`;
+
+  document.getElementById('wf-body').innerHTML = html;
+  document.getElementById('workflow-modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeWorkflow() {
+  document.getElementById('workflow-modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function closeWorkflowOutside(e) {
+  if (e.target === document.getElementById('workflow-modal')) closeWorkflow();
 }
 
 // ── 페이지 로드 시 저장 결과 확인 ────────────────
