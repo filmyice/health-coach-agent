@@ -226,7 +226,8 @@ def build_json_result(
     if flags.get("consult_required"):
         top_warning = "일부 추천 성분은 개인 건강 상태에 따라 전문가 상담이 필요할 수 있습니다."
 
-    AGE_LABEL    = {"teens": "10대", "20s": "20대", "30s": "30대", "40s": "40대", "50s_plus": "50대 이상"}
+    AGE_LABEL    = {"teens": "10대", "20s": "20대", "30s": "30대", "40s": "40대",
+                    "50s_plus": "50대 이상", "50s": "50대", "60s": "60대", "70s_plus": "70대 이상"}
     GENDER_LABEL = {"female": "여성", "male": "남성"}
     GOAL_LABEL   = {
         "fatigue_management": "피로 관리", "sleep_management": "수면 관리",

@@ -45,6 +45,9 @@ TEST_CASES = [
     {"health_goal": "심혈관 건강",  "age_group": "40대",     "gender": "남성"},
     {"health_goal": "모발 건강",    "age_group": "40대",     "gender": "여성"},
     {"health_goal": "간 건강",      "age_group": "30대",     "gender": "남성"},
+    # 신규 연령대 (50대/60대/70대)
+    {"health_goal": "뼈 건강",      "age_group": "60대",     "gender": "여성"},
+    {"health_goal": "심혈관 건강",  "age_group": "70대 이상","gender": "남성"},
     # 다중 목표 시나리오 (2개 선택)
     {"health_goal": "피로 관리",    "health_goals": ["피로 관리", "수면 관리"],
      "age_group": "30대", "gender": "여성"},
@@ -89,6 +92,16 @@ def validate_outputs(tc: dict) -> list[str]:
             np = json.load(f)
         if not np.get("health_goal"):
             errors.append("normalized_profile: health_goal 누락")
+
+    # 2-1. user_result age_label 검증 (50대/60대/70대 빈값 체크)
+    res_path = PROJECT_ROOT / "output/final/user_result.json"
+    age_group = tc.get("age_group", "")
+    if res_path.exists() and age_group not in ("", "unknown"):
+        with open(res_path, encoding="utf-8") as f:
+            res = json.load(f)
+        age_label = res.get("profile", {}).get("age_label", "")
+        if not age_label:
+            errors.append(f"user_result: age_label 비어 있음 (age_group={age_group})")
 
     # 3. final_health_plan 검증 — 음식/습관/영양 각 1개 이상
     plan_path = PROJECT_ROOT / "output/recommendation/final_health_plan.json"
