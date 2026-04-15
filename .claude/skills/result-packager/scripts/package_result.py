@@ -112,6 +112,15 @@ def _load_food_rules() -> dict:
     return {}
 
 
+def _load_habit_rules() -> dict:
+    rules_path = (Path(__file__).parent.parent.parent /
+                  "habit-recommender" / "references" / "habit_rules.json")
+    if rules_path.exists():
+        with open(rules_path, encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+
 def build_json_result(
     health_plan: dict,
     price_comparison: dict | None,
@@ -192,6 +201,18 @@ def build_json_result(
                     foods_out.append({**rule_f, "goal_key": sec_goal})
                     break  # 최대 1개
 
+    # 습관 추천에 goal_key 부여 + 2차 목표 습관 1개 보충
+    habits_out = [{**h, "goal_key": goal} for h in health_plan.get("habits", [])]
+    if secondary_goals:
+        habit_rules = _load_habit_rules()
+        existing_habit_titles = {h.get("title", "") for h in habits_out}
+        for sec_goal in secondary_goals[:1]:
+            for rule_h in habit_rules.get(sec_goal, {}).get("habits", []):
+                h_title = rule_h.get("title", "")
+                if h_title and h_title not in existing_habit_titles:
+                    habits_out.append({**rule_h, "goal_key": sec_goal})
+                    break  # 최대 1개
+
     shopping_section: dict = {"available": False}
     if price_comparison:
         shopping_section = {
@@ -235,7 +256,7 @@ def build_json_result(
         "top_warning": top_warning,
         "recommendations": {
             "foods":     foods_out,
-            "habits":    health_plan.get("habits", []),
+            "habits":    habits_out,
             "nutrients": nutrients_out,
         },
         "shopping":    shopping_section,

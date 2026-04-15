@@ -315,15 +315,31 @@ function renderResultCards(meta) {
 
   // 습관
   const habits = rec.habits || [];
+  const hPrimaryKey = meta.health_goal || '';
+  const hMultiGoal  = (meta.goal_labels || []).length > 1;
+  const GOAL_LBL_H = {
+    fatigue_management:'피로 관리', sleep_management:'수면 관리',
+    immunity_management:'면역 관리', eye_health:'눈 건강',
+    gut_health:'장 건강', bone_health:'뼈 건강',
+    skin_antioxidant:'피부·항산화', weight_management:'체중 관리',
+    blood_sugar_management:'혈당 관리', stress_management:'스트레스 관리',
+    exercise_recovery:'운동 관리', cardiovascular_health:'심혈관 건강',
+    hair_health:'모발 건강', liver_health:'간 건강',
+  };
   if (habits.length) {
     html += `<div class="result-section"><div class="result-section-title"><span>🏃</span> 생활습관 제안</div><div class="habit-list">`;
     for (const h of habits) {
       const dc = h.difficulty === '쉬움' ? 'badge-easy' : 'badge-medium';
-      html += `<div class="habit-card">
+      const hIsSec = h.goal_key && h.goal_key !== hPrimaryKey;
+      const hBadge = hIsSec
+        ? `<span class="nutrient-goal-badge secondary">${GOAL_LBL_H[h.goal_key] || h.goal_key}</span>`
+        : (hMultiGoal ? `<span class="nutrient-goal-badge primary">${GOAL_LBL_H[hPrimaryKey] || ''}</span>` : '');
+      html += `<div class="habit-card${hIsSec ? ' secondary-goal' : ''}">
         <div class="habit-card-icon">${habitIcon(h.title)}</div>
         <div class="habit-card-body">
           <div class="habit-card-header">
             <span class="habit-card-title">${h.title}</span>
+            ${hBadge}
             ${h.difficulty ? `<span class="badge ${dc}">${h.difficulty}</span>` : ''}
             ${h.frequency  ? `<span class="badge badge-freq">${h.frequency}</span>` : ''}
           </div>
