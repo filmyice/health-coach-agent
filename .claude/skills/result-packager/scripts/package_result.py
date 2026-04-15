@@ -74,6 +74,74 @@ REASON_TEMPLATE = {
     },
 }
 
+# 기저질환 → 영양소 상호작용 경고
+CONDITION_NUTRIENT_WARNINGS = {
+    "고혈압": {
+        "코엔자임 Q10": ("warning", "혈압약과 CoQ10 병용 시 혈압이 추가로 낮아질 수 있어 용량 모니터링이 필요합니다."),
+        "오메가-3":    ("warning", "고용량(3g 이상) 오메가-3는 혈압에 영향을 줄 수 있습니다. 의사와 상담 후 복용하세요."),
+        "마그네슘":    ("info",    "마그네슘은 혈압 조절에 도움이 될 수 있습니다. 권장량 이내로 복용하세요."),
+        "칼슘":        ("warning", "칼슘 채널 차단제 계열 혈압약 복용 중이라면 칼슘 보충제 복용 시간을 분리하세요."),
+    },
+    "당뇨": {
+        "크롬":      ("consult", "당뇨약과 크롬 병용 시 혈당이 과도하게 낮아질 수 있습니다. 반드시 의사와 상담 후 복용하세요."),
+        "베르베린":  ("consult", "당뇨약(메트포르민 등)과 유사 작용으로 저혈당 위험이 있습니다. 의사 상담이 필요합니다."),
+        "알파리포산":("warning", "혈당 강하 효과가 중첩될 수 있습니다. 복용 중 혈당 모니터링을 권장합니다."),
+        "마그네슘":  ("info",    "마그네슘은 인슐린 감수성 개선에 도움될 수 있습니다. 혈당 변화를 관찰하세요."),
+    },
+    "갑상선": {
+        "칼슘":  ("warning", "갑상선 약(레보티록신)과 칼슘 보충제는 반드시 4시간 이상 간격을 두고 복용하세요."),
+        "철분":  ("warning", "갑상선약 복용 시 철분과 동시 복용 시 흡수를 방해할 수 있습니다. 2~4시간 간격을 두세요."),
+        "아연":  ("info",    "갑상선 기능 저하 시 아연이 도움될 수 있으나, 갑상선약과 시간 간격을 두고 복용하세요."),
+    },
+    "신장질환": {
+        "칼슘":    ("consult", "신장질환이 있는 경우 칼슘 과잉 섭취는 위험할 수 있습니다. 반드시 전문가 상담 후 복용하세요."),
+        "마그네슘":("consult", "신장 기능 저하 시 마그네슘 배출이 어려워 고용량 복용은 위험합니다. 전문가 상담이 필요합니다."),
+        "비타민 D":("warning", "신장질환 시 비타민 D 대사가 달라집니다. 의사 처방 하에 복용하세요."),
+        "오메가-3":("warning", "신장질환이 있는 경우 고용량 오메가-3는 주의가 필요합니다. 의사와 상담하세요."),
+    },
+    "간질환": {
+        "NAC":    ("warning", "간질환 상태에 따라 NAC이 도움이 될 수도, 역효과가 날 수도 있습니다. 의사 상담이 필요합니다."),
+        "밀크씨슬":("info",   "일반 간질환에는 밀크씨슬이 도움될 수 있으나, 심한 간경변의 경우 의사 상담을 권장합니다."),
+        "비타민 E":("warning", "간질환이 있는 경우 고용량 비타민 E는 주의가 필요합니다. 권장량 이내로 복용하세요."),
+    },
+}
+
+# 복용 중인 약 → 영양소 상호작용 경고
+MEDICATION_NUTRIENT_WARNINGS = {
+    "혈압약": {
+        "코엔자임 Q10":("warning", "혈압약과 CoQ10 병용 시 혈압이 추가로 낮아질 수 있어 모니터링이 필요합니다."),
+        "마그네슘":    ("warning", "일부 혈압약과 마그네슘 병용 시 혈압이 과도하게 낮아질 수 있습니다."),
+        "오메가-3":    ("warning", "오메가-3의 혈압 강하 효과와 혈압약이 중첩될 수 있습니다. 의사에게 알려주세요."),
+        "칼슘":        ("warning", "칼슘 채널 차단제 계열 혈압약 복용 중 칼슘 보충제는 복용 시간을 분리하세요."),
+    },
+    "당뇨약": {
+        "크롬":      ("consult", "당뇨약과 크롬 병용 시 저혈당 위험이 있습니다. 반드시 의사와 상담하세요."),
+        "베르베린":  ("consult", "당뇨약과 베르베린은 혈당 강하 효과가 중첩됩니다. 의사 지도 하에 복용하세요."),
+        "알파리포산":("warning", "당뇨약과 함께 복용 시 혈당 강하 효과가 강해질 수 있습니다. 혈당을 모니터링하세요."),
+    },
+    "항응고제": {
+        "오메가-3":    ("consult", "항응고제(와파린 등)와 오메가-3 병용 시 출혈 위험이 높아집니다. 반드시 의사와 상담하세요."),
+        "비타민 E":    ("consult", "항응고제와 비타민 E 병용 시 항응고 효과가 강해질 수 있습니다. 전문가 상담이 필요합니다."),
+        "비타민 C":    ("warning", "고용량 비타민 C(1g 이상)는 와파린 효과에 영향을 줄 수 있습니다. 적정량을 유지하세요."),
+        "아연":        ("warning", "항응고제와 아연 병용 시 상호작용 가능성이 있습니다. 의사에게 알려주세요."),
+        "프로바이오틱스":("info", "프로바이오틱스는 장내 비타민 K 생성에 영향을 줄 수 있어 와파린 수치 모니터링이 필요합니다."),
+    },
+    "항우울제": {
+        "L-테아닌":  ("warning", "일부 항우울제와 병용 시 진정 효과가 강해질 수 있습니다. 의사에게 알려주세요."),
+        "멜라토닌":  ("warning", "SSRI/SNRI 계열 항우울제와 멜라토닌 병용 시 상호작용 가능성이 있습니다. 의사 상담을 권장합니다."),
+        "마그네슘":  ("info",    "항우울제와 마그네슘 병용은 일반적으로 안전하나, 고용량 복용 시 의사에게 알려주세요."),
+        "BCAA":      ("warning", "항우울제 복용 중 아미노산 보충제는 세로토닌 시스템에 영향을 줄 수 있습니다."),
+    },
+}
+
+# 기저질환 → 음식 주의 키워드
+CONDITION_FOOD_CAUTIONS = {
+    "고혈압":   {"keywords": ["김치", "멸치", "된장", "명란"],        "note": "⚠️ 고혈압: 나트륨 함량이 높아 섭취량을 제한하는 것이 좋습니다."},
+    "당뇨":     {"keywords": ["바나나", "고구마", "현미", "과일"],     "note": "⚠️ 당뇨: 혈당 상승 속도를 늦추기 위해 소량씩 나눠 섭취를 권장합니다."},
+    "신장질환": {"keywords": ["바나나", "멸치", "김치", "토마토", "감자"], "note": "⚠️ 신장질환: 칼륨·인 함량이 높아 섭취량을 전문가와 상의하세요."},
+    "간질환":   {"keywords": ["마늘"],                                "note": "⚠️ 간질환: 마늘을 과량 섭취하면 간에 부담을 줄 수 있습니다. 적정량을 유지하세요."},
+}
+
 NAME_EN_MAP = {
     "철분": "Iron", "비타민 B12": "Vitamin B12", "마그네슘": "Magnesium",
     "코엔자임 Q10": "CoQ10", "멜라토닌": "Melatonin", "L-테아닌": "L-Theanine",
@@ -121,6 +189,59 @@ def _load_habit_rules() -> dict:
     return {}
 
 
+def _inject_extra_warnings(nutrient_name: str, caution: dict, conditions: list, medications: list) -> dict:
+    """기저질환·복용약에 따라 영양소 주의사항 보강."""
+    caution = dict(caution)
+    items = list(caution.get("items", []))
+    level = caution.get("level", "info")
+    level_order = {"info": 0, "warning": 1, "consult": 2}
+
+    for cond in conditions:
+        warnings = CONDITION_NUTRIENT_WARNINGS.get(cond, {})
+        if nutrient_name in warnings:
+            lvl, msg = warnings[nutrient_name]
+            if f"[{cond}]" not in " ".join(items):
+                items.append(f"[{cond}] {msg}")
+            if level_order.get(lvl, 0) > level_order.get(level, 0):
+                level = lvl
+
+    for med in medications:
+        if med == "없음":
+            continue
+        warnings = MEDICATION_NUTRIENT_WARNINGS.get(med, {})
+        if nutrient_name in warnings:
+            lvl, msg = warnings[nutrient_name]
+            if f"[{med}]" not in " ".join(items):
+                items.append(f"[{med}] {msg}")
+            if level_order.get(lvl, 0) > level_order.get(level, 0):
+                level = lvl
+
+    caution["items"] = items
+    caution["level"] = level
+    caution["consultation_needed"] = caution.get("consultation_needed", False) or (level == "consult")
+    return caution
+
+
+def _apply_condition_food_notes(foods: list, conditions: list) -> list:
+    """기저질환에 따라 음식 serving_suggestion에 주의 메모 추가."""
+    result = []
+    for f in foods:
+        f = dict(f)
+        name = f.get("name", "")
+        notes = []
+        for cond in conditions:
+            rule = CONDITION_FOOD_CAUTIONS.get(cond, {})
+            for kw in rule.get("keywords", []):
+                if kw in name:
+                    notes.append(rule["note"])
+                    break
+        if notes:
+            original = f.get("serving_suggestion", "")
+            f["serving_suggestion"] = original + " " + " ".join(notes) if original else " ".join(notes)
+        result.append(f)
+    return result
+
+
 def build_json_result(
     health_plan: dict,
     price_comparison: dict | None,
@@ -132,6 +253,25 @@ def build_json_result(
     nutrients_raw = health_plan.get("nutrients", [])
     cautions_raw = health_plan.get("nutrient_cautions", [])
 
+    conditions  = profile.get("conditions", []) or []
+    medications = profile.get("medications", []) or []
+    age_group   = profile.get("age_group", "unknown")
+
+    # 연령대별 하루 권장량 override 맵 (recommend_nutrient.py와 동일 데이터)
+    AGE_DAILY_INTAKE_OVERRIDES = {
+        "toddler":  {"비타민 D": {"amount": "400~600IU", "note": "유아(3~6세) 권장량"}, "칼슘": {"amount": "700~1,000mg", "note": "유아(3~6세) 권장량"}, "철분": {"amount": "7~10mg", "note": "유아(3~6세) 권장량"}, "오메가-3": {"amount": "500~700mg", "note": "유아 DHA 포함 권장량"}},
+        "child":    {"비타민 D": {"amount": "600~1,000IU", "note": "어린이(7~12세) 권장량"}, "칼슘": {"amount": "1,000~1,200mg", "note": "어린이(7~12세) 성장기 권장량"}, "철분": {"amount": "8~10mg", "note": "어린이(7~12세) 권장량"}, "오메가-3": {"amount": "700~1,000mg", "note": "어린이 뇌발달·집중력"}},
+        "teens":    {"칼슘": {"amount": "1,000~1,300mg", "note": "성장기 권장량 (성인보다 높음)"}, "비타민 D": {"amount": "600~1,000IU", "note": "성장기 칼슘 흡수 촉진"}, "철분": {"amount": "11~15mg", "note": "성장기 권장량"}},
+        "20s":      {"철분": {"amount": "10~18mg", "note": "여성 18mg, 남성 10mg"}},
+        "30s":      {"코엔자임 Q10": {"amount": "100~200mg", "note": "30대부터 체내 합성 감소"}, "오메가-3": {"amount": "1,000~2,000mg", "note": "30대 심혈관·뇌 건강 유지"}},
+        "40s":      {"코엔자임 Q10": {"amount": "100~300mg", "note": "40대 이후 증량 권장"}, "비타민 D": {"amount": "800~1,000IU", "note": "40대 이후 흡수율 저하"}},
+        "50s":      {"칼슘": {"amount": "1,000~1,200mg", "note": "50대 이후 골밀도 감소 예방"}, "비타민 D": {"amount": "800~2,000IU", "note": "50대 이후 증량 권장"}, "비타민 B12": {"amount": "2.4~4mcg", "note": "50대 이후 흡수율 저하"}},
+        "60s":      {"칼슘": {"amount": "1,200mg", "note": "60대 이상 골다공증 예방"}, "비타민 D": {"amount": "1,000~2,000IU", "note": "60대 이상 낙상·골절 예방"}, "비타민 B12": {"amount": "2.4~6mcg", "note": "60대 이상 설하정 권장"}, "마그네슘": {"amount": "320~420mg", "note": "60대 이상 근육 경련·수면 개선"}, "오메가-3": {"amount": "1,000~2,000mg", "note": "60대 이상 심혈관·인지 기능"}},
+        "70s_plus": {"칼슘": {"amount": "1,200mg", "note": "70대 이상 필수 보충"}, "비타민 D": {"amount": "1,500~2,000IU", "note": "70대 이상 상위 권장량"}, "비타민 B12": {"amount": "4~6mcg", "note": "70대 이상 설하정·주사 권장"}, "마그네슘": {"amount": "320~420mg", "note": "70대 이상 낙상·인지 기능"}, "오메가-3": {"amount": "1,000~2,000mg", "note": "70대 이상 심혈관·치매 예방"}, "비타민 C": {"amount": "100~200mg", "note": "70대 이상 면역·항산화"}},
+        "50s_plus": {"칼슘": {"amount": "1,000~1,200mg", "note": "50대 이상 골밀도 감소 예방"}, "비타민 D": {"amount": "800~2,000IU", "note": "50대 이상 증량 권장"}, "비타민 B12": {"amount": "2.4~4mcg", "note": "50대 이상 흡수율 저하"}},
+    }
+    _age_overrides = AGE_DAILY_INTAKE_OVERRIDES.get(age_group, {})
+
     caution_map = {c["nutrient_name"]: c for c in cautions_raw}
 
     nutrients_out = []
@@ -140,17 +280,21 @@ def build_json_result(
         caution = caution_map.get(name, {})
         reason = (n.get("reason") or n.get("reason_seed") or
                   REASON_TEMPLATE.get(goal, {}).get(name, f"{name} 보충을 고려해 볼 수 있습니다."))
+        base_caution = {
+            "level":               caution.get("caution_level", "info"),
+            "items":               caution.get("short_cautions", []),
+            "interaction_flags":   caution.get("interaction_flags", []),
+            "consultation_needed": caution.get("consultation_needed", False),
+        }
+        enriched_caution = _inject_extra_warnings(name, base_caution, conditions, medications)
         nutrients_out.append({
-            "name":    name,
-            "name_en": n.get("name_en") or NAME_EN_MAP.get(name, ""),
-            "reason":  reason,
-            "goal_key": goal,
-            "cautions": {
-                "level":               caution.get("caution_level", "info"),
-                "items":               caution.get("short_cautions", []),
-                "interaction_flags":   caution.get("interaction_flags", []),
-                "consultation_needed": caution.get("consultation_needed", False),
-            },
+            "name":         name,
+            "name_en":      n.get("name_en") or NAME_EN_MAP.get(name, ""),
+            "reason":       reason,
+            "goal_key":     goal,
+            "daily_intake": n.get("daily_intake"),
+            "best_time":    n.get("best_time"),
+            "cautions":     enriched_caution,
         })
 
     # 2번째 목표 영양 성분 보충 (중복 제외, 최대 2개)
@@ -174,23 +318,29 @@ def build_json_result(
                 cr = caution_rules.get(name_en, {})
                 reason = (REASON_TEMPLATE.get(sec_goal, {}).get(rule_n.get("name", ""), "")
                           or rule_n.get("reason_seed", f"{rule_n.get('name', '')} 보충을 고려해 볼 수 있습니다."))
+                sec_base_caution = {
+                    "level":               cr.get("caution_level", "info"),
+                    "items":               cr.get("short_cautions", []),
+                    "interaction_flags":   cr.get("interaction_flags", []),
+                    "consultation_needed": cr.get("consultation_needed", False),
+                }
+                sec_enriched = _inject_extra_warnings(rule_n.get("name", ""), sec_base_caution, conditions, medications)
+                sec_name = rule_n.get("name", "")
                 nutrients_out.append({
-                    "name":     rule_n.get("name", ""),
-                    "name_en":  name_en,
-                    "reason":   reason,
-                    "goal_key": sec_goal,
-                    "cautions": {
-                        "level":               cr.get("caution_level", "info"),
-                        "items":               cr.get("short_cautions", []),
-                        "interaction_flags":   cr.get("interaction_flags", []),
-                        "consultation_needed": cr.get("consultation_needed", False),
-                    },
+                    "name":         sec_name,
+                    "name_en":      name_en,
+                    "reason":       reason,
+                    "goal_key":     sec_goal,
+                    "daily_intake": _age_overrides.get(sec_name) or rule_n.get("daily_intake"),
+                    "best_time":    rule_n.get("best_time"),
+                    "cautions":     sec_enriched,
                 })
                 existing_en.add(name_en)
                 added += 1
 
-    # 음식 추천에 goal_key 부여 + 2차 목표 음식 1개 보충
-    foods_out = [{**f, "goal_key": goal} for f in health_plan.get("foods", [])]
+    # 음식 추천에 goal_key 부여 + 기저질환 주의 메모 적용 + 2차 목표 음식 1개 보충
+    foods_raw = [{**f, "goal_key": goal} for f in health_plan.get("foods", [])]
+    foods_out = _apply_condition_food_notes(foods_raw, conditions)
     if secondary_goals:
         food_rules = _load_food_rules()
         existing_food_names = {f.get("name", "") for f in foods_out}
@@ -225,8 +375,21 @@ def build_json_result(
     top_warning = None
     if flags.get("consult_required"):
         top_warning = "일부 추천 성분은 개인 건강 상태에 따라 전문가 상담이 필요할 수 있습니다."
+    if age_group in ("toddler", "child") and not top_warning:
+        age_label_str = "유아(3~6세)" if age_group == "toddler" else "어린이(7~12세)"
+        top_warning = f"⚠️ {age_label_str} 영양제는 반드시 소아과 전문의와 상담 후 복용하세요. 성인용 제품은 절대 복용하지 마세요."
 
-    AGE_LABEL    = {"teens": "10대", "20s": "20대", "30s": "30대", "40s": "40대",
+    real_meds = [m for m in medications if m and m != "없음"]
+    if (conditions or real_meds) and not top_warning:
+        parts = []
+        if conditions:
+            parts.append(f"기저질환({', '.join(conditions)})")
+        if real_meds:
+            parts.append(f"복용 중인 약({', '.join(real_meds)})")
+        top_warning = f"{' 및 '.join(parts)}이 확인되었습니다. 영양 성분 복용 전 반드시 담당 의사 또는 약사와 상담하세요."
+
+    AGE_LABEL    = {"toddler": "유아 (3~6세)", "child": "어린이 (7~12세)",
+                    "teens": "10대", "20s": "20대", "30s": "30대", "40s": "40대",
                     "50s_plus": "50대 이상", "50s": "50대", "60s": "60대", "70s_plus": "70대 이상"}
     GENDER_LABEL = {"female": "여성", "male": "남성"}
     GOAL_LABEL   = {

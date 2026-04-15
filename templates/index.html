@@ -47,6 +47,8 @@
       <p class="section-label">Step 2</p>
       <p class="section-title">연령대를 선택해주세요</p>
       <div class="chip-group" id="age-group">
+        <button class="chip" data-value="유아 (3~6세)"   onclick="selectChip('age', this)">유아 (3~6세)</button>
+        <button class="chip" data-value="어린이 (7~12세)" onclick="selectChip('age', this)">어린이 (7~12세)</button>
         <button class="chip" data-value="10대"      onclick="selectChip('age', this)">10대</button>
         <button class="chip" data-value="20대"      onclick="selectChip('age', this)">20대</button>
         <button class="chip" data-value="30대"      onclick="selectChip('age', this)">30대</button>
@@ -664,7 +666,7 @@ function showWorkflow() {
           <div class="wf-step-label">${s.label}</div>
           <div class="wf-step-desc">${s.desc}</div>
         </div>
-        <div class="wf-step-badge wf-badge-${s.type}">${{script:'스크립트',agent:'AI',cond:'조건부'}[s.type]}</div>
+        <div class="wf-step-badge wf-badge-${s.type}">${ {script:'스크립트',agent:'AI',cond:'조건부'}[s.type]}</div>
       </div>${connector}`;
   });
 

@@ -16,6 +16,15 @@ SKILL_DIR = Path(__file__).parent.parent
 RULES_PATH = SKILL_DIR / "references" / "food_rules.json"
 OUTPUT_PATH = Path("output/recommendation/food_candidates.json")
 
+# 알레르기 카테고리 → 음식명 키워드 매핑
+ALLERGEN_KEYWORDS = {
+    "유제품":   ["우유", "치즈", "요거트", "버터", "크림", "유청", "카제인", "유제품", "밀크"],
+    "견과류":   ["호두", "아몬드", "캐슈넛", "땅콩", "피스타치오", "잣", "헤이즐넛", "견과", "마카다미아"],
+    "해산물":   ["생선", "연어", "참치", "고등어", "새우", "오징어", "굴", "조개", "멸치", "어류", "해산물", "해조류", "미역", "김"],
+    "밀·글루텐": ["밀", "글루텐", "빵", "국수", "파스타", "보리", "호밀", "통밀"],
+    "채식":     ["닭", "소고기", "돼지고기", "육류", "고기", "새우", "생선", "연어", "참치", "고등어", "오징어", "굴", "조개", "멸치"],
+}
+
 # 기본 폴백 음식 (룰셋 로드 실패 시 사용)
 DEFAULT_FOODS = [
     {
@@ -42,6 +51,25 @@ def load_goal_profile() -> dict:
         return json.load(f)
 
 
+def load_allergies() -> list:
+    profile_path = Path("output/intake/normalized_profile.json")
+    if not profile_path.exists():
+        return []
+    with open(profile_path, encoding="utf-8") as f:
+        profile = json.load(f)
+    return profile.get("allergies") or []
+
+
+def is_allergen(food_name: str, allergies: list) -> bool:
+    """음식 이름에 알레르기 키워드가 포함되어 있으면 True"""
+    for allergy in allergies:
+        keywords = ALLERGEN_KEYWORDS.get(allergy, [allergy])
+        for kw in keywords:
+            if kw in food_name:
+                return True
+    return False
+
+
 def load_rules() -> dict:
     if not RULES_PATH.exists():
         print(f"[WARN] 룰셋 파일 없음: {RULES_PATH}", file=sys.stderr)
@@ -50,7 +78,7 @@ def load_rules() -> dict:
         return json.load(f)
 
 
-def recommend(goal_profile: dict, rules: dict) -> list[dict]:
+def recommend(goal_profile: dict, rules: dict, allergies: list) -> list[dict]:
     health_goal = goal_profile.get("primary_goal", "")
     goal_rules = rules.get(health_goal, {})
     foods = goal_rules.get("foods", [])
@@ -59,18 +87,30 @@ def recommend(goal_profile: dict, rules: dict) -> list[dict]:
         print(f"[WARN] 룰셋에 '{health_goal}' 음식 정보 없음. 기본값 사용.", file=sys.stderr)
         return DEFAULT_FOODS
 
-    # 2~4개로 제한
-    return foods[:4]
+    # 알레르기 음식 제외
+    if allergies:
+        filtered = [f for f in foods if not is_allergen(f.get("name", ""), allergies)]
+        if len(filtered) >= 2:
+            foods = filtered
+        else:
+            print(f"[WARN] 알레르기 필터 후 음식이 부족해 원본 사용 (알레르기: {allergies})", file=sys.stderr)
+
+    # 최대 5개 (일반식품 + 건강보조식품 포함)
+    return foods[:5]
 
 
 def main():
     goal_profile = load_goal_profile()
     rules = load_rules()
+    allergies = load_allergies()
+
+    if allergies:
+        print(f"[INFO] 알레르기 필터 적용: {allergies}", file=sys.stderr)
 
     max_retries = 2
     for attempt in range(1, max_retries + 1):
         try:
-            foods = recommend(goal_profile, rules)
+            foods = recommend(goal_profile, rules, allergies)
             if len(foods) >= 2:
                 break
         except Exception as e:

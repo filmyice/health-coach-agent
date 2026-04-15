@@ -17,7 +17,7 @@ ALLOWED_HEALTH_GOALS = [
     "피로 관리", "수면 관리", "면역 관리", "눈 건강", "장 건강", "뼈 건강", "피부·항산화",
     "체중 관리", "혈당 관리", "스트레스 관리", "운동 관리", "심혈관 건강", "모발 건강", "간 건강",
 ]
-ALLOWED_AGE_GROUPS = ["10대", "20대", "30대", "40대", "50대", "60대", "70대 이상", "50대 이상", "unknown"]
+ALLOWED_AGE_GROUPS = ["유아 (3~6세)", "어린이 (7~12세)", "10대", "20대", "30대", "40대", "50대", "60대", "70대 이상", "50대 이상", "unknown"]
 ALLOWED_GENDERS = ["여성", "남성", "unknown"]
 
 # 내부 코드값 매핑
@@ -39,6 +39,8 @@ GOAL_MAP = {
 }
 
 AGE_MAP = {
+    "유아 (3~6세)":    "toddler",
+    "어린이 (7~12세)": "child",
     "10대": "teens",
     "20대": "20s",
     "30대": "30s",
@@ -87,6 +89,10 @@ def normalize(data: dict) -> dict:
         "raw_health_goal": data["health_goal"],
         "raw_age_group": data.get("age_group", "unknown"),
         "raw_gender": data.get("gender", "unknown"),
+        "allergies": data.get("allergies") or [],
+        "conditions": data.get("conditions") or [],
+        "medications": data.get("medications") or [],
+        "extra_note": data.get("extra_note") or "",
         "normalized_at": datetime.now(timezone.utc).isoformat(),
     }
 

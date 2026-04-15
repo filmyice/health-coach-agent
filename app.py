@@ -38,8 +38,12 @@ def run_pipeline():
         health_goals = [g.strip() for g in health_goals_raw if g and g.strip()]
         health_goal  = health_goals[0] if health_goals else ""
 
-        age_group = (data.get("age_group") or "").strip()
-        gender    = (data.get("gender")    or "").strip()
+        age_group  = (data.get("age_group") or "").strip()
+        gender     = (data.get("gender")    or "").strip()
+        allergies  = data.get("allergies")  or []
+        conditions = data.get("conditions") or []
+        medications= data.get("medications")or []
+        extra_note = (data.get("extra_note") or "").strip()
 
         if not all([health_goal, age_group, gender]):
             return jsonify({"error": "모든 항목을 선택해주세요."}), 400
@@ -52,7 +56,7 @@ def run_pipeline():
             capture_output=True, cwd=PROJECT_ROOT, env=env,
         )
 
-        # 입력 파일 생성 (primary goal만 파이프라인에 전달)
+        # 입력 파일 생성
         intake_dir = PROJECT_ROOT / "output" / "intake"
         intake_dir.mkdir(parents=True, exist_ok=True)
         with open(intake_dir / "raw_minimal_input.json", "w", encoding="utf-8") as f:
@@ -62,6 +66,10 @@ def run_pipeline():
                     "health_goals": health_goals,
                     "age_group":    age_group,
                     "gender":       gender,
+                    "allergies":    allergies,
+                    "conditions":   conditions,
+                    "medications":  medications,
+                    "extra_note":   extra_note,
                 },
                 f, ensure_ascii=False,
             )
