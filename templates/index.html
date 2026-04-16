@@ -66,6 +66,7 @@
       <div class="chip-group" id="gender-group">
         <button class="chip" data-value="여성" onclick="selectChip('gender', this)">여성</button>
         <button class="chip" data-value="남성" onclick="selectChip('gender', this)">남성</button>
+        <button class="chip" data-value="무관" onclick="selectChip('gender', this)">무관</button>
       </div>
     </div>
 
@@ -139,6 +140,7 @@
       <div class="pstep" id="ps3">💊 영양 성분</div>
       <div class="pstep" id="ps4">🔍 최종 검증</div>
     </div>
+    <button class="btn-cancel" id="cancel-btn" onclick="cancelPipeline()">✕ 취소</button>
   </div>
 
   <!-- ── 결과 ──────────────────────────────────── -->
@@ -181,24 +183,55 @@ let lastMeta = null;
 
 // ── 아이콘 맵 ────────────────────────────────────
 const FOOD_ICONS = {
-  '블루베리':'🫐','토마토':'🍅','아보카도':'🥑','연어':'🐟','고등어':'🐟',
-  '브로콜리':'🥦','시금치':'🥬','견과류':'🥜','아몬드':'🥜','호두':'🥜',
-  '달걀':'🥚','요거트':'🥛','우유':'🥛','따뜻한 우유':'🥛','치즈':'🧀',
-  '귤':'🍊','오렌지':'🍊','키위':'🥝','바나나':'🍌','사과':'🍎',
-  '포도':'🍇','딸기':'🍓','당근':'🥕','고구마':'🍠','현미':'🍚',
-  '오트밀':'🌾','두부':'🫘','콩':'🫘','김치':'🥗','녹차':'🍵',
-  '체리':'🍒','올리브유':'🫒','아마씨':'🌱','블루베리 스무디':'🫐',
-  '닭가슴살':'🍗','귀리':'🌾','다크초콜릿':'🍫','고구마':'🍠',
-  '멸치':'🐟','강황':'🫚','파프리카':'🫑','마늘':'🧄',
+  // 채소·과일
+  '블루베리':'🫐','토마토':'🍅','아보카도':'🥑','브로콜리':'🥦','시금치':'🥬',
+  '시금치·케일':'🥬','귤':'🍊','오렌지':'🍊','키위':'🥝','바나나':'🍌',
+  '사과':'🍎','포도':'🍇','딸기':'🍓','당근':'🥕','고구마':'🍠',
+  '파프리카':'🫑','마늘':'🧄','아로니아':'🫐','알로에 베라':'🌵','알로에 베라 젤':'🌵',
+  // 곡물·두류
+  '현미':'🍚','오트밀':'🌾','귀리':'🌾','두부':'🫘','콩':'🫘','김치':'🥗',
+  // 견과·오일
+  '견과류':'🥜','아몬드':'🥜','호두':'🥜','올리브유':'🫒','아마씨':'🌱',
+  // 단백질
+  '달걀':'🥚','닭가슴살':'🍗','연어':'🐟','고등어':'🐟','멸치':'🐟',
+  // 유제품
+  '요거트':'🥛','우유':'🥛','따뜻한 우유':'🥛','치즈':'🧀',
+  // 음료·차
+  '녹차':'🍵','블루베리 스무디':'🫐','산조인 한방차':'🍵',
+  // 기타 음식
+  '다크초콜릿':'🍫','강황':'🫚',
+  // 건강기능식품
+  '홍삼':'🌿','홍삼 농축액':'🌿','녹용':'🦌','흑염소 진액':'🐐',
+  '프로폴리스':'🐝','밀크시슬':'🌱','스피루리나':'🌊','클로렐라':'🌊',
+  '아슈와간다':'🌿','빌베리 추출물':'👁️','발레리안 추출물':'🌿',
+  '여주 추출물':'🌿',
 };
 const HABIT_KEYWORDS = [
-  ['걷기','🚶'],['달리기','🏃'],['운동','🏋️'],['스트레칭','🤸'],
-  ['수면','😴'],['취침','🌙'],['잠','😴'],['물','💧'],['수분','💧'],
+  // 신체 활동
+  ['걷기','🚶'],['달리기','🏃'],['산책','🚶'],['운동','🏋️'],['스트레칭','🤸'],
+  ['신체 활동','🏃'],['체육','⚽'],
+  // 수면·휴식
+  ['수면','😴'],['취침','🌙'],['잠','😴'],['눈 감기','😴'],['침실','🌙'],
+  // 수분·음식
+  ['물','💧'],['수분','💧'],['식사','🍽️'],['채소','🥗'],['씹기','🍽️'],
+  ['편식','🥗'],['야식','🌙'],
+  // 카페인·음료
+  ['카페인','☕'],['탄산음료','🥤'],['절주','🚫'],['금주','🚫'],
+  // 피부·외모
   ['자외선','☀️'],['선크림','☀️'],['보습','💆'],['세안','🧴'],
-  ['명상','🧘'],['호흡','🌬️'],['식사','🍽️'],['채소','🥗'],
-  ['금연','🚭'],['금주','🚫'],['햇빛','🌞'],['야외','🌿'],
-  ['스마트폰','📵'],['블루라이트','📵'],['스크린','📵'],['규칙적','⏰'],
-  ['마사지','💆'],['씹기','🍽️'],['야식','🌙'],['절주','🚫'],
+  ['두피','💆'],['헤어','💇'],
+  // 눈 건강
+  ['눈 깜빡','👁️'],['20-20-20','👁️'],['화면 밝기','👁️'],['블루라이트','📵'],
+  // 정신·마음
+  ['명상','🧘'],['호흡','🌬️'],['취미','🎨'],['친구','👥'],['대화','👥'],
+  // 햇빛·야외
+  ['햇빛','🌞'],['햇볕','🌞'],['야외','🌿'],
+  // 디지털
+  ['스마트폰','📵'],['스크린','📵'],
+  // 건강 관리
+  ['혈압','🩺'],['맥박','🩺'],['손 씻기','🙌'],['위생','🙌'],
+  // 기타
+  ['금연','🚭'],['규칙적','⏰'],['마사지','💆'],
 ];
 const NUTRIENT_ICONS = {
   '철분':'🩸','비타민 B12':'⚡','마그네슘':'💪','코엔자임 Q10':'🔋',
@@ -313,6 +346,7 @@ const STEPS = [
   { id:'ps4', pct:90, msg:'최종 플랜을 작성하고 있습니다…' },
 ];
 let stepTimer = null, stepIdx = 0;
+let _abortCtrl = null;
 
 function startProgress() {
   stepIdx = 0;
@@ -341,6 +375,15 @@ function stopProgress() {
   STEPS.forEach(s => document.getElementById(s.id).classList.add('done'));
 }
 
+// ── 취소 ──────────────────────────────────────────
+function cancelPipeline() {
+  if (_abortCtrl) { _abortCtrl.abort(); _abortCtrl = null; }
+  clearInterval(stepTimer);
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('form-section').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 // ── 파이프라인 실행 ──────────────────────────────
 async function runPipeline() {
   const err = document.getElementById('error-box');
@@ -349,11 +392,13 @@ async function runPipeline() {
   document.getElementById('loading').style.display = 'flex';
   document.getElementById('result').style.display = 'none';
   startProgress();
+  _abortCtrl = new AbortController();
 
   try {
     const res = await fetch('/api/run', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      signal: _abortCtrl.signal,
       body: JSON.stringify({
         health_goals: state.goals,
         age_group: state.age,
@@ -377,6 +422,7 @@ async function runPipeline() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
   } catch (e) {
+    if (e.name === 'AbortError') return; // 사용자가 취소한 경우 무시
     stopProgress();
     document.getElementById('loading').style.display = 'none';
     showError('서버 연결에 실패했습니다: ' + e.message);
@@ -388,7 +434,7 @@ function renderResultCards(meta) {
   const el = document.getElementById('result-content');
   const rec = meta.recommendations || {};
   const prof = meta.profile || {};
-  const ranks = ['①','②','③','④','⑤'];
+  const ranks = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
   let html = '';
 
   // 메타 배지
@@ -417,7 +463,7 @@ function renderResultCards(meta) {
       const r = f.recipe;
       html += `<div class="food-card${isSec ? ' secondary-goal' : ''}">
         <div class="food-card-icon">${foodIcon(f.name)}</div>
-        <div class="food-card-name">${f.name} ${foodBadge}</div>
+        <div class="food-card-name">${f.name} ${foodBadge}${f.category === '건강보조식품' ? '<span class="food-supp-badge">건강기능식품</span>' : ''}</div>
         <div class="food-card-reason">${f.reason || ''}</div>
         ${f.serving_suggestion ? `<div class="food-card-tip">🍽️ ${f.serving_suggestion}</div>` : ''}
         ${r ? `
@@ -535,13 +581,37 @@ function renderResultCards(meta) {
   el.innerHTML = html;
 }
 
-// ── 공유 (링크 복사) ──────────────────────────────
+// ── 공유 (결과 텍스트 복사) ───────────────────────
 function shareResult() {
-  const url = window.location.href;
-  navigator.clipboard.writeText(url).then(() => {
-    showToast('링크가 복사됐습니다!');
+  if (!lastMeta) return;
+  const rec  = lastMeta.recommendations || {};
+  const prof = lastMeta.profile || {};
+  const goals = (lastMeta.goal_labels || [lastMeta.goal_label]).filter(Boolean).join(' + ');
+  let text = `🌿 건강 코치 에이전트 추천 결과\n`;
+  text += `대상: ${prof.age_label || ''} ${prof.gender_label || ''} | 목표: ${goals}\n\n`;
+  const foods = rec.foods || [];
+  if (foods.length) {
+    text += `🥗 추천 음식\n`;
+    foods.forEach(f => { text += `  · ${f.name} — ${f.reason || ''}\n`; });
+    text += '\n';
+  }
+  const habits = rec.habits || [];
+  if (habits.length) {
+    text += `🏃 생활습관 제안\n`;
+    habits.forEach(h => { text += `  · ${h.title} (${h.frequency || ''})\n`; });
+    text += '\n';
+  }
+  const nutrients = rec.nutrients || [];
+  if (nutrients.length) {
+    text += `💊 영양 성분 제안\n`;
+    nutrients.forEach(n => { text += `  · ${n.name}${n.name_en ? ` (${n.name_en})` : ''}\n`; });
+    text += '\n';
+  }
+  text += `ℹ️ 이 내용은 의료적 진단이 아닙니다.`;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('추천 결과가 텍스트로 복사됐습니다!');
   }).catch(() => {
-    prompt('아래 링크를 복사하세요:', url);
+    prompt('아래 내용을 복사하세요:', text);
   });
 }
 
@@ -712,6 +782,11 @@ function closeWorkflow() {
 function closeWorkflowOutside(e) {
   if (e.target === document.getElementById('workflow-modal')) closeWorkflow();
 }
+
+// ── ESC 키 모달 닫기 ──────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeWorkflow();
+});
 
 // ── 페이지 로드 시 저장 결과 확인 ────────────────
 window.addEventListener('load', loadSavedResult);

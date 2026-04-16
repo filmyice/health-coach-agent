@@ -391,7 +391,7 @@ def build_json_result(
     AGE_LABEL    = {"toddler": "유아 (3~6세)", "child": "어린이 (7~12세)",
                     "teens": "10대", "20s": "20대", "30s": "30대", "40s": "40대",
                     "50s_plus": "50대 이상", "50s": "50대", "60s": "60대", "70s_plus": "70대 이상"}
-    GENDER_LABEL = {"female": "여성", "male": "남성"}
+    GENDER_LABEL = {"female": "여성", "male": "남성", "unknown": ""}
     GOAL_LABEL   = {
         "fatigue_management": "피로 관리", "sleep_management": "수면 관리",
         "immunity_management": "면역 관리", "eye_health": "눈 건강",

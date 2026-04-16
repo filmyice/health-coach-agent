@@ -18,7 +18,7 @@ ALLOWED_HEALTH_GOALS = [
     "체중 관리", "혈당 관리", "스트레스 관리", "운동 관리", "심혈관 건강", "모발 건강", "간 건강",
 ]
 ALLOWED_AGE_GROUPS = ["유아 (3~6세)", "어린이 (7~12세)", "10대", "20대", "30대", "40대", "50대", "60대", "70대 이상", "50대 이상", "unknown"]
-ALLOWED_GENDERS = ["여성", "남성", "unknown"]
+ALLOWED_GENDERS = ["여성", "남성", "무관", "unknown"]
 
 # 내부 코드값 매핑
 GOAL_MAP = {
@@ -55,6 +55,7 @@ AGE_MAP = {
 GENDER_MAP = {
     "여성": "female",
     "남성": "male",
+    "무관": "unknown",
     "unknown": "unknown",
 }
 
