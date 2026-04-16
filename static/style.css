@@ -492,6 +492,41 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 .caution-list li { margin-bottom: .15rem; }
 .interaction-note { margin-top: .4rem; font-size: .77rem; opacity: .85; }
 
+/* info 레벨 접이식 */
+.caution-details {
+  margin: 0 .75rem .75rem;
+  border-radius: 8px;
+  padding: .4rem .75rem;
+  font-size: .8rem;
+  background: #f0f9ff; border-left: 3px solid #93c5fd; color: #1e40af;
+}
+.caution-summary {
+  cursor: pointer; font-size: .78rem; font-weight: 500;
+  list-style: none; outline: none; user-select: none;
+}
+.caution-summary::-webkit-details-marker { display: none; }
+.caution-details[open] .caution-summary { margin-bottom: .3rem; }
+
+/* 더 보기 버튼 */
+.caution-more-btn {
+  background: none; border: none; cursor: pointer;
+  font-size: .76rem; font-weight: 600; margin-top: .25rem;
+  padding: 0; opacity: .75; text-decoration: underline;
+}
+.caution-more-btn:hover { opacity: 1; }
+
+/* 개인화 인트로 배너 */
+.personalized-intro {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: .7rem 1rem;
+  font-size: .85rem;
+  color: #166534;
+  margin-bottom: 1.25rem;
+  line-height: 1.55;
+}
+
 /* ── 쇼핑 링크 테이블 ─────────────────────────── */
 .shop-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
 .shop-table th {

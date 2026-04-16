@@ -152,7 +152,8 @@
           <button class="btn-action" onclick="showWorkflow()" title="워크플로우">📋 워크플로우</button>
           <button class="btn-action" onclick="shareResult()" title="링크 복사">🔗 공유</button>
           <button class="btn-action" onclick="saveResult()" title="저장">💾 저장</button>
-          <button class="btn-reset" onclick="reset()">← 다시 입력</button>
+          <button class="btn-action" onclick="resetGoalOnly()" title="목표만 바꿔서 재추천">🎯 목표 변경</button>
+          <button class="btn-reset" onclick="reset()">← 전체 초기화</button>
         </div>
       </div>
       <!-- 저장된 결과 불러오기 배너 -->
@@ -247,6 +248,24 @@ const NUTRIENT_ICONS = {
 function foodIcon(n)     { return FOOD_ICONS[n] || '🥗'; }
 function habitIcon(t)    { for(const[k,i] of HABIT_KEYWORDS) if(t.includes(k)) return i; return '✅'; }
 function nutrientIcon(n) { return NUTRIENT_ICONS[n] || '💊'; }
+
+// ── 목표별 개인화 맥락 설명 ──────────────────────
+const GOAL_SUMMARY_MAP = {
+  fatigue_management:       '규칙적인 수면, 철분·비타민 B 보충, 과로 방지가 핵심입니다',
+  sleep_management:         '수면 환경 개선, 취침 루틴 형성, 마그네슘·멜라토닌 조절이 중요합니다',
+  immunity_management:      '균형 잡힌 식사, 충분한 휴식, 비타민 C·아연 보충이 효과적입니다',
+  eye_health:               '디지털 기기 사용 시간 조절, 루테인·오메가-3 섭취가 도움이 됩니다',
+  gut_health:               '식이섬유 섭취 증가, 프로바이오틱스 보충, 규칙적인 식습관이 중요합니다',
+  bone_health:              '칼슘·비타민 D 보충, 체중 부하 운동, 충분한 햇볕 노출이 핵심입니다',
+  skin_antioxidant:         '항산화 영양소(비타민 C·E) 섭취, 자외선 차단, 충분한 수분 섭취가 필요합니다',
+  weight_management:        '식사량 조절, 규칙적인 유산소 운동, 단백질 섭취 유지가 중요합니다',
+  blood_sugar_management:   '정제 탄수화물 줄이기, 규칙적인 식사 시간, 식후 가벼운 운동이 효과적입니다',
+  stress_management:        '규칙적인 이완 루틴, 마그네슘·L-테아닌 보충, 수면의 질 향상이 핵심입니다',
+  exercise_recovery:        '운동 후 단백질 보충, 충분한 회복 시간, BCAA·마그네슘 섭취가 도움이 됩니다',
+  cardiovascular_health:    '오메가-3·코엔자임 Q10 보충, 나트륨 줄이기, 규칙적인 유산소 운동이 중요합니다',
+  hair_health:              '비오틴·아연 보충, 두피 혈액순환 개선, 단백질 충분 섭취가 핵심입니다',
+  liver_health:             '알코올 줄이기, 밀크씨슬·NAC 보충, 기름진 음식 제한이 효과적입니다',
+};
 
 // ── 목표 키 → 한글 레이블 (단일 공통 맵) ─────────
 const GOAL_LABEL_MAP = {
@@ -445,6 +464,18 @@ function renderResultCards(meta) {
   if (prof.gender_label) html += `<span class="meta-badge meta-badge-gender">${prof.gender_label}</span>`;
   html += `</div>`;
 
+  // 개인화 인트로 배너
+  const goalKey = meta.health_goal || '';
+  const goalSummary = GOAL_SUMMARY_MAP[goalKey];
+  if (goalSummary) {
+    const ageLabel   = prof.age_label   ? `<b>${prof.age_label}</b>` : '';
+    const genderLabel = (prof.gender_label && prof.gender_label !== '') ? `<b>${prof.gender_label}</b>` : '';
+    const goalsLabel  = (meta.goal_labels || [meta.goal_label]).filter(Boolean)
+                          .map(g => `<b>${g}</b>`).join(' + ');
+    const whoStr = [ageLabel, genderLabel].filter(Boolean).join(' ');
+    html += `<div class="personalized-intro">💡 ${whoStr ? whoStr + '의 ' : ''}${goalsLabel} 관리에는 ${goalSummary}</div>`;
+  }
+
   if (meta.top_warning) html += `<div class="warning-banner">⚠️ ${meta.top_warning}</div>`;
 
   // 음식
@@ -547,14 +578,31 @@ function renderResultCards(meta) {
           </div>` : ''}
         </div>` : ''}`;
       if ((c.items||[]).length) {
-        html += `<div class="nutrient-card-caution ${lvlClass}">
-          <div class="caution-title">${lvlIcon} 주의사항</div>
-          <ul class="caution-list">`;
-        for (const it of c.items) html += `<li>${it}</li>`;
-        html += `</ul>`;
-        if ((c.interaction_flags||[]).length)
-          html += `<div class="interaction-note">🔗 ${c.interaction_flags.join(' / ')}</div>`;
-        html += `</div>`;
+        const items = c.items || [];
+        const interactions = c.interaction_flags || [];
+        if (lvl === 'info') {
+          // info: 접이식 (기본 닫힘)
+          html += `<details class="caution-details caution-info">
+            <summary class="caution-summary">ℹ️ 복용 참고사항</summary>
+            <ul class="caution-list">${items.map(it => `<li>${it}</li>`).join('')}</ul>
+            ${interactions.length ? `<div class="interaction-note">🔗 ${interactions.join(' / ')}</div>` : ''}
+          </details>`;
+        } else {
+          // warning / consult: 최대 2개 표시, 추가 항목은 접기
+          const MAX_V = 2;
+          const visible = items.slice(0, MAX_V);
+          const hidden  = items.slice(MAX_V);
+          const extraId = `cx-${i}-${Math.random().toString(36).slice(2,6)}`;
+          html += `<div class="nutrient-card-caution ${lvlClass}">`;
+          if (lvl === 'consult') html += `<div class="caution-title">🚨 전문가 상담 권고</div>`;
+          html += `<ul class="caution-list">${visible.map(it => `<li>${it}</li>`).join('')}</ul>`;
+          if (hidden.length) {
+            html += `<ul class="caution-list" id="${extraId}" style="display:none">${hidden.map(it => `<li>${it}</li>`).join('')}</ul>`;
+            html += `<button class="caution-more-btn" onclick="document.getElementById('${extraId}').style.display='block';this.style.display='none'">+ ${hidden.length}개 더 보기</button>`;
+          }
+          if (interactions.length) html += `<div class="interaction-note">🔗 ${interactions.join(' / ')}</div>`;
+          html += `</div>`;
+        }
       }
       html += `</div>`;
     });
@@ -679,6 +727,20 @@ function reset() {
   updateGoalDisplay();
   updateBtn();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetGoalOnly() {
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('form-section').style.display = 'block';
+  // 목표 선택만 초기화, 나이·성별·기타 조건 유지
+  state.goals = [];
+  document.querySelectorAll('.goal-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('error-box').style.display = 'none';
+  updateGoalDisplay();
+  updateBtn();
+  // 목표 선택 영역으로 스크롤
+  const goalSection = document.querySelector('.goal-grid');
+  if (goalSection) setTimeout(() => goalSection.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
 }
 
 // ── 워크플로우 모달 ──────────────────────────────
