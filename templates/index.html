@@ -215,6 +215,17 @@ function foodIcon(n)     { return FOOD_ICONS[n] || '🥗'; }
 function habitIcon(t)    { for(const[k,i] of HABIT_KEYWORDS) if(t.includes(k)) return i; return '✅'; }
 function nutrientIcon(n) { return NUTRIENT_ICONS[n] || '💊'; }
 
+// ── 목표 키 → 한글 레이블 (단일 공통 맵) ─────────
+const GOAL_LABEL_MAP = {
+  fatigue_management:'피로 관리', sleep_management:'수면 관리',
+  immunity_management:'면역 관리', eye_health:'눈 건강',
+  gut_health:'장 건강', bone_health:'뼈 건강',
+  skin_antioxidant:'피부·항산화', weight_management:'체중 관리',
+  blood_sugar_management:'혈당 관리', stress_management:'스트레스 관리',
+  exercise_recovery:'운동 관리', cardiovascular_health:'심혈관 건강',
+  hair_health:'모발 건강', liver_health:'간 건강',
+};
+
 // ── 건강 목표 다중 선택 (최대 2개) ──────────────
 function selectGoal(el) {
   const val = el.dataset.value;
@@ -242,11 +253,32 @@ function updateGoalDisplay() {
   disp.innerHTML = state.goals.map(g => `<span class="goal-chip-selected">${g}</span>`).join('<span class="goal-chip-arrow">→</span>');
 }
 
+// 유아·어린이에게 적합하지 않은 성인 전용 목표
+const ADULT_ONLY_GOALS = new Set(['혈당 관리','심혈관 건강','모발 건강','간 건강','스트레스 관리','피부·항산화']);
+
+function filterGoalsByAge(ageVal) {
+  const isChild = ageVal === '유아 (3~6세)' || ageVal === '어린이 (7~12세)';
+  document.querySelectorAll('.goal-btn').forEach(btn => {
+    const g = btn.dataset.value;
+    if (isChild && ADULT_ONLY_GOALS.has(g)) {
+      btn.classList.add('goal-disabled');
+      btn.disabled = true;
+      // 혹시 선택돼 있으면 해제
+      const idx = state.goals.indexOf(g);
+      if (idx !== -1) { state.goals.splice(idx, 1); btn.classList.remove('active'); }
+    } else {
+      btn.classList.remove('goal-disabled');
+      btn.disabled = false;
+    }
+  });
+  updateGoalDisplay();
+}
+
 function selectChip(type, el) {
   const group = type === 'age' ? 'age-group' : 'gender-group';
   document.querySelectorAll(`#${group} .chip`).forEach(b => b.classList.remove('active'));
   el.classList.add('active');
-  if (type === 'age') state.age = el.dataset.value;
+  if (type === 'age') { state.age = el.dataset.value; filterGoalsByAge(el.dataset.value); }
   else state.gender = el.dataset.value;
   updateBtn();
 }
@@ -371,25 +403,17 @@ function renderResultCards(meta) {
 
   // 음식
   const foods = rec.foods || [];
-  const GOAL_LABEL_MAP_F = {
-    fatigue_management:'피로 관리', sleep_management:'수면 관리',
-    immunity_management:'면역 관리', eye_health:'눈 건강',
-    gut_health:'장 건강', bone_health:'뼈 건강',
-    skin_antioxidant:'피부·항산화', weight_management:'체중 관리',
-    blood_sugar_management:'혈당 관리', stress_management:'스트레스 관리',
-    exercise_recovery:'운동 관리', cardiovascular_health:'심혈관 건강',
-    hair_health:'모발 건강', liver_health:'간 건강',
-  };
   const primaryKey = meta.health_goal || '';
   const multiGoal  = (meta.goal_labels || []).length > 1;
   if (foods.length) {
     html += `<div class="result-section"><div class="result-section-title"><span>🥗</span> 추천 음식</div><div class="food-grid">`;
-    for (const f of foods) {
+    for (let fi = 0; fi < foods.length; fi++) {
+      const f = foods[fi];
       const isSec = f.goal_key && f.goal_key !== primaryKey;
       const foodBadge = isSec
-        ? `<span class="nutrient-goal-badge secondary">${GOAL_LABEL_MAP_F[f.goal_key] || f.goal_key}</span>`
-        : (multiGoal ? `<span class="nutrient-goal-badge primary">${GOAL_LABEL_MAP_F[primaryKey] || ''}</span>` : '');
-      const rid = `recipe-${foods.indexOf(f)}`;
+        ? `<span class="nutrient-goal-badge secondary">${GOAL_LABEL_MAP[f.goal_key] || f.goal_key}</span>`
+        : (multiGoal ? `<span class="nutrient-goal-badge primary">${GOAL_LABEL_MAP[primaryKey] || ''}</span>` : '');
+      const rid = `recipe-${fi}`;
       const r = f.recipe;
       html += `<div class="food-card${isSec ? ' secondary-goal' : ''}">
         <div class="food-card-icon">${foodIcon(f.name)}</div>
@@ -414,25 +438,14 @@ function renderResultCards(meta) {
 
   // 습관
   const habits = rec.habits || [];
-  const hPrimaryKey = meta.health_goal || '';
-  const hMultiGoal  = (meta.goal_labels || []).length > 1;
-  const GOAL_LBL_H = {
-    fatigue_management:'피로 관리', sleep_management:'수면 관리',
-    immunity_management:'면역 관리', eye_health:'눈 건강',
-    gut_health:'장 건강', bone_health:'뼈 건강',
-    skin_antioxidant:'피부·항산화', weight_management:'체중 관리',
-    blood_sugar_management:'혈당 관리', stress_management:'스트레스 관리',
-    exercise_recovery:'운동 관리', cardiovascular_health:'심혈관 건강',
-    hair_health:'모발 건강', liver_health:'간 건강',
-  };
   if (habits.length) {
     html += `<div class="result-section"><div class="result-section-title"><span>🏃</span> 생활습관 제안</div><div class="habit-list">`;
     for (const h of habits) {
       const dc = h.difficulty === '쉬움' ? 'badge-easy' : 'badge-medium';
-      const hIsSec = h.goal_key && h.goal_key !== hPrimaryKey;
+      const hIsSec = h.goal_key && h.goal_key !== primaryKey;
       const hBadge = hIsSec
-        ? `<span class="nutrient-goal-badge secondary">${GOAL_LBL_H[h.goal_key] || h.goal_key}</span>`
-        : (hMultiGoal ? `<span class="nutrient-goal-badge primary">${GOAL_LBL_H[hPrimaryKey] || ''}</span>` : '');
+        ? `<span class="nutrient-goal-badge secondary">${GOAL_LABEL_MAP[h.goal_key] || h.goal_key}</span>`
+        : (multiGoal ? `<span class="nutrient-goal-badge primary">${GOAL_LABEL_MAP[primaryKey] || ''}</span>` : '');
       html += `<div class="habit-card${hIsSec ? ' secondary-goal' : ''}">
         <div class="habit-card-icon">${habitIcon(h.title)}</div>
         <div class="habit-card-body">
@@ -451,11 +464,6 @@ function renderResultCards(meta) {
 
   // 영양 성분
   const nutrients = rec.nutrients || [];
-  const primaryGoalKey = meta.health_goal || '';
-  const goalLabelMap = {};
-  (meta.goal_labels || []).forEach((lbl, idx) => {
-    // goal_keys 배열이 없으므로 index 기반 매핑은 어렵고, goal_key로 직접 매핑
-  });
   if (nutrients.length) {
     html += `<div class="result-section"><div class="result-section-title"><span>💊</span> 영양 성분 제안</div><div class="nutrient-list">`;
     nutrients.forEach((n, i) => {
@@ -463,20 +471,10 @@ function renderResultCards(meta) {
       const lvl = c.level || 'info';
       const lvlClass = {info:'caution-info',warning:'caution-warning',consult:'caution-consult'}[lvl] || 'caution-info';
       const lvlIcon  = {info:'ℹ️',warning:'⚠️',consult:'🚨'}[lvl] || 'ℹ️';
-      const isSecondary = n.goal_key && n.goal_key !== primaryGoalKey;
-      const goalLabels = meta.goal_labels || [];
-      const GOAL_LABEL_MAP = {
-        fatigue_management:'피로 관리', sleep_management:'수면 관리',
-        immunity_management:'면역 관리', eye_health:'눈 건강',
-        gut_health:'장 건강', bone_health:'뼈 건강',
-        skin_antioxidant:'피부·항산화', weight_management:'체중 관리',
-        blood_sugar_management:'혈당 관리', stress_management:'스트레스 관리',
-        exercise_recovery:'운동 관리', cardiovascular_health:'심혈관 건강',
-        hair_health:'모발 건강', liver_health:'간 건강',
-      };
+      const isSecondary = n.goal_key && n.goal_key !== primaryKey;
       const goalBadge = isSecondary
         ? `<span class="nutrient-goal-badge secondary">${GOAL_LABEL_MAP[n.goal_key] || n.goal_key}</span>`
-        : (goalLabels.length > 1 ? `<span class="nutrient-goal-badge primary">${GOAL_LABEL_MAP[primaryGoalKey] || ''}</span>` : '');
+        : (multiGoal ? `<span class="nutrient-goal-badge primary">${GOAL_LABEL_MAP[primaryKey] || ''}</span>` : '');
       html += `<div class="nutrient-card${isSecondary ? ' secondary-goal' : ''}">
         <div class="nutrient-card-header">
           <div class="nutrient-card-icon">${nutrientIcon(n.name)}</div>
@@ -595,15 +593,19 @@ function showError(msg) {
   err.textContent = '⚠️ ' + msg;
   err.style.display = 'block';
   document.getElementById('form-section').style.display = 'block';
+  setTimeout(() => err.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
 }
 
 function reset() {
   document.getElementById('result').style.display = 'none';
   document.getElementById('form-section').style.display = 'block';
   document.querySelectorAll('.goal-btn, .chip').forEach(b => b.classList.remove('active'));
+  // 목표 버튼 비활성화 해제
+  document.querySelectorAll('.goal-btn').forEach(b => { b.classList.remove('goal-disabled'); b.disabled = false; });
   state.goals = []; state.age = ''; state.gender = '';
   state.allergy = []; state.condition = []; state.medication = [];
   document.getElementById('extra-note').value = '';
+  document.getElementById('error-box').style.display = 'none';
   updateGoalDisplay();
   updateBtn();
   window.scrollTo({ top: 0, behavior: 'smooth' });

@@ -90,6 +90,8 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 .goal-btn .icon { font-size: 1.75rem; }
 .goal-btn:hover  { border-color: var(--green-400); background: var(--green-50); }
 .goal-btn.active { border-color: var(--green-600); background: var(--green-100); color: var(--green-700); font-weight: 700; }
+.goal-btn.goal-disabled { opacity: .32; cursor: not-allowed; border-color: var(--gray-200); background: var(--gray-50); color: var(--gray-400); }
+.goal-btn.goal-disabled:hover { border-color: var(--gray-200); background: var(--gray-50); }
 
 /* ── 다중 목표 선택 표시 ──────────────────────── */
 .multi-hint {
