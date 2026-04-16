@@ -47,7 +47,6 @@
       <p class="section-label">Step 2</p>
       <p class="section-title">연령대를 선택해주세요</p>
       <div class="chip-group" id="age-group">
-        <button class="chip" data-value="유아 (3~6세)"   onclick="selectChip('age', this)">유아 (3~6세)</button>
         <button class="chip" data-value="어린이 (7~12세)" onclick="selectChip('age', this)">어린이 (7~12세)</button>
         <button class="chip" data-value="10대"      onclick="selectChip('age', this)">10대</button>
         <button class="chip" data-value="20대"      onclick="selectChip('age', this)">20대</button>
@@ -56,6 +55,9 @@
         <button class="chip" data-value="50대"      onclick="selectChip('age', this)">50대</button>
         <button class="chip" data-value="60대"      onclick="selectChip('age', this)">60대</button>
         <button class="chip" data-value="70대 이상" onclick="selectChip('age', this)">70대 이상</button>
+      </div>
+      <div class="age-notice">
+        👶 <strong>영유아(6세 이하)</strong>는 소아과 전문의와 상담하세요. 이 서비스는 영유아 대상 추천을 제공하지 않습니다.
       </div>
     </div>
 
@@ -245,6 +247,43 @@ const NUTRIENT_ICONS = {
   'NAC':'🔬','비타민 E':'🌻','식이섬유 (프리바이오틱스)':'🌾',
 };
 
+// ── 음식별 주요 영양소 (어린이 모드 뱃지용) ─────────
+const FOOD_NUTRIENTS_MAP = {
+  '당근':     ['베타카로틴', '비타민A'],
+  '브로콜리': ['비타민C', '칼슘', '철분'],
+  '시금치':   ['철분', '비타민K', '엽산'],
+  '시금치·케일': ['철분', '비타민K', '엽산'],
+  '달걀':     ['단백질', '비타민D', '철분'],
+  '우유':     ['칼슘', '비타민D', '단백질'],
+  '따뜻한 우유': ['칼슘', '마그네슘'],
+  '요거트':   ['칼슘', '프로바이오틱스'],
+  '치즈':     ['칼슘', '단백질'],
+  '연어':     ['오메가-3', '비타민D', '단백질'],
+  '고등어':   ['오메가-3', 'DHA'],
+  '멸치':     ['칼슘', '오메가-3'],
+  '닭가슴살': ['단백질', '비타민B12'],
+  '두부':     ['단백질', '칼슘', '철분'],
+  '콩':       ['단백질', '철분', '엽산'],
+  '현미':     ['식이섬유', '비타민B1'],
+  '현미밥':   ['식이섬유', '비타민B1'],
+  '오트밀':   ['식이섬유', '철분', '마그네슘'],
+  '귀리':     ['식이섬유', '철분'],
+  '고구마':   ['베타카로틴', '비타민C', '식이섬유'],
+  '아보카도': ['건강한 지방', '칼륨', '비타민E'],
+  '블루베리': ['비타민C', '항산화 성분'],
+  '오렌지':   ['비타민C', '엽산'],
+  '귤':       ['비타민C', '식이섬유'],
+  '키위':     ['비타민C', '비타민K'],
+  '바나나':   ['칼륨', '비타민B6'],
+  '사과':     ['식이섬유', '비타민C'],
+  '딸기':     ['비타민C', '엽산'],
+  '토마토':   ['비타민C', '리코펜'],
+  '파프리카': ['비타민C', '베타카로틴'],
+  '아몬드':   ['비타민E', '칼슘', '철분'],
+  '호두':     ['오메가-3', '비타민E'],
+  '견과류':   ['비타민E', '오메가-3'],
+};
+
 function foodIcon(n)     { return FOOD_ICONS[n] || '🥗'; }
 function habitIcon(t)    { for(const[k,i] of HABIT_KEYWORDS) if(t.includes(k)) return i; return '✅'; }
 function nutrientIcon(n) { return NUTRIENT_ICONS[n] || '💊'; }
@@ -309,7 +348,7 @@ function updateGoalDisplay() {
 const ADULT_ONLY_GOALS = new Set(['혈당 관리','심혈관 건강','모발 건강','간 건강','스트레스 관리','피부·항산화']);
 
 function filterGoalsByAge(ageVal) {
-  const isChild = ageVal === '유아 (3~6세)' || ageVal === '어린이 (7~12세)';
+  const isChild = ageVal === '어린이 (7~12세)';
   document.querySelectorAll('.goal-btn').forEach(btn => {
     const g = btn.dataset.value;
     if (isChild && ADULT_ONLY_GOALS.has(g)) {
@@ -330,8 +369,12 @@ function selectChip(type, el) {
   const group = type === 'age' ? 'age-group' : 'gender-group';
   document.querySelectorAll(`#${group} .chip`).forEach(b => b.classList.remove('active'));
   el.classList.add('active');
-  if (type === 'age') { state.age = el.dataset.value; filterGoalsByAge(el.dataset.value); }
-  else state.gender = el.dataset.value;
+  if (type === 'age') {
+    state.age = el.dataset.value;
+    filterGoalsByAge(el.dataset.value);
+  } else {
+    state.gender = el.dataset.value;
+  }
   updateBtn();
 }
 
@@ -454,6 +497,7 @@ function renderResultCards(meta) {
   const rec = meta.recommendations || {};
   const prof = meta.profile || {};
   const ranks = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
+  const isChildMode = prof.age_group === 'child';
   let html = '';
 
   // 메타 배지
@@ -492,9 +536,15 @@ function renderResultCards(meta) {
         : (multiGoal ? `<span class="nutrient-goal-badge primary">${GOAL_LABEL_MAP[primaryKey] || ''}</span>` : '');
       const rid = `recipe-${fi}`;
       const r = f.recipe;
+      // 어린이 모드: 영양소 뱃지
+      const foodNutrients = FOOD_NUTRIENTS_MAP[f.name] || [];
+      const nutrientBadgesHtml = isChildMode && foodNutrients.length
+        ? `<div class="food-nutrient-badges">${foodNutrients.map(n => `<span class="food-nutrient-badge">${n}</span>`).join('')}</div>`
+        : '';
       html += `<div class="food-card${isSec ? ' secondary-goal' : ''}">
         <div class="food-card-icon">${foodIcon(f.name)}</div>
         <div class="food-card-name">${f.name} ${foodBadge}${f.category === '건강보조식품' ? '<span class="food-supp-badge">건강기능식품</span>' : ''}</div>
+        ${nutrientBadgesHtml}
         <div class="food-card-reason">${f.reason || ''}</div>
         ${f.serving_suggestion ? `<div class="food-card-tip">🍽️ ${f.serving_suggestion}</div>` : ''}
         ${r ? `
@@ -541,7 +591,16 @@ function renderResultCards(meta) {
 
   // 영양 성분
   const nutrients = rec.nutrients || [];
-  if (nutrients.length) {
+  if (isChildMode) {
+    html += `<div class="result-section child-nutrition-notice">
+      <div class="result-section-title"><span>🥦</span> 어린이 영양 섭취 가이드</div>
+      <div class="child-nutrition-msg">
+        <p>🌱 <strong>어린이(7~12세)</strong>는 균형 잡힌 식사로 대부분의 영양을 충분히 섭취할 수 있습니다.</p>
+        <p>💊 영양제는 식사로 보충이 어려운 경우에만 <strong>소아과 전문의와 상담 후</strong> 복용하세요.</p>
+        <p>✅ 위 음식들에 표시된 <strong>영양소 뱃지</strong>를 참고해 균형 잡힌 식단을 구성해보세요.</p>
+      </div>
+    </div>`;
+  } else if (nutrients.length) {
     html += `<div class="result-section"><div class="result-section-title"><span>💊</span> 영양 성분 제안</div><div class="nutrient-list">`;
     nutrients.forEach((n, i) => {
       const c = n.cautions || {};
@@ -609,8 +668,8 @@ function renderResultCards(meta) {
     html += `</div></div>`;
   }
 
-  // 쇼핑 검색
-  if (nutrients.length) {
+  // 쇼핑 검색 (어린이 모드에서는 숨김)
+  if (!isChildMode && nutrients.length) {
     html += `<div class="result-section"><div class="result-section-title"><span>🛒</span> 영양 성분 검색</div>
       <div class="shop-table-wrap"><table class="shop-table"><thead><tr><th>성분</th><th>네이버</th><th>쿠팡</th><th>iHerb</th></tr></thead><tbody>`;
     for (const n of nutrients) {

@@ -21,6 +21,21 @@ ALLERGEN_NUTRIENT_EXCLUSIONS = {
     "해산물": ["오메가-3"],
 }
 
+# 어린이(7~12세)에게 부적합한 영양 성분 (성인 전용)
+CHILD_EXCLUDED_NUTRIENTS = [
+    "코엔자임 Q10", "멜라토닌", "L-테아닌", "베르베린", "알파리포산",
+    "NAC", "BCAA", "글루타치온", "콜라겐", "밀크시슬", "밀크씨슬",
+    "크롬", "여주 추출물", "아슈와간다", "발레리안", "단백질 보충제",
+    "녹차 추출물", "식이섬유 (프리바이오틱스)",
+]
+
+# 어린이에게 허용되는 영양 성분
+CHILD_ALLOWED_NUTRIENTS = [
+    "비타민 D", "칼슘", "철분", "아연", "비타민 C", "오메가-3",
+    "마그네슘", "프로바이오틱스", "비타민 B12", "프리바이오틱스",
+    "비타민 E", "비타민 A", "엽산", "식이섬유", "루테인",
+]
+
 # extra_note에서 임신·수유 감지 키워드
 PREGNANCY_KEYWORDS = ["임신", "임산부", "수유", "모유"]
 # 임신·수유 시 제외할 영양 성분
@@ -217,6 +232,14 @@ def recommend(goal: dict, profile: dict, rules: dict) -> list[dict]:
         targets = n.get("target_profile", [])
         if not targets or age_group in targets or gender in targets:
             filtered.append(n)
+
+    # 1-1. 어린이(7~12세) 전용 허용 목록 필터링
+    if age_group == "child":
+        before = [n["name"] for n in filtered]
+        filtered = [n for n in filtered if n.get("name") in CHILD_ALLOWED_NUTRIENTS]
+        excluded = [name for name in before if name not in [n["name"] for n in filtered]]
+        if excluded:
+            print(f"[INFO] 어린이 부적합 영양소 제외: {excluded}", file=sys.stderr)
 
     # 2. 연령대 우선순위·권장량 조정
     filtered = apply_age_adjustments(filtered, age_group, gender)
