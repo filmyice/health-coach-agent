@@ -55,6 +55,9 @@ def load_inputs() -> tuple[dict, list]:
     return profile, safety_answers
 
 
+PREGNANCY_KEYWORDS = ["임신", "임산부", "수유", "모유"]
+
+
 def calculate_flags(profile: dict, safety_answers: list) -> dict:
     flags = {
         "has_medication": False,
@@ -65,6 +68,27 @@ def calculate_flags(profile: dict, safety_answers: list) -> dict:
         "consult_required": False,
     }
     flag_details = []
+
+    # extra_note에서 임신·수유 키워드 감지
+    extra_note = profile.get("extra_note", "")
+    if any(kw in extra_note for kw in PREGNANCY_KEYWORDS):
+        flags["pregnancy_or_breastfeeding"] = True
+        flag_details.append({"flag": "pregnancy_or_breastfeeding", "trigger": "extra_note_keyword"})
+        print(f"[INFO] 임신·수유 키워드 감지 (extra_note)", file=sys.stderr)
+
+    # 프로필 medications 필드에서 약물 여부 감지
+    medications = profile.get("medications") or []
+    if medications:
+        flags["has_medication"] = True
+        flag_details.append({"flag": "has_medication", "trigger": "profile_medications"})
+
+    # 프로필 allergies / conditions 필드 감지
+    if profile.get("allergies"):
+        flags["allergy"] = True
+        flag_details.append({"flag": "allergy", "trigger": "profile_allergies"})
+    if profile.get("conditions"):
+        flags["chronic_condition"] = True
+        flag_details.append({"flag": "chronic_condition", "trigger": "profile_conditions"})
 
     # 안전 질문 응답 기반 플래그 계산
     answer_map = {a["question"]: a["answer"] for a in safety_answers}

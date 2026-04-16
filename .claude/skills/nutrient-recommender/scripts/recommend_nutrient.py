@@ -16,6 +16,16 @@ SKILL_DIR = Path(__file__).parent.parent
 RULES_PATH = SKILL_DIR / "references" / "nutrient_rules.json"
 OUTPUT_PATH = Path("output/recommendation/nutrient_candidates.json")
 
+# 알레르기 → 제외할 영양 성분 매핑
+ALLERGEN_NUTRIENT_EXCLUSIONS = {
+    "해산물": ["오메가-3"],
+}
+
+# extra_note에서 임신·수유 감지 키워드
+PREGNANCY_KEYWORDS = ["임신", "임산부", "수유", "모유"]
+# 임신·수유 시 제외할 영양 성분
+PREGNANCY_EXCLUDED_NUTRIENTS = ["멜라토닌"]
+
 
 # ── 연령대별 영양소 조정 ──────────────────────────────────────────
 AGE_NUTRIENT_CONFIG = {
@@ -64,6 +74,7 @@ AGE_NUTRIENT_CONFIG = {
         "daily_intake_overrides": {
             "철분":     {"amount": "10~18mg", "note": "여성 월경기: 18mg, 남성: 10mg. 비타민 C와 함께 섭취하면 흡수율이 높아집니다."},
             "마그네슘": {"amount": "280~350mg", "note": "스트레스·피로가 많은 20대에 부족하기 쉬운 미네랄입니다."},
+            "비타민 D": {"amount": "400~800IU", "note": "20대 일반 권장량. 실내 생활이 많거나 햇볕 노출이 부족한 경우 보충을 고려하세요."},
         },
         "age_reason_prefix": "활동량이 많은 20대에는",
     },
@@ -194,6 +205,8 @@ def recommend(goal: dict, profile: dict, rules: dict) -> list[dict]:
     health_goal = goal.get("primary_goal", "")
     age_group   = profile.get("age_group", "unknown")
     gender      = profile.get("gender", "unknown")
+    allergies   = profile.get("allergies") or []
+    extra_note  = profile.get("extra_note", "")
 
     goal_rules   = rules.get(health_goal, {})
     all_nutrients = goal_rules.get("nutrients", [])
@@ -208,7 +221,29 @@ def recommend(goal: dict, profile: dict, rules: dict) -> list[dict]:
     # 2. 연령대 우선순위·권장량 조정
     filtered = apply_age_adjustments(filtered, age_group, gender)
 
-    # 3. 상위 1~3개 반환
+    # 3. 알레르기 기반 영양 성분 제외
+    excluded_by_allergy = set()
+    for allergy in allergies:
+        excluded_by_allergy.update(ALLERGEN_NUTRIENT_EXCLUSIONS.get(allergy, []))
+    if excluded_by_allergy:
+        before = [n["name"] for n in filtered]
+        filtered = [n for n in filtered if n.get("name") not in excluded_by_allergy]
+        after = [n["name"] for n in filtered]
+        removed = [n for n in before if n not in after]
+        if removed:
+            print(f"[INFO] 알레르기({allergies}) 성분 제외: {removed}", file=sys.stderr)
+
+    # 4. 임신·수유 감지 → 특정 성분 제외
+    is_pregnant_or_nursing = any(kw in extra_note for kw in PREGNANCY_KEYWORDS)
+    if is_pregnant_or_nursing:
+        before = [n["name"] for n in filtered]
+        filtered = [n for n in filtered if n.get("name") not in PREGNANCY_EXCLUDED_NUTRIENTS]
+        after = [n["name"] for n in filtered]
+        removed = [n for n in before if n not in after]
+        if removed:
+            print(f"[INFO] 임신·수유로 인한 성분 제외: {removed}", file=sys.stderr)
+
+    # 5. 상위 1~3개 반환
     return filtered[:3]
 
 
