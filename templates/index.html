@@ -284,6 +284,15 @@ const FOOD_NUTRIENTS_MAP = {
   '견과류':   ['비타민E', '오메가-3'],
 };
 
+// ── 근거 수준 표시 ────────────────────────────────
+const EVIDENCE_CONFIG = {
+  research:    { label: '연구 지지',    icon: '🔬', cls: 'ev-research' },
+  expert:      { label: '전문가 권고',  icon: '👨‍⚕️', cls: 'ev-expert'   },
+  traditional: { label: '전통 사용',    icon: '🌿', cls: 'ev-traditional' },
+};
+// 순위 레이블
+const RANK_LABELS = ['핵심 성분', '보조 성분', '추가 고려'];
+
 function foodIcon(n)     { return FOOD_ICONS[n] || '🥗'; }
 function habitIcon(t)    { for(const[k,i] of HABIT_KEYWORDS) if(t.includes(k)) return i; return '✅'; }
 function nutrientIcon(n) { return NUTRIENT_ICONS[n] || '💊'; }
@@ -536,9 +545,9 @@ function renderResultCards(meta) {
         : (multiGoal ? `<span class="nutrient-goal-badge primary">${GOAL_LABEL_MAP[primaryKey] || ''}</span>` : '');
       const rid = `recipe-${fi}`;
       const r = f.recipe;
-      // 어린이 모드: 영양소 뱃지
+      // 음식 영양소 뱃지 (모든 사용자에게 표시)
       const foodNutrients = FOOD_NUTRIENTS_MAP[f.name] || [];
-      const nutrientBadgesHtml = isChildMode && foodNutrients.length
+      const nutrientBadgesHtml = foodNutrients.length
         ? `<div class="food-nutrient-badges">${foodNutrients.map(n => `<span class="food-nutrient-badge">${n}</span>`).join('')}</div>`
         : '';
       html += `<div class="food-card${isSec ? ' secondary-goal' : ''}">
@@ -611,15 +620,30 @@ function renderResultCards(meta) {
       const goalBadge = isSecondary
         ? `<span class="nutrient-goal-badge secondary">${GOAL_LABEL_MAP[n.goal_key] || n.goal_key}</span>`
         : (multiGoal ? `<span class="nutrient-goal-badge primary">${GOAL_LABEL_MAP[primaryKey] || ''}</span>` : '');
+      // 근거 수준 뱃지
+      const ev = EVIDENCE_CONFIG[n.evidence_level] || EVIDENCE_CONFIG.expert;
+      const evBadge = `<span class="evidence-badge ${ev.cls}">${ev.icon} ${ev.label}</span>`;
+      // 순위 레이블
+      const rankLabel = RANK_LABELS[i] || '';
+      // 메커니즘 태그
+      const mechTags = (n.mechanism_tags || []).map(t => `<span class="mech-tag">${t}</span>`).join('');
+      const mechRow = mechTags ? `<div class="mech-tags-row">${mechTags}</div>` : '';
+      // 나이대 맞춤 컨텍스트
+      const ageCtxHtml = n.age_boosted && n.age_context
+        ? `<div class="age-context-row">🎯 <em>${n.age_context} 특히 중요합니다</em></div>`
+        : '';
       html += `<div class="nutrient-card${isSecondary ? ' secondary-goal' : ''}">
         <div class="nutrient-card-header">
           <div class="nutrient-card-icon">${nutrientIcon(n.name)}</div>
           <div class="nutrient-card-meta">
             <div class="nutrient-card-name">${n.name} ${goalBadge}</div>
             ${n.name_en ? `<div class="nutrient-card-en">${n.name_en}</div>` : ''}
+            <div class="nutrient-card-badges">${evBadge}${rankLabel ? `<span class="rank-label">${rankLabel}</span>` : ''}</div>
           </div>
           <span class="nutrient-card-rank">${ranks[i] || (i+1)}</span>
         </div>
+        ${mechRow}
+        ${ageCtxHtml}
         ${n.reason ? `<div class="nutrient-card-reason">${n.reason}</div>` : ''}
         ${(n.daily_intake || n.best_time) ? `
         <div class="nutrient-info-row">

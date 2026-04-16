@@ -21,6 +21,79 @@ DISCLAIMERS = [
     "복용 중인 약이나 임신·수유 중이라면 전문가 상담이 필요할 수 있어요.",
 ]
 
+# ── 영양소별 근거 수준 ────────────────────────────────────────────
+# research: 다수의 임상 연구 지지 / expert: 전문가·가이드라인 권고 / traditional: 전통 사용 근거
+NUTRIENT_EVIDENCE = {
+    "철분":            "research",
+    "비타민 D":        "research",
+    "칼슘":            "research",
+    "오메가-3":        "research",
+    "비타민 C":        "research",
+    "마그네슘":        "research",
+    "프로바이오틱스":  "research",
+    "아연":            "research",
+    "비타민 B12":      "research",
+    "루테인":          "research",
+    "지아잔틴":        "expert",
+    "코엔자임 Q10":    "expert",
+    "멜라토닌":        "expert",
+    "L-테아닌":        "expert",
+    "비오틴":          "expert",
+    "프리바이오틱스":  "expert",
+    "식이섬유":        "expert",
+    "식이섬유 (프리바이오틱스)": "expert",
+    "콜라겐":          "expert",
+    "글루타치온":      "expert",
+    "단백질 보충제":   "expert",
+    "BCAA":            "expert",
+    "NAC":             "expert",
+    "알파리포산":      "expert",
+    "베르베린":        "expert",
+    "크롬":            "expert",
+    "녹차 추출물":     "expert",
+    "비타민 E":        "research",
+    "아슈와간다":      "traditional",
+    "발레리안":        "traditional",
+    "밀크시슬":        "traditional",
+    "밀크씨슬":        "traditional",
+}
+
+# ── 영양소별 핵심 작용 메커니즘 태그 ─────────────────────────────
+NUTRIENT_MECHANISM_TAGS = {
+    "철분":            ["헤모글로빈 생성", "산소 운반", "에너지 대사"],
+    "비타민 B12":      ["에너지 대사", "신경 기능", "적혈구 생성"],
+    "마그네슘":        ["근육 이완", "에너지 생성", "신경 안정"],
+    "코엔자임 Q10":    ["세포 에너지 생성", "항산화", "심혈관 보호"],
+    "비타민 D":        ["칼슘 흡수", "면역 조절", "뼈 건강"],
+    "칼슘":            ["뼈·치아 형성", "신경 전달", "근육 수축"],
+    "오메가-3":        ["항염증", "심혈관 보호", "뇌·눈 기능"],
+    "비타민 C":        ["항산화", "콜라겐 합성", "면역 강화"],
+    "아연":            ["면역 반응", "상처 회복", "세포 분열"],
+    "프로바이오틱스":  ["장내 균형", "소화 기능", "면역 조절"],
+    "멜라토닌":        ["수면 리듬 조절", "항산화"],
+    "L-테아닌":        ["이완 효과", "집중력", "카페인 완화"],
+    "루테인":          ["황반 색소 보호", "청색광 차단"],
+    "지아잔틴":        ["황반 보호", "눈 피로 완화"],
+    "프리바이오틱스":  ["유익균 증식", "장 운동 개선"],
+    "식이섬유":        ["장 운동", "혈당 안정", "배변 규칙성"],
+    "식이섬유 (프리바이오틱스)": ["유익균 증식", "장 운동"],
+    "콜라겐":          ["피부 탄력", "관절 보호"],
+    "글루타치온":      ["강력 항산화", "해독 작용"],
+    "비오틴":          ["케라틴 합성", "모발·손톱 강화"],
+    "단백질 보충제":   ["근육 합성", "운동 회복"],
+    "BCAA":            ["근육 분해 억제", "운동 피로 감소"],
+    "NAC":             ["간 해독", "글루타치온 전구체"],
+    "밀크시슬":        ["간세포 보호", "항산화"],
+    "밀크씨슬":        ["간세포 보호", "항산화"],
+    "베르베린":        ["혈당 조절", "지질 개선"],
+    "알파리포산":      ["항산화", "혈당 조절 보조"],
+    "크롬":            ["인슐린 감수성 개선", "혈당 안정"],
+    "녹차 추출물":     ["EGCG 항산화", "지방 연소 보조"],
+    "비타민 E":        ["항산화", "세포막 보호"],
+    "아슈와간다":      ["코르티솔 감소", "스트레스 완화"],
+    "발레리안":        ["GABA 활성", "수면 유도"],
+}
+
 
 def load_file(path: Path, required: bool = True) -> dict | None:
     if not path.exists():
@@ -288,13 +361,17 @@ def build_json_result(
         }
         enriched_caution = _inject_extra_warnings(name, base_caution, conditions, medications)
         nutrients_out.append({
-            "name":         name,
-            "name_en":      n.get("name_en") or NAME_EN_MAP.get(name, ""),
-            "reason":       reason,
-            "goal_key":     goal,
-            "daily_intake": n.get("daily_intake"),
-            "best_time":    n.get("best_time"),
-            "cautions":     enriched_caution,
+            "name":            name,
+            "name_en":         n.get("name_en") or NAME_EN_MAP.get(name, ""),
+            "reason":          reason,
+            "goal_key":        goal,
+            "daily_intake":    n.get("daily_intake"),
+            "best_time":       n.get("best_time"),
+            "cautions":        enriched_caution,
+            "evidence_level":  NUTRIENT_EVIDENCE.get(name, "expert"),
+            "mechanism_tags":  NUTRIENT_MECHANISM_TAGS.get(name, []),
+            "age_context":     n.get("age_context", ""),
+            "age_boosted":     n.get("age_boosted", False),
         })
 
     # 2번째 목표 영양 성분 보충 (중복 제외, 최대 2개)
@@ -327,13 +404,17 @@ def build_json_result(
                 sec_enriched = _inject_extra_warnings(rule_n.get("name", ""), sec_base_caution, conditions, medications)
                 sec_name = rule_n.get("name", "")
                 nutrients_out.append({
-                    "name":         sec_name,
-                    "name_en":      name_en,
-                    "reason":       reason,
-                    "goal_key":     sec_goal,
-                    "daily_intake": _age_overrides.get(sec_name) or rule_n.get("daily_intake"),
-                    "best_time":    rule_n.get("best_time"),
-                    "cautions":     sec_enriched,
+                    "name":           sec_name,
+                    "name_en":        name_en,
+                    "reason":         reason,
+                    "goal_key":       sec_goal,
+                    "daily_intake":   _age_overrides.get(sec_name) or rule_n.get("daily_intake"),
+                    "best_time":      rule_n.get("best_time"),
+                    "cautions":       sec_enriched,
+                    "evidence_level": NUTRIENT_EVIDENCE.get(sec_name, "expert"),
+                    "mechanism_tags": NUTRIENT_MECHANISM_TAGS.get(sec_name, []),
+                    "age_context":    "",
+                    "age_boosted":    False,
                 })
                 existing_en.add(name_en)
                 added += 1

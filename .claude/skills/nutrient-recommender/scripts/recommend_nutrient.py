@@ -200,14 +200,15 @@ def apply_age_adjustments(nutrients: list, age_group: str, gender: str) -> list:
         if name in boost_list:
             boost_amount = len(boost_list) - boost_list.index(name)
             n["priority"] = max(0, n.get("priority", 99) - boost_amount)
+            n["age_boosted"] = True  # 이 나이대에 특히 중요한 성분 표시
 
         # 하루 권장량 override
         if name in overrides:
             n["daily_intake"] = overrides[name]
 
-        # 연령 맞춤 이유 prefix
-        if prefix and n.get("reason_seed"):
-            n["reason_seed"] = f"{prefix} {n['reason_seed']}"
+        # 연령 맞춤 컨텍스트를 reason_seed에 합치지 않고 별도 필드로 분리
+        if prefix and n.get("age_boosted"):
+            n["age_context"] = prefix  # e.g. "체력 변화가 시작되는 30대에는"
 
         result.append(n)
 
