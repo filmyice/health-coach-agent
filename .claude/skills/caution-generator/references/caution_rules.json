@@ -16,7 +16,7 @@
     "female_consult": false
   },
   "Vitamin B12": {
-    "caution_level": "info",
+    "caution_level": "warning",
     "short_cautions": [
       "일반적으로 안전하나 과다 복용 시 드물게 피부 반응 가능",
       "채식주의자나 노인의 경우 특히 중요한 영양소입니다"
@@ -43,7 +43,7 @@
     "female_consult": false
   },
   "Vitamin C": {
-    "caution_level": "info",
+    "caution_level": "warning",
     "short_cautions": [
       "과다 복용(2,000mg 이상) 시 소화 불편, 설사 가능",
       "신장 결석 이력이 있으신 분은 주의가 필요합니다"
@@ -106,7 +106,7 @@
     "female_consult": true
   },
   "Probiotics": {
-    "caution_level": "info",
+    "caution_level": "warning",
     "short_cautions": [
       "복용 초기 가스, 복부 팽만이 일시적으로 발생할 수 있습니다",
       "면역 억제제 복용 중이거나 면역 저하 상태에서는 의사 상담 필요"
@@ -144,7 +144,7 @@
     "female_consult": false
   },
   "L-Theanine": {
-    "caution_level": "info",
+    "caution_level": "warning",
     "short_cautions": [
       "일반적으로 안전하나 혈압 강하 효과가 있을 수 있습니다"
     ],
@@ -169,7 +169,7 @@
     "female_consult": false
   },
   "Protein Supplement": {
-    "caution_level": "info",
+    "caution_level": "warning",
     "short_cautions": [
       "신장 질환이 있으신 분은 고단백 보충제 복용 전 의사 상담이 필요합니다",
       "충분한 수분 섭취와 함께 복용을 권장합니다"
@@ -248,7 +248,7 @@
     "female_consult": true
   },
   "BCAA": {
-    "caution_level": "info",
+    "caution_level": "warning",
     "short_cautions": [
       "신장 질환자는 복용 전 의사 상담이 필요합니다",
       "식품에서 충분한 단백질 섭취가 가능하다면 별도 보충이 불필요할 수 있습니다"
@@ -272,7 +272,7 @@
     "female_consult": false
   },
   "Milk Thistle": {
-    "caution_level": "info",
+    "caution_level": "warning",
     "short_cautions": [
       "드물게 소화 불편, 두통이 발생할 수 있습니다",
       "국화과 식물 알레르기가 있는 경우 주의가 필요합니다"
