@@ -549,29 +549,40 @@ function renderResultCards(meta) {
       const isSec = f.goal_key && f.goal_key !== primaryKey;
       const foodBadge = goalBadgeHtml(f, primaryKey, multiGoal);
       const rid = `recipe-${fi}`;
-      const r = f.recipe;
+      const recipes = f.recipes || (f.recipe ? [Object.assign({label:'기본'}, f.recipe)] : []);
       // 음식 영양소 뱃지 (모든 사용자에게 표시)
       const foodNutrients = FOOD_NUTRIENTS_MAP[f.name] || [];
       const nutrientBadgesHtml = foodNutrients.length
         ? `<div class="food-nutrient-badges">${foodNutrients.map(n => `<span class="food-nutrient-badge">${n}</span>`).join('')}</div>`
         : '';
+      let recipesHtml = '';
+      if (recipes.length) {
+        const tabs = recipes.map((r, ri) =>
+          `<button class="recipe-tab${ri===0?' active':''}" onclick="switchRecipe('${rid}',${ri},this)">${r.label||'기본'}</button>`
+        ).join('');
+        const panels = recipes.map((r, ri) =>
+          `<div class="recipe-panel${ri===0?'':' hidden'}" id="${rid}-p${ri}">
+            <div class="recipe-header">
+              <span class="recipe-name">${r.name}</span>
+              <span class="recipe-time">⏱ ${r.time}</span>
+            </div>
+            <ol class="recipe-steps">${r.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+          </div>`
+        ).join('');
+        recipesHtml = `
+        <button class="recipe-toggle" onclick="toggleRecipe('${rid}', this)">🍳 레시피 보기</button>
+        <div class="recipe-box" id="${rid}">
+          <div class="recipe-tabs">${tabs}</div>
+          ${panels}
+        </div>`;
+      }
       html += `<div class="food-card${isSec ? ' secondary-goal' : ''}">
         <div class="food-card-icon">${foodIcon(f.name)}</div>
         <div class="food-card-name">${f.name} ${foodBadge}${f.category === '건강보조식품' ? '<span class="food-supp-badge">건강기능식품</span>' : ''}</div>
         ${nutrientBadgesHtml}
         <div class="food-card-reason">${f.reason || ''}</div>
         ${f.serving_suggestion ? `<div class="food-card-tip">🍽️ ${f.serving_suggestion}</div>` : ''}
-        ${r ? `
-        <button class="recipe-toggle" onclick="toggleRecipe('${rid}', this)">🍳 레시피 보기</button>
-        <div class="recipe-box" id="${rid}">
-          <div class="recipe-header">
-            <span class="recipe-name">${r.name}</span>
-            <span class="recipe-time">⏱ ${r.time}</span>
-          </div>
-          <ol class="recipe-steps">
-            ${r.steps.map(s => `<li>${s}</li>`).join('')}
-          </ol>
-        </div>` : ''}
+        ${recipesHtml}
       </div>`;
     }
     html += `</div></div>`;
@@ -757,6 +768,12 @@ function toggleRecipe(id, btn) {
   const box = document.getElementById(id);
   const open = box.classList.toggle('open');
   btn.textContent = open ? '🍳 레시피 닫기' : '🍳 레시피 보기';
+}
+
+function switchRecipe(rid, idx, tabEl) {
+  const box = document.getElementById(rid);
+  box.querySelectorAll('.recipe-panel').forEach((p, i) => p.classList.toggle('hidden', i !== idx));
+  box.querySelectorAll('.recipe-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
 }
 
 function showToast(msg) {

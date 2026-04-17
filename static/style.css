@@ -500,6 +500,22 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 }
 .recipe-steps li:last-child { margin-bottom: 0; }
 
+/* ── 레시피 탭 ──────────────────────────────────── */
+.recipe-tabs {
+  display: flex; gap: .3rem; margin-bottom: .6rem; flex-wrap: wrap;
+}
+.recipe-tab {
+  padding: .22rem .65rem;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 999px;
+  background: var(--gray-50);
+  font-size: .74rem; font-weight: 600; color: var(--gray-600);
+  cursor: pointer; transition: background .12s, border-color .12s, color .12s;
+}
+.recipe-tab:hover { border-color: var(--green-400); color: var(--green-700); background: var(--green-50); }
+.recipe-tab.active { background: var(--green-600); border-color: var(--green-600); color: white; }
+.recipe-panel.hidden { display: none; }
+
 /* ── 습관 카드 ─────────────────────────────────── */
 .habit-list { display: flex; flex-direction: column; gap: .6rem; }
 .habit-card {
