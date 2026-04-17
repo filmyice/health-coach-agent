@@ -640,6 +640,57 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 }
 .caution-details[open] .caution-chevron { transform: rotate(180deg); }
 
+/* ── 결론 요약 카드 ─────────────────────────────── */
+.summary-card {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 1.5px solid #86efac;
+  border-radius: 14px;
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1.4rem;
+}
+.summary-who {
+  display: flex; align-items: center; flex-wrap: wrap; gap: .5rem;
+  margin-bottom: .75rem;
+}
+.summary-who-label {
+  font-size: .78rem; font-weight: 600;
+  background: white; border: 1px solid #bbf7d0;
+  border-radius: 999px; padding: .15rem .65rem;
+  color: var(--green-700);
+}
+.summary-goal-label {
+  font-size: .92rem; color: #14532d;
+}
+.summary-goal-label strong { font-size: 1rem; }
+.summary-sections {
+  display: flex; flex-direction: column; gap: .75rem;
+}
+.summary-section-title {
+  font-size: .8rem; font-weight: 700; color: #166534; margin-bottom: .35rem;
+}
+.summary-action-list {
+  margin: 0; padding-left: 1.3rem;
+  display: flex; flex-direction: column; gap: .2rem;
+}
+.summary-action-list li {
+  font-size: .88rem; color: #1f2937; line-height: 1.55;
+}
+.summary-action-icon { margin-right: .3rem; }
+.summary-priority {
+  font-size: .87rem; font-weight: 600; color: #1e40af;
+  background: #eff6ff; border-radius: 8px;
+  padding: .35rem .75rem; display: inline-block;
+  letter-spacing: .01em;
+}
+.summary-warn-section { margin-top: .1rem; }
+.summary-warn {
+  font-size: .82rem; color: #92400e;
+  background: #fffbeb; border: 1px solid #fde68a;
+  border-radius: 8px; padding: .35rem .75rem;
+  margin-bottom: .3rem;
+}
+.summary-warn:last-child { margin-bottom: 0; }
+
 /* 개인화 인트로 배너 */
 .personalized-intro {
   background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
@@ -956,4 +1007,8 @@ body.large-text .nutrient-card-name { font-size: 1.05rem; }
 body.large-text .nutrient-card-reason { font-size: .95rem; }
 body.large-text .caution-list li { font-size: .95rem; }
 body.large-text .disclaimer-box  { font-size: .95rem; }
+body.large-text .summary-goal-label { font-size: 1.05rem; }
+body.large-text .summary-action-list li { font-size: 1rem; }
+body.large-text .summary-priority { font-size: 1rem; }
+body.large-text .summary-warn { font-size: .95rem; }
 body.large-text .shop-table      { font-size: 1rem; }

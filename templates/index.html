@@ -523,6 +523,61 @@ function renderResultCards(meta) {
   const multiGoal   = goalLabels.length > 1;
   let html = '';
 
+  // ── 요약 카드 ────────────────────────────────────
+  {
+    const foods    = rec.foods    || [];
+    const habits   = rec.habits   || [];
+    const nutrients= rec.nutrients|| [];
+
+    // 오늘 바로 할 3가지 — 습관 우선, 부족하면 음식·영양소로 채움
+    const actions = [];
+    if (habits[0])    actions.push({ icon: '🏃', text: habits[0].title });
+    if (habits[1])    actions.push({ icon: '💡', text: habits[1].title });
+    if (foods[0] && actions.length < 3)
+      actions.push({ icon: '🥗', text: `${foods[0].name} 섭취하기` });
+    if (nutrients[0] && actions.length < 3)
+      actions.push({ icon: '💊', text: `${nutrients[0].name} 보충 고려` });
+    if (foods[0] && actions.length < 3)
+      actions.push({ icon: '🥗', text: `${foods[0].name} 섭취하기` });
+    const top3 = actions.slice(0, 3);
+
+    // 영양제 우선순위
+    const nutriPriority = nutrients.slice(0, 4).map(n => n.name).join(' &gt; ');
+
+    // 주의 메시지
+    const warnings = [];
+    if (meta.top_warning) warnings.push(meta.top_warning);
+    if (isChildMode) warnings.push('어린이(7~12세)는 보호자·전문가 상담 후 복용하세요');
+    else {
+      const hasConsult = nutrients.some(n => (n.cautions||{}).level === 'consult');
+      if (hasConsult) warnings.push('일부 성분은 전문가 상담 후 복용하세요');
+    }
+
+    const goalStr = goalLabels.join(' + ');
+    const whoStr  = [prof.age_label, prof.gender_label].filter(Boolean).join(' · ');
+
+    html += `<div class="summary-card">
+      <div class="summary-who">${whoStr ? `<span class="summary-who-label">${whoStr}</span>` : ''}<span class="summary-goal-label">🎯 핵심 목표: <strong>${goalStr}</strong></span></div>
+      <div class="summary-sections">
+        <div class="summary-section">
+          <div class="summary-section-title">✅ 오늘 바로 시작할 ${top3.length}가지</div>
+          <ol class="summary-action-list">
+            ${top3.map(a => `<li><span class="summary-action-icon">${a.icon}</span>${a.text}</li>`).join('')}
+          </ol>
+        </div>
+        ${nutriPriority && !isChildMode ? `
+        <div class="summary-section">
+          <div class="summary-section-title">💊 영양제 우선순위</div>
+          <div class="summary-priority">${nutriPriority}</div>
+        </div>` : ''}
+        ${warnings.length ? `
+        <div class="summary-section summary-warn-section">
+          ${warnings.map(w => `<div class="summary-warn">⚠️ ${w}</div>`).join('')}
+        </div>` : ''}
+      </div>
+    </div>`;
+  }
+
   html += `<div class="result-meta-badges">`;
   goalLabels.forEach(g => html += `<span class="meta-badge meta-badge-goal">🎯 ${g}</span>`);
   if (prof.age_label)    html += `<span class="meta-badge meta-badge-age">${prof.age_label}</span>`;
