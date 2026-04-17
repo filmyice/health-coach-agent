@@ -752,24 +752,38 @@ function renderResultCards(meta) {
   // 습관
   const habits = rec.habits || [];
   if (habits.length) {
+    const DIFF_META = {
+      '쉬움':    { cls: 'diff-easy',   bar: 1, label: '쉬움' },
+      '보통':    { cls: 'diff-medium', bar: 2, label: '보통' },
+      '어려움':  { cls: 'diff-hard',   bar: 3, label: '어려움' },
+    };
     html += `<div class="result-section"><div class="result-section-title"><span>🏃</span> 생활습관 제안</div><div class="habit-list">`;
-    for (const h of habits) {
-      const dc = h.difficulty === '쉬움' ? 'badge-easy' : 'badge-medium';
+    habits.forEach((h, hi) => {
       const hIsSec = h.goal_key && h.goal_key !== primaryKey;
       const hBadge = goalBadgeHtml(h, primaryKey, multiGoal);
+      const dm = DIFF_META[h.difficulty] || DIFF_META['보통'];
+      const bars = [1,2,3].map(n =>
+        `<span class="diff-bar${n <= dm.bar ? ' filled' : ''}"></span>`
+      ).join('');
       html += `<div class="habit-card${hIsSec ? ' secondary-goal' : ''}">
+        <div class="habit-rank">${hi + 1}순위</div>
         <div class="habit-card-icon">${habitIcon(h.title)}</div>
         <div class="habit-card-body">
           <div class="habit-card-header">
             <span class="habit-card-title">${h.title}</span>
             ${hBadge}
-            ${h.difficulty ? `<span class="badge ${dc}">${h.difficulty}</span>` : ''}
-            ${h.frequency  ? `<span class="badge badge-freq">${h.frequency}</span>` : ''}
+            ${h.frequency ? `<span class="badge badge-freq">${h.frequency}</span>` : ''}
           </div>
-          <div class="habit-card-desc">${h.description || ''}</div>
+          <div class="habit-meta-row">
+            <span class="habit-effect">⚡ ${h.effect || h.description || ''}</span>
+            <span class="habit-diff ${dm.cls}">
+              <span class="diff-bars">${bars}</span>${dm.label}
+            </span>
+          </div>
+          ${h.start_tip ? `<div class="habit-start-tip">▶ 시작법: ${h.start_tip}</div>` : ''}
         </div>
       </div>`;
-    }
+    });
     html += `</div></div>`;
   }
 

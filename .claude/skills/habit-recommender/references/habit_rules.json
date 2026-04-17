@@ -5,13 +5,17 @@
         "title": "취침·기상 시간 고정",
         "description": "매일 같은 시간에 자고 일어나면 몸의 회복 리듬이 안정되어 피로 회복에 도움이 될 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "수면 회복 리듬 안정 → 낮 에너지↑",
+        "start_tip": "오늘 밤부터 목표 취침 시간을 알람으로 설정"
       },
       {
         "title": "점심 후 10~15분 눈 감기",
         "description": "짧은 휴식이 오후 집중력과 에너지 회복에 도움이 될 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "평일 매일"
+        "frequency": "평일 매일",
+        "effect": "오후 피로 30% 감소 효과",
+        "start_tip": "점심 먹은 자리나 차 안에서 눈만 감아도 됨"
       },
       {
         "title": "카페인 오후 2시 이후 자제",
@@ -27,7 +31,9 @@
           "60s",
           "70s_plus",
           "50s_plus"
-        ]
+        ],
+        "effect": "야간 수면 질 개선 → 다음날 피로 감소",
+        "start_tip": "오후엔 따뜻한 물·루이보스로 대체"
       },
       {
         "title": "야외 활동 30분 (햇볕)",
@@ -38,7 +44,9 @@
           "toddler",
           "child",
           "teens"
-        ]
+        ],
+        "effect": "비타민 D·세로토닌 생성 → 활력↑",
+        "start_tip": "점심 산책 10분부터 시작"
       },
       {
         "title": "충분한 수면 (10~12시간)",
@@ -48,7 +56,9 @@
         "target_profile": [
           "toddler",
           "child"
-        ]
+        ],
+        "effect": "성장기 뇌·신체 피로 완전 회복",
+        "start_tip": "취침 시간을 30분씩 앞당겨 목표 달성"
       },
       {
         "title": "스마트폰·영상 사용 시간 제한",
@@ -58,7 +68,9 @@
         "target_profile": [
           "child",
           "teens"
-        ]
+        ],
+        "effect": "수면 호르몬 방해 제거 → 숙면",
+        "start_tip": "취침 1시간 전 폰 뒤집어 두기만 해도 됨"
       }
     ]
   },
@@ -68,19 +80,25 @@
         "title": "취침 1시간 전 스크린 끄기",
         "description": "블루라이트가 멜라토닌 분비를 억제하여 수면 진입을 방해할 수 있습니다",
         "difficulty": "보통",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "멜라토닌 분비 정상화 → 빠른 입면",
+        "start_tip": "취침 전 알람만 맞추고 폰 다른 방에 두기"
       },
       {
         "title": "취침 전 짧은 스트레칭",
         "description": "5~10분 가벼운 스트레칭이 근육 이완과 수면 준비에 도움이 될 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "근육 긴장 완화 → 10분 내 잠들기",
+        "start_tip": "침대에 누워 발목 돌리기 5회부터"
       },
       {
         "title": "침실 온도 18~20°C 유지",
         "description": "서늘한 환경이 수면의 질 향상에 도움이 될 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "체온 하강 촉진 → 수면 깊이↑",
+        "start_tip": "에어컨/선풍기를 미리 10분 켜두기"
       },
       {
         "title": "취침 전 따뜻한 우유 한 잔",
@@ -90,7 +108,9 @@
         "target_profile": [
           "toddler",
           "child"
-        ]
+        ],
+        "effect": "트립토판→세로토닌→멜라토닌 생성",
+        "start_tip": "취침 30분 전 전자레인지 1분 데워 마시기"
       },
       {
         "title": "취침 전 독서 습관",
@@ -100,7 +120,9 @@
         "target_profile": [
           "child",
           "teens"
-        ]
+        ],
+        "effect": "뇌 각성 낮춤 → 자연스러운 졸음",
+        "start_tip": "핸드폰 대신 책 1~2쪽만 읽기"
       }
     ]
   },
@@ -110,19 +132,25 @@
         "title": "하루 30분 가벼운 걷기",
         "description": "중간 강도 유산소 운동이 면역 세포 활성화에 도움이 될 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "주 5회 이상"
+        "frequency": "주 5회 이상",
+        "effect": "NK세포 활성 → 면역력 강화",
+        "start_tip": "엘리베이터 대신 계단 1층부터 시작"
       },
       {
         "title": "손 씻기 습관화",
         "description": "외출 후, 식사 전 꼼꼼한 손 씻기가 감염 예방에 효과적입니다",
         "difficulty": "쉬움",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "감염 예방 60% 이상 효과",
+        "start_tip": "식사 전·화장실 후 20초 손 씻기"
       },
       {
         "title": "하루 7~8시간 수면",
         "description": "충분한 수면이 면역 기능 회복의 핵심입니다",
         "difficulty": "보통",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "면역 T세포 생성 증가",
+        "start_tip": "기상 시간 고정 → 취침 시간 자동 조정"
       },
       {
         "title": "손 씻기·위생 습관화",
@@ -132,7 +160,9 @@
         "target_profile": [
           "toddler",
           "child"
-        ]
+        ],
+        "effect": "병원균 차단 → 질병 감소",
+        "start_tip": "가방에 손 소독제 상시 휴대"
       },
       {
         "title": "편식 줄이기",
@@ -143,7 +173,9 @@
           "toddler",
           "child",
           "teens"
-        ]
+        ],
+        "effect": "다양한 영양소 → 면역 시스템 균형",
+        "start_tip": "매끼 새로운 채소 1가지씩 추가"
       }
     ]
   },
@@ -153,19 +185,25 @@
         "title": "20-20-20 규칙 실천",
         "description": "20분마다 20초간 6m(20피트) 거리의 물체를 바라보면 눈 피로 완화에 도움이 될 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "화면 사용 시 매일"
+        "frequency": "화면 사용 시 매일",
+        "effect": "눈 근육 긴장 완화 → 안구 건조 예방",
+        "start_tip": "스마트폰 타이머 20분으로 설정"
       },
       {
         "title": "화면 밝기 주변 조도에 맞추기",
         "description": "화면이 주변보다 너무 밝거나 어두우면 눈의 피로가 빨리 쌓입니다",
         "difficulty": "쉬움",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "눈 피로 누적 방지",
+        "start_tip": "자동 밝기 설정 ON으로 변경"
       },
       {
         "title": "의식적으로 자주 눈 깜빡이기",
         "description": "집중할 때 눈 깜빡임이 줄어 안구 건조가 심해질 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "화면 사용 시 매일"
+        "frequency": "화면 사용 시 매일",
+        "effect": "눈물막 유지 → 건조증 완화",
+        "start_tip": "집중할 때 1분마다 10회 깜빡이기 연습"
       }
     ]
   },
@@ -175,19 +213,25 @@
         "title": "규칙적인 식사 시간 지키기",
         "description": "일정한 시간에 식사하면 장의 운동 리듬이 안정됩니다",
         "difficulty": "보통",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "장 운동 리듬 안정 → 변비 예방",
+        "start_tip": "아침 식사 시간 15분만 고정"
       },
       {
         "title": "식후 10~15분 가벼운 산책",
         "description": "식후 걷기가 소화 촉진과 장 운동에 도움이 될 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "장 연동 운동 촉진 → 소화↑",
+        "start_tip": "식후 의자에서 일어나 집 한 바퀴"
       },
       {
         "title": "하루 1.5~2L 물 마시기",
         "description": "충분한 수분이 장 운동과 변비 예방에 필수적입니다",
         "difficulty": "쉬움",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "장 수분 유지 → 변 이동 원활",
+        "start_tip": "아침 기상 후 물 한 컵부터 시작"
       },
       {
         "title": "채소·과일 매끼 포함하기",
@@ -198,7 +242,9 @@
           "toddler",
           "child",
           "teens"
-        ]
+        ],
+        "effect": "식이섬유 공급 → 유익균 먹이",
+        "start_tip": "반찬 1가지를 채소로 교체"
       }
     ]
   },
@@ -208,13 +254,17 @@
         "title": "하루 15~30분 햇볕 쬐기",
         "description": "자외선이 피부에서 비타민 D를 합성하여 칼슘 흡수를 돕습니다",
         "difficulty": "쉬움",
-        "frequency": "매일 (가능한 경우)"
+        "frequency": "매일 (가능한 경우)",
+        "effect": "비타민 D 합성 → 칼슘 흡수↑",
+        "start_tip": "점심 산책 15분 — 모자 잠깐 벗기"
       },
       {
         "title": "걷기 또는 계단 이용",
         "description": "체중 부하 운동이 뼈 밀도 유지에 도움이 될 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "주 5회 이상"
+        "frequency": "주 5회 이상",
+        "effect": "뼈에 적당한 압력 → 골밀도 유지",
+        "start_tip": "버스 한 정거장 걸어서 가기"
       },
       {
         "title": "탄산음료·카페인 줄이기",
@@ -230,7 +280,9 @@
           "60s",
           "70s_plus",
           "50s_plus"
-        ]
+        ],
+        "effect": "칼슘 소실 방지",
+        "start_tip": "하루 탄산 1캔을 우유 1컵으로 대체"
       },
       {
         "title": "줄넘기·점프 운동",
@@ -240,7 +292,9 @@
         "target_profile": [
           "child",
           "teens"
-        ]
+        ],
+        "effect": "뼈 자극 → 골밀도 형성",
+        "start_tip": "하루 50회 줄넘기부터 시작"
       },
       {
         "title": "매일 야외 놀이 (햇볕)",
@@ -250,7 +304,9 @@
         "target_profile": [
           "toddler",
           "child"
-        ]
+        ],
+        "effect": "성장기 비타민 D·뼈 형성 극대화",
+        "start_tip": "방과 후 30분 밖에서 놀기"
       }
     ]
   },
@@ -260,19 +316,25 @@
         "title": "매일 자외선 차단제 바르기",
         "description": "자외선이 피부 노화와 색소 침착의 주요 원인입니다",
         "difficulty": "쉬움",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "자외선 산화 손상 차단 → 노화 예방",
+        "start_tip": "세안 후 마지막 단계로 습관화"
       },
       {
         "title": "하루 8잔 이상 물 마시기",
         "description": "충분한 수분 섭취가 피부 탄력 유지에 도움이 될 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "피부 수분층 유지 → 탄력↑",
+        "start_tip": "책상에 물병 항시 두기"
       },
       {
         "title": "세안 후 즉시 보습",
         "description": "세안 후 3분 이내 보습제를 바르면 피부 수분 손실을 줄일 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "수분 증발 전 잠금 → 피부 장벽 강화",
+        "start_tip": "세안 후 30초 이내 로션 바르기"
       },
       {
         "title": "충분한 수분 섭취",
@@ -282,7 +344,9 @@
         "target_profile": [
           "toddler",
           "child"
-        ]
+        ],
+        "effect": "피부 세포 재생 지원",
+        "start_tip": "식사 전 물 한 컵 습관"
       }
     ]
   },
@@ -292,19 +356,25 @@
         "title": "식사 시 천천히 20번 이상 씹기",
         "description": "천천히 씹으면 포만감 신호가 뇌에 전달되어 과식 방지에 도움이 될 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "매끼"
+        "frequency": "매끼",
+        "effect": "포만감 신호 전달 → 과식 방지",
+        "start_tip": "첫 5숟갈만 의식적으로 천천히"
       },
       {
         "title": "하루 30분 이상 걷기",
         "description": "꾸준한 유산소 운동이 체지방 감소와 기초대사량 유지에 도움이 될 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "주 5회 이상"
+        "frequency": "주 5회 이상",
+        "effect": "기초대사량 유지 → 체지방 감소",
+        "start_tip": "점심 산책 15분 + 저녁 15분으로 분리"
       },
       {
         "title": "야식·음식 섭취 시간 제한",
         "description": "저녁 식사 후 3시간 이내 취침 시 지방 축적 위험이 높아질 수 있습니다",
         "difficulty": "보통",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "야간 지방 축적 차단",
+        "start_tip": "저녁 7시 이후엔 물·허브티만"
       },
       {
         "title": "매일 1시간 신체 활동",
@@ -314,7 +384,9 @@
         "target_profile": [
           "child",
           "teens"
-        ]
+        ],
+        "effect": "성장기 체중 조절 + 근육 발달",
+        "start_tip": "좋아하는 스포츠 1가지 고르기"
       },
       {
         "title": "과자·탄산음료 줄이기",
@@ -325,7 +397,9 @@
           "toddler",
           "child",
           "teens"
-        ]
+        ],
+        "effect": "빈 칼로리 제거 → 즉각적 체중 관리",
+        "start_tip": "오늘 간식 1회를 과일로 대체"
       }
     ]
   },
@@ -335,19 +409,25 @@
         "title": "식후 10~15분 가벼운 걷기",
         "description": "식후 걷기가 혈당 급등 완화에 도움이 될 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "매 식후"
+        "frequency": "매 식후",
+        "effect": "혈당 스파이크 억제 → 인슐린 분비↓",
+        "start_tip": "식사 후 자리에서 일어나 집 주변 산책"
       },
       {
         "title": "당분 음료를 물로 대체하기",
         "description": "음료 속 당분이 혈당을 빠르게 올리는 주요 원인 중 하나입니다",
         "difficulty": "보통",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "혈당 급등 방지 → 췌장 부담↓",
+        "start_tip": "오늘 음료 1개를 탄산수로 교체"
       },
       {
         "title": "규칙적인 식사 시간 유지",
         "description": "불규칙한 식사는 혈당 변동 폭을 키울 수 있습니다",
         "difficulty": "보통",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "인슐린 패턴 안정 → 혈당 변동 감소",
+        "start_tip": "아침 식사 시간을 매일 같은 시간으로"
       }
     ]
   },
@@ -357,19 +437,25 @@
         "title": "하루 10분 복식 호흡·명상",
         "description": "깊은 호흡이 부교감신경을 활성화하여 스트레스 호르몬 감소에 도움이 될 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "코르티솔 수치 감소 → 즉각적 진정",
+        "start_tip": "4초 들이쉬고 4초 내쉬기 10회"
       },
       {
         "title": "하루 30분 가벼운 운동",
         "description": "유산소 운동이 엔도르핀 분비를 촉진하여 스트레스 완화에 도움이 될 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "주 4회 이상"
+        "frequency": "주 4회 이상",
+        "effect": "엔도르핀 분비 → 기분↑·스트레스↓",
+        "start_tip": "좋아하는 음악 틀고 동네 한 바퀴"
       },
       {
         "title": "디지털 디톡스 (취침 전 1시간)",
         "description": "스마트폰 사용 줄이기가 정신적 피로와 수면의 질 개선에 도움이 될 수 있습니다",
         "difficulty": "보통",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "뇌 과부하 해소 → 수면 질↑",
+        "start_tip": "취침 1시간 전 폰을 충전기에 꽂고 멀리"
       },
       {
         "title": "친구·가족과 대화 시간 갖기",
@@ -379,7 +465,9 @@
         "target_profile": [
           "child",
           "teens"
-        ]
+        ],
+        "effect": "사회적 연결 → 스트레스 완충",
+        "start_tip": "하루 5분 짧은 전화 또는 문자"
       },
       {
         "title": "취미 활동 (그림·음악·독서)",
@@ -390,7 +478,9 @@
           "toddler",
           "child",
           "teens"
-        ]
+        ],
+        "effect": "몰입→뇌 휴식 → 스트레스 해소",
+        "start_tip": "15분이라도 좋아하는 것 하기"
       }
     ]
   },
@@ -400,19 +490,25 @@
         "title": "운동 후 5~10분 정적 스트레칭",
         "description": "쿨다운 스트레칭이 근육통 완화와 유연성 유지에 도움이 될 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "운동 후 매번"
+        "frequency": "운동 후 매번",
+        "effect": "젖산 제거 촉진 → 다음날 근육통↓",
+        "start_tip": "운동 직후 앉아서 햄스트링 스트레칭"
       },
       {
         "title": "운동 후 충분한 수분 보충",
         "description": "운동 중 손실된 수분과 전해질 보충이 회복에 필수적입니다",
         "difficulty": "쉬움",
-        "frequency": "운동 후 매번"
+        "frequency": "운동 후 매번",
+        "effect": "전해질 회복 → 근육 경련 예방",
+        "start_tip": "운동 직후 물 500ml 30분 내 섭취"
       },
       {
         "title": "근육 회복을 위한 7~9시간 수면",
         "description": "수면 중 성장호르몬 분비가 근육 회복의 핵심입니다",
         "difficulty": "보통",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "성장호르몬 분비 → 근육 재생 극대화",
+        "start_tip": "오늘 취침 시간 30분 앞당기기"
       },
       {
         "title": "준비운동·마무리 스트레칭",
@@ -422,7 +518,9 @@
         "target_profile": [
           "child",
           "teens"
-        ]
+        ],
+        "effect": "부상 예방 + 회복 속도↑",
+        "start_tip": "운동 전 5분 제자리 뛰기"
       },
       {
         "title": "체육 활동 적극 참여",
@@ -432,7 +530,9 @@
         "target_profile": [
           "child",
           "teens"
-        ]
+        ],
+        "effect": "성장기 근력·심폐 기능 발달",
+        "start_tip": "학교 체육 시간 최선 다해 참여"
       }
     ]
   },
@@ -442,7 +542,9 @@
         "title": "주 150분 이상 유산소 운동",
         "description": "걷기·수영·자전거 등이 심장 기능 강화와 혈압 개선에 도움이 될 수 있습니다",
         "difficulty": "보통",
-        "frequency": "주 5회 (회당 30분)"
+        "frequency": "주 5회 (회당 30분)",
+        "effect": "LDL 콜레스테롤↓ · 심장 기능↑",
+        "start_tip": "주 5일, 하루 30분 빠르게 걷기"
       },
       {
         "title": "금연 또는 간접흡연 피하기",
@@ -457,7 +559,9 @@
           "60s",
           "70s_plus",
           "50s_plus"
-        ]
+        ],
+        "effect": "혈관 산화 손상 즉시 차단",
+        "start_tip": "흡연 구역 경로 바꾸기"
       },
       {
         "title": "혈압·맥박 정기 체크",
@@ -470,7 +574,9 @@
           "60s",
           "70s_plus",
           "50s_plus"
-        ]
+        ],
+        "effect": "고혈압 조기 발견 → 심뇌혈관 예방",
+        "start_tip": "약국 혈압계로 월 1회 측정"
       }
     ]
   },
@@ -480,19 +586,25 @@
         "title": "두피 마사지 (3~5분)",
         "description": "두피 혈액순환 촉진이 모낭에 영양 공급을 도울 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "매일 (샴푸 시 활용)"
+        "frequency": "매일 (샴푸 시 활용)",
+        "effect": "두피 혈행↑ → 모낭 영양 공급",
+        "start_tip": "샴푸할 때 손가락으로 3분 마사지"
       },
       {
         "title": "헤어 드라이어 열 줄이기",
         "description": "지나친 열이 모발 단백질을 손상시킬 수 있습니다",
         "difficulty": "쉬움",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "모발 단백질 파괴 방지",
+        "start_tip": "드라이 마지막 1분은 쿨 바람으로"
       },
       {
         "title": "스트레스 관리 (명상·운동)",
         "description": "스트레스 호르몬이 탈모를 악화시킬 수 있습니다",
         "difficulty": "보통",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "코르티솔↓ → 탈모 방지",
+        "start_tip": "하루 10분 산책 또는 복식 호흡"
       },
       {
         "title": "두피 청결 유지",
@@ -502,7 +614,9 @@
         "target_profile": [
           "child",
           "teens"
-        ]
+        ],
+        "effect": "모공 막힘 방지 → 모발 성장 환경 조성",
+        "start_tip": "매일 또는 격일 순한 샴푸로 세발"
       }
     ]
   },
@@ -521,19 +635,25 @@
           "60s",
           "70s_plus",
           "50s_plus"
-        ]
+        ],
+        "effect": "간 염증·지방간 회복 가장 빠른 방법",
+        "start_tip": "오늘 술 자리에서 음료수 1잔으로 대체"
       },
       {
         "title": "규칙적인 유산소 운동",
         "description": "운동이 지방간 예방과 간 기능 개선에 도움이 될 수 있습니다",
         "difficulty": "보통",
-        "frequency": "주 3~4회"
+        "frequency": "주 3~4회",
+        "effect": "간 지방 연소 · ALT 수치 개선",
+        "start_tip": "하루 30분 빠른 걷기"
       },
       {
         "title": "충분한 수분 섭취 (하루 1.5L 이상)",
         "description": "수분이 간의 독소 배출 과정을 돕습니다",
         "difficulty": "쉬움",
-        "frequency": "매일"
+        "frequency": "매일",
+        "effect": "간 해독 물질 배출 원활화",
+        "start_tip": "아침 공복에 물 1컵부터"
       }
     ]
   }

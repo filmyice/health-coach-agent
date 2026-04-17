@@ -540,18 +540,62 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 
 /* ── 습관 카드 ─────────────────────────────────── */
 .habit-list { display: flex; flex-direction: column; gap: .6rem; }
+.habit-list { display: flex; flex-direction: column; gap: .6rem; }
 .habit-card {
-  background: var(--gray-50);
+  background: white;
   border: 1px solid var(--gray-200);
   border-radius: var(--radius);
-  padding: .9rem 1rem;
-  display: flex; align-items: flex-start; gap: .75rem;
+  padding: .85rem 1rem;
+  display: flex; align-items: flex-start; gap: .6rem;
 }
-.habit-card-icon { font-size: 1.6rem; flex-shrink: 0; margin-top: .1rem; }
-.habit-card-body { flex: 1; }
-.habit-card-header { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-bottom: .25rem; }
+.habit-rank {
+  flex-shrink: 0;
+  font-size: .68rem; font-weight: 800; letter-spacing: -.01em;
+  color: white; background: var(--green-600);
+  border-radius: 6px; padding: .2rem .45rem;
+  margin-top: .15rem; white-space: nowrap;
+}
+.habit-card-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: .05rem; }
+.habit-card-body { flex: 1; min-width: 0; }
+.habit-card-header { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; margin-bottom: .3rem; }
 .habit-card-title { font-weight: 700; font-size: .92rem; color: var(--gray-800); }
 .habit-card.secondary-goal { border-left: 3px solid #eab308; }
+
+/* 효과·난이도 행 */
+.habit-meta-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: .5rem; margin-bottom: .35rem; flex-wrap: wrap;
+}
+.habit-effect {
+  font-size: .8rem; color: #1e40af; font-weight: 600;
+  background: #eff6ff; border-radius: 6px;
+  padding: .15rem .55rem; flex: 1; min-width: 0;
+}
+/* 난이도 바 */
+.habit-diff {
+  display: flex; align-items: center; gap: .3rem;
+  font-size: .75rem; font-weight: 700; white-space: nowrap; flex-shrink: 0;
+}
+.diff-bars { display: flex; gap: 2px; align-items: center; }
+.diff-bar {
+  width: 6px; height: 12px; border-radius: 2px;
+  background: var(--gray-200);
+}
+.diff-easy   .diff-bar.filled { background: var(--green-500); }
+.diff-medium .diff-bar.filled { background: #f59e0b; }
+.diff-hard   .diff-bar.filled { background: #ef4444; }
+.diff-easy   { color: var(--green-700); }
+.diff-medium { color: #92400e; }
+.diff-hard   { color: #991b1b; }
+
+/* 시작법 */
+.habit-start-tip {
+  font-size: .8rem; color: var(--gray-700);
+  background: var(--gray-50); border-left: 3px solid var(--green-400);
+  border-radius: 0 6px 6px 0;
+  padding: .3rem .6rem; line-height: 1.5;
+}
+
 .badge {
   font-size: .7rem; font-weight: 600; padding: .15rem .5rem;
   border-radius: 999px;
@@ -966,10 +1010,13 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
   .food-card-tip { font-size: .72rem; }
 
   /* ── 습관 카드 ── */
-  .habit-card { padding: .65rem .7rem; gap: .55rem; }
-  .habit-card-icon  { font-size: 1.3rem; }
+  .habit-card { padding: .65rem .7rem; gap: .45rem; }
+  .habit-rank { font-size: .62rem; padding: .15rem .35rem; }
+  .habit-card-icon  { font-size: 1.25rem; }
   .habit-card-title { font-size: .86rem; }
-  .habit-card-desc  { font-size: .76rem; }
+  .habit-effect { font-size: .76rem; }
+  .habit-start-tip  { font-size: .76rem; }
+  .habit-diff { font-size: .72rem; }
   .badge { font-size: .66rem; }
 
   /* ── 영양 성분 카드 ── */
@@ -1023,8 +1070,11 @@ body.large-text .btn-font-size   { font-size: 1rem; }
 body.large-text .result-section-title { font-size: 1.35rem; }
 body.large-text .food-card-name  { font-size: 1.1rem; }
 body.large-text .food-card-reason{ font-size: .98rem; }
-body.large-text .habit-card-title{ font-size: 1.1rem; }
-body.large-text .habit-card-desc { font-size: .98rem; }
+body.large-text .habit-card-title { font-size: 1.1rem; }
+body.large-text .habit-card-desc  { font-size: .98rem; }
+body.large-text .habit-effect     { font-size: .95rem; }
+body.large-text .habit-start-tip  { font-size: .95rem; }
+body.large-text .habit-rank       { font-size: .8rem; }
 body.large-text .nutrient-card-name { font-size: 1.05rem; }
 body.large-text .nutrient-card-reason { font-size: .95rem; }
 body.large-text .caution-list li { font-size: .95rem; }
