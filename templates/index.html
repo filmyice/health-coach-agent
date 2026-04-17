@@ -290,6 +290,107 @@ const FOOD_NUTRIENTS_MAP = {
   '견과류':   ['비타민E', '오메가-3'],
 };
 
+// ── 맞춤 추천 배지 ───────────────────────────────
+// 목표 + 음식 카테고리 조합 → 선택 이유
+const GOAL_CAT_MATCH = {
+  fatigue_management: {
+    '단백질': '에너지 생성 재료', '채소': '철분·비타민 보충', '곡류': '지속 에너지원',
+    '탄수화물': '빠른 에너지 보충', '건강보조식품': '피로 회복 집중 보충',
+    '과일': '천연 당·비타민C', '유제품': '필수 아미노산',
+  },
+  sleep_management: {
+    '과일': '트립토판·마그네슘', '견과류': '마그네슘 공급', '유제품': '수면 유도 트립토판',
+    '건강보조식품': '수면 호르몬 지원', '탄수화물': '세로토닌 합성 도움',
+  },
+  immunity_management: {
+    '채소': '비타민C·항산화', '발효식품': '장내 면역 강화', '향신채': '항균·항염 성분',
+    '건강보조식품': '면역 세포 활성화', '과일': '비타민C 직접 공급',
+  },
+  eye_health: {
+    '채소': '루테인·베타카로틴', '생선': '오메가3·DHA 망막 보호', '과일': '안토시아닌',
+    '건강보조식품': '루테인·지아잔틴 집중',
+  },
+  gut_health: {
+    '발효식품': '유익균 직접 공급', '채소': '식이섬유 장 운동', '과일': '펙틴 프리바이오틱',
+    '유제품': '프로바이오틱스', '건강보조식품': '장 점막 보호',
+    '복합탄수화물': '지속 식이섬유',
+  },
+  bone_health: {
+    '유제품': '칼슘 직접 공급원', '생선': '칼슘+비타민D', '채소': '비타민K·마그네슘',
+    '단백질': '뼈 기질 단백질', '건강보조식품': '골밀도 강화 지원',
+    '십자화과 채소': '비타민K·칼슘',
+  },
+  skin_antioxidant: {
+    '과일': '안토시아닌·비타민C', '채소': '카로티노이드 항산화',
+    '건강한 지방': '피부 보습 지방산', '건강보조식품': '콜라겐 합성 지원',
+    '항산화 식품': '폴리페놀 항산화',
+  },
+  weight_management: {
+    '단백질': '근육 유지·포만감↑', '복합탄수화물': '혈당 안정·포만감',
+    '채소': '저칼로리·식이섬유', '과일': '천연당·식이섬유',
+    '건강보조식품': '대사 활성 지원',
+  },
+  blood_sugar_management: {
+    '통곡물': '혈당 급등 억제', '채소': '식이섬유 혈당 조절',
+    '건강한 지방': '인슐린 민감성↑', '건강보조식품': '혈당 조절 성분',
+    '과일': '저GI 천연당', '견과류': '지방산·마그네슘',
+  },
+  stress_management: {
+    '항산화 식품': '코르티솔 산화 방어', '건강한 지방': '뇌 세로토닌 합성',
+    '생선': '오메가3 신경 안정', '건강보조식품': '아답토젠 스트레스 완화',
+    '과일': '비타민C 코르티솔↓', '탄수화물': '세로토닌 합성 보조',
+  },
+  exercise_recovery: {
+    '단백질': '근육 단백질 재합성', '탄수화물': '글리코겐 빠른 보충',
+    '과일': '항염·전해질 보충', '건강보조식품': '회복 인자 집중 공급',
+    '항염 식품': '근육 염증 완화',
+  },
+  cardiovascular_health: {
+    '생선': '오메가3 중성지방↓', '통곡물': '베타글루칸 콜레스테롤↓',
+    '채소': '리코펜·항산화', '견과류': '불포화지방산 혈관 보호',
+    '건강보조식품': '혈행 개선 성분', '건강한 지방': '좋은 HDL 증가',
+  },
+  hair_health: {
+    '단백질': '케라틴 합성 재료', '생선': '오메가3 두피 혈행',
+    '견과류': '비오틴·아연', '채소': '철분·엽산 모낭 영양',
+    '건강보조식품': '두피 성장인자 지원',
+  },
+  liver_health: {
+    '십자화과 채소': '설포라판 해독 효소', '향신료': '커큐민 항산화',
+    '향신채': '알리신 간 보호', '음료': '카테킨 지방간 예방',
+    '건강보조식품': '간세포 보호 성분', '채소': '베타카로틴 항산화',
+  },
+};
+
+// 연령대 → 맞춤 이유 접두어
+const AGE_MATCH_LABEL = {
+  'child':    '성장기 필수',
+  'teens':    '10대 성장 지원',
+  '20s':      '20대 활력 지원',
+  '30s':      '30대 기초 관리',
+  '40s':      '40대 대사 관리',
+  '50s':      '50대 노화 예방',
+  '60s':      '60대 근골격 유지',
+  '70s_plus': '시니어 맞춤',
+};
+const AGE_GROUP_KEY_MAP = {
+  '어린이 (7~12세)': 'child', '10대': 'teens', '20대': '20s', '30대': '30s',
+  '40대': '40s', '50대': '50s', '60대': '60s', '70대 이상': '70s_plus',
+};
+
+function getFoodMatchBadges(food, ageGroup, primaryGoal) {
+  const badges = [];
+  const goalMap  = GOAL_CAT_MATCH[primaryGoal] || {};
+  const goalReason = goalMap[food.category];
+  if (goalReason) badges.push({ text: goalReason, cls: 'mb-goal' });
+
+  const ageKey = AGE_GROUP_KEY_MAP[ageGroup] || ageGroup;
+  const ageLabel = AGE_MATCH_LABEL[ageKey];
+  if (ageLabel) badges.push({ text: ageLabel, cls: 'mb-age' });
+
+  return badges;
+}
+
 // ── 근거 수준 표시 ────────────────────────────────
 const EVIDENCE_CONFIG = {
   research:    { label: '연구 지지',    icon: '🔬', cls: 'ev-research' },
@@ -631,10 +732,15 @@ function renderResultCards(meta) {
           ${panels}
         </div>`;
       }
+      const matchBadges = getFoodMatchBadges(f, prof.age_group || prof.age_label, f.goal_key || primaryKey);
+      const matchBadgesHtml = matchBadges.length
+        ? `<div class="food-match-badges">${matchBadges.map(b => `<span class="food-match-badge ${b.cls}">${b.text}</span>`).join('')}</div>`
+        : '';
       html += `<div class="food-card${isSec ? ' secondary-goal' : ''}">
         <div class="food-card-icon">${foodIcon(f.name)}</div>
         <div class="food-card-name">${f.name} ${foodBadge}${f.category === '건강보조식품' ? '<span class="food-supp-badge">건강기능식품</span>' : ''}</div>
         ${nutrientBadgesHtml}
+        ${matchBadgesHtml}
         <div class="food-card-reason">${f.reason || ''}</div>
         ${f.serving_suggestion ? `<div class="food-card-tip">🍽️ ${f.serving_suggestion}</div>` : ''}
         ${recipesHtml}
