@@ -799,59 +799,66 @@ function renderResultCards(meta) {
       </div>
     </div>`;
   } else if (nutrients.length) {
+    const REC_LEVEL = {
+      '높음': { cls: 'rl-high',   label: '추천도 높음' },
+      '중간': { cls: 'rl-mid',    label: '추천도 중간' },
+      '보통': { cls: 'rl-normal', label: '추천도 보통' },
+    };
     html += `<div class="result-section"><div class="result-section-title"><span>💊</span> 영양 성분 제안</div><div class="nutrient-list">`;
     nutrients.forEach((n, i) => {
       const c = n.cautions || {};
       const lvl = c.level || 'info';
       const isSecondary = n.goal_key && n.goal_key !== primaryKey;
-      const goalBadge  = goalBadgeHtml(n, primaryKey, multiGoal);
-      const ev = EVIDENCE_CONFIG[n.evidence_level] || EVIDENCE_CONFIG.expert;
-      const evBadge    = `<span class="evidence-badge ${ev.cls}">${ev.icon} ${ev.label}</span>`;
-      const rankLabel  = RANK_LABELS[i] || '';
-      const mechTags   = (n.mechanism_tags || []).map(t => `<span class="mech-tag">${t}</span>`).join('');
-      const mechRow    = mechTags ? `<div class="mech-tags-row">${mechTags}</div>` : '';
+      const goalBadge = goalBadgeHtml(n, primaryKey, multiGoal);
+      const rl = REC_LEVEL[n.recommendation_level] || REC_LEVEL['중간'];
       const ageCtxHtml = n.age_boosted && n.age_context
-        ? `<div class="age-context-row">🎯 <em>${n.age_context} 특히 중요합니다</em></div>` : '';
-      html += `<div class="nutrient-card${isSecondary ? ' secondary-goal' : ''}">
-        <div class="nutrient-card-header">
-          <div class="nutrient-card-icon">${nutrientIcon(n.name)}</div>
-          <div class="nutrient-card-meta">
-            <div class="nutrient-card-name">${n.name} ${goalBadge}</div>
-            ${n.name_en ? `<div class="nutrient-card-en">${n.name_en}</div>` : ''}
-            <div class="nutrient-card-badges">${evBadge}${rankLabel ? `<span class="rank-label">${rankLabel}</span>` : ''}</div>
-          </div>
-          <span class="nutrient-card-rank">${ranks[i] || (i+1)}</span>
-        </div>
-        ${mechRow}
-        ${ageCtxHtml}
-        ${n.reason ? `<div class="nutrient-card-reason">${n.reason}</div>` : ''}
-        ${(n.daily_intake || n.best_time) ? `
-        <div class="nutrient-info-row">
-          ${n.daily_intake ? `
-          <div class="nutrient-info-item">
-            <span class="nutrient-info-label">📊 하루 권장량</span>
-            <span class="nutrient-info-value">${n.daily_intake.amount}</span>
-            ${n.daily_intake.note ? `<span class="nutrient-info-note">${n.daily_intake.note}</span>` : ''}
-          </div>` : ''}
-          ${n.best_time ? `
-          <div class="nutrient-info-item">
-            <span class="nutrient-info-label">⏰ 복용 시간</span>
-            <span class="nutrient-info-value">${n.best_time.when}</span>
-            ${n.best_time.tip ? `<span class="nutrient-info-note">${n.best_time.tip}</span>` : ''}
-          </div>` : ''}
-        </div>` : ''}`;
+        ? `<span class="nc-age-ctx">🎯 ${n.age_context}</span>` : '';
+      const foodFirstHtml = (n.food_first||[]).length
+        ? `<div class="nc-food-first">🥗 먼저 해볼 것: <span>${n.food_first.join(' · ')}</span></div>` : '';
+      const suppTipHtml = n.supplement_tip
+        ? `<div class="nc-supp-tip">💊 영양제로 갈 경우: ${n.supplement_tip}</div>` : '';
+
+      // Tier 2: 권장량·복용시간·상호작용
+      let tier2 = '';
+      if (n.daily_intake || n.best_time || (c.interaction_flags||[]).length) {
+        tier2 += `<details class="nc-tier2">
+          <summary class="nc-tier2-summary">📋 상세 복용 정보 <span class="caution-chevron">▾</span></summary>
+          <div class="nc-tier2-body">`;
+        if (n.daily_intake)
+          tier2 += `<div class="nc-detail-row"><span class="nc-detail-label">📊 하루 권장량</span><span>${n.daily_intake.amount}</span>${n.daily_intake.note ? `<span class="nc-detail-note">${n.daily_intake.note}</span>` : ''}</div>`;
+        if (n.best_time)
+          tier2 += `<div class="nc-detail-row"><span class="nc-detail-label">⏰ 복용 시간</span><span>${n.best_time.when}</span>${n.best_time.tip ? `<span class="nc-detail-note">${n.best_time.tip}</span>` : ''}</div>`;
+        if ((c.interaction_flags||[]).length)
+          tier2 += `<div class="nc-detail-row"><span class="nc-detail-label">🔗 상호작용</span><span>${c.interaction_flags.join(' / ')}</span></div>`;
+        tier2 += `</div></details>`;
+      }
+
+      // Tier 3: 주의사항 (warning/consult는 항상, info는 숨김)
+      let tier3 = '';
       if ((c.items||[]).length) {
-        const items = c.items || [];
-        const interactions = c.interaction_flags || [];
-        const summaryText = { info:'ℹ️ 복용 참고사항', warning:'⚠️ 복용 참고사항', consult:'🚨 전문가 상담 권고' }[lvl] || 'ℹ️ 복용 참고사항';
         const lvlClass = { info:'caution-info', warning:'caution-warning', consult:'caution-consult' }[lvl] || 'caution-info';
-        html += `<details class="nutrient-card-caution caution-details ${lvlClass}">
-          <summary class="caution-summary">${summaryText} <span class="caution-chevron">▾</span></summary>
-          <ul class="caution-list">${items.map(it => `<li>${it}</li>`).join('')}</ul>
-          ${interactions.length ? `<div class="interaction-note">🔗 ${interactions.join(' / ')}</div>` : ''}
+        const tier3Label = lvl === 'consult' ? '🚨 전문가 상담 필요 항목' : lvl === 'warning' ? '⚠️ 주의사항' : 'ℹ️ 세부 정보';
+        tier3 = `<details class="nc-tier3 caution-details ${lvlClass}">
+          <summary class="caution-summary">${tier3Label} <span class="caution-chevron">▾</span></summary>
+          <ul class="caution-list">${c.items.map(it=>`<li>${it}</li>`).join('')}</ul>
         </details>`;
       }
-      html += `</div>`;
+
+      html += `<div class="nutrient-card${isSecondary ? ' secondary-goal' : ''}">
+        <div class="nc-header">
+          <div class="nc-icon">${nutrientIcon(n.name)}</div>
+          <div class="nc-title-block">
+            <div class="nc-name">${n.name} ${goalBadge}${ageCtxHtml}</div>
+            ${n.name_en ? `<div class="nc-name-en">${n.name_en}</div>` : ''}
+          </div>
+          <span class="nc-rec-level ${rl.cls}">${rl.label}</span>
+        </div>
+        <div class="nc-reason">${n.reason || ''}</div>
+        ${foodFirstHtml}
+        ${suppTipHtml}
+        ${tier2}
+        ${tier3}
+      </div>`;
     });
     html += `</div></div>`;
   }

@@ -361,17 +361,20 @@ def build_json_result(
         }
         enriched_caution = _inject_extra_warnings(name, base_caution, conditions, medications)
         nutrients_out.append({
-            "name":            name,
-            "name_en":         n.get("name_en") or NAME_EN_MAP.get(name, ""),
-            "reason":          reason,
-            "goal_key":        goal,
-            "daily_intake":    n.get("daily_intake"),
-            "best_time":       n.get("best_time"),
-            "cautions":        enriched_caution,
-            "evidence_level":  NUTRIENT_EVIDENCE.get(name, "expert"),
-            "mechanism_tags":  NUTRIENT_MECHANISM_TAGS.get(name, []),
-            "age_context":     n.get("age_context", ""),
-            "age_boosted":     n.get("age_boosted", False),
+            "name":                 name,
+            "name_en":              n.get("name_en") or NAME_EN_MAP.get(name, ""),
+            "reason":               reason,
+            "goal_key":             goal,
+            "daily_intake":         n.get("daily_intake"),
+            "best_time":            n.get("best_time"),
+            "cautions":             enriched_caution,
+            "evidence_level":       NUTRIENT_EVIDENCE.get(name, "expert"),
+            "mechanism_tags":       NUTRIENT_MECHANISM_TAGS.get(name, []),
+            "age_context":          n.get("age_context", ""),
+            "age_boosted":          n.get("age_boosted", False),
+            "recommendation_level": n.get("recommendation_level", ""),
+            "food_first":           n.get("food_first", []),
+            "supplement_tip":       n.get("supplement_tip", ""),
         })
 
     # 2번째 목표 영양 성분 보충 (중복 제외, 최대 2개)
@@ -404,17 +407,20 @@ def build_json_result(
                 sec_enriched = _inject_extra_warnings(rule_n.get("name", ""), sec_base_caution, conditions, medications)
                 sec_name = rule_n.get("name", "")
                 nutrients_out.append({
-                    "name":           sec_name,
-                    "name_en":        name_en,
-                    "reason":         reason,
-                    "goal_key":       sec_goal,
-                    "daily_intake":   _age_overrides.get(sec_name) or rule_n.get("daily_intake"),
-                    "best_time":      rule_n.get("best_time"),
-                    "cautions":       sec_enriched,
-                    "evidence_level": NUTRIENT_EVIDENCE.get(sec_name, "expert"),
-                    "mechanism_tags": NUTRIENT_MECHANISM_TAGS.get(sec_name, []),
-                    "age_context":    "",
-                    "age_boosted":    False,
+                    "name":                 sec_name,
+                    "name_en":              name_en,
+                    "reason":               reason,
+                    "goal_key":             sec_goal,
+                    "daily_intake":         _age_overrides.get(sec_name) or rule_n.get("daily_intake"),
+                    "best_time":            rule_n.get("best_time"),
+                    "cautions":             sec_enriched,
+                    "evidence_level":       NUTRIENT_EVIDENCE.get(sec_name, "expert"),
+                    "mechanism_tags":       NUTRIENT_MECHANISM_TAGS.get(sec_name, []),
+                    "age_context":          "",
+                    "age_boosted":          False,
+                    "recommendation_level": rule_n.get("recommendation_level", ""),
+                    "food_first":           rule_n.get("food_first", []),
+                    "supplement_tip":       rule_n.get("supplement_tip", ""),
                 })
                 existing_en.add(name_en)
                 added += 1
