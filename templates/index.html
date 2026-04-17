@@ -12,6 +12,10 @@
   <span class="logo">🌿</span>
   <span class="brand">건강 코치 에이전트</span>
   <span class="tagline">AI 기반 맞춤 건강 추천</span>
+  <button class="btn-font-size" id="font-size-toggle" onclick="toggleLargeText()" title="글씨 크기 변경">
+    <span id="font-size-icon">가</span>
+    <span id="font-size-label">큰글씨</span>
+  </button>
 </header>
 
 <main>
@@ -927,8 +931,20 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeWorkflow();
 });
 
+// ── 큰글씨 토글 ──────────────────────────────────
+function toggleLargeText() {
+  const isLarge = document.body.classList.toggle('large-text');
+  localStorage.setItem('largeText', isLarge ? '1' : '0');
+  document.getElementById('font-size-icon').textContent = isLarge ? '가' : '가';
+  document.getElementById('font-size-label').textContent = isLarge ? '기본글씨' : '큰글씨';
+  document.getElementById('font-size-toggle').classList.toggle('active', isLarge);
+}
+
 // ── 페이지 로드 시 저장 결과 확인 ────────────────
-window.addEventListener('load', loadSavedResult);
+window.addEventListener('load', () => {
+  loadSavedResult();
+  if (localStorage.getItem('largeText') === '1') toggleLargeText();
+});
 </script>
 
 </body>

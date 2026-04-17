@@ -45,6 +45,22 @@ header {
 .brand { font-size: 1.25rem; font-weight: 700; color: var(--green-700); }
 .tagline { font-size: .85rem; color: var(--gray-400); margin-left: auto; }
 
+.btn-font-size {
+  display: flex; align-items: center; gap: .3rem;
+  margin-left: .75rem;
+  padding: .4rem .85rem;
+  background: var(--gray-100);
+  border: 1.5px solid var(--gray-200);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: .82rem; font-weight: 600; color: var(--gray-700);
+  transition: background .15s, border-color .15s, color .15s;
+  white-space: nowrap;
+}
+.btn-font-size #font-size-icon { font-size: 1rem; line-height: 1; }
+.btn-font-size:hover { background: var(--green-50); border-color: var(--green-400); color: var(--green-700); }
+.btn-font-size.active { background: var(--green-600); border-color: var(--green-600); color: white; }
+
 /* ── 레이아웃 ─────────────────────────────────── */
 main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 
@@ -898,3 +914,28 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
   .wf-step-badge { font-size: .66rem; padding: .15rem .4rem; }
   .wf-blend-note { font-size: .78rem; padding: .7rem .85rem; }
 }
+
+/* ── 큰글씨 모드 ─────────────────────────────────── */
+body.large-text {
+  font-size: 1.125rem;
+}
+body.large-text .section-label   { font-size: .95rem; }
+body.large-text .section-title   { font-size: 1.6rem; }
+body.large-text .section-sub-hint{ font-size: 1rem; }
+body.large-text .goal-btn        { font-size: 1.05rem; padding: .9rem .5rem; }
+body.large-text .chip            { font-size: 1.05rem; padding: .55rem 1.2rem; }
+body.large-text .btn-run         { font-size: 1.2rem; }
+body.large-text .card            { padding: 1.75rem; }
+body.large-text .brand           { font-size: 1.5rem; }
+body.large-text .tagline         { font-size: 1rem; }
+body.large-text .btn-font-size   { font-size: 1rem; }
+body.large-text .result-section-title { font-size: 1.35rem; }
+body.large-text .food-card-name  { font-size: 1.1rem; }
+body.large-text .food-card-reason{ font-size: .98rem; }
+body.large-text .habit-card-title{ font-size: 1.1rem; }
+body.large-text .habit-card-desc { font-size: .98rem; }
+body.large-text .nutrient-card-name { font-size: 1.05rem; }
+body.large-text .nutrient-card-reason { font-size: .95rem; }
+body.large-text .caution-list li { font-size: .95rem; }
+body.large-text .disclaimer-box  { font-size: .95rem; }
+body.large-text .shop-table      { font-size: 1rem; }
