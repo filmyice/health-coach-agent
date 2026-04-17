@@ -249,7 +249,7 @@ const NUTRIENT_ICONS = {
   'NAC':'🔬','비타민 E':'🌻','식이섬유 (프리바이오틱스)':'🌾',
 };
 
-// ── 음식별 주요 영양소 (어린이 모드 뱃지용) ─────────
+// ── 음식별 주요 영양소 뱃지 ──────────────────────────
 const FOOD_NUTRIENTS_MAP = {
   '당근':     ['베타카로틴', '비타민A'],
   '브로콜리': ['비타민C', '칼슘', '철분'],
@@ -444,8 +444,7 @@ function setProgress(pct, msg) {
 function stopProgress() {
   clearInterval(stepTimer);
   setProgress(100, '완료!');
-  document.querySelectorAll('.pstep').forEach(e => e.classList.replace('active','done'));
-  STEPS.forEach(s => document.getElementById(s.id).classList.add('done'));
+  document.querySelectorAll('.pstep').forEach(e => { e.classList.remove('active'); e.classList.add('done'); });
 }
 
 // ── 취소 ──────────────────────────────────────────
@@ -502,6 +501,12 @@ async function runPipeline() {
   }
 }
 
+function goalBadgeHtml(item, primaryKey, multiGoal) {
+  const isSec = item.goal_key && item.goal_key !== primaryKey;
+  if (isSec) return `<span class="nutrient-goal-badge secondary">${GOAL_LABEL_MAP[item.goal_key] || item.goal_key}</span>`;
+  return multiGoal ? `<span class="nutrient-goal-badge primary">${GOAL_LABEL_MAP[primaryKey] || ''}</span>` : '';
+}
+
 // ── 카드 렌더링 ──────────────────────────────────
 function renderResultCards(meta) {
   const el = document.getElementById('result-content');
@@ -509,24 +514,22 @@ function renderResultCards(meta) {
   const prof = meta.profile || {};
   const ranks = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
   const isChildMode = prof.age_group === 'child';
+  const primaryKey  = meta.health_goal || '';
+  const goalLabels  = (meta.goal_labels || [meta.goal_label]).filter(Boolean);
+  const multiGoal   = goalLabels.length > 1;
   let html = '';
 
-  // 메타 배지
   html += `<div class="result-meta-badges">`;
-  const goals = meta.goal_labels || [meta.goal_label];
-  goals.filter(Boolean).forEach(g => html += `<span class="meta-badge meta-badge-goal">🎯 ${g}</span>`);
+  goalLabels.forEach(g => html += `<span class="meta-badge meta-badge-goal">🎯 ${g}</span>`);
   if (prof.age_label)    html += `<span class="meta-badge meta-badge-age">${prof.age_label}</span>`;
   if (prof.gender_label) html += `<span class="meta-badge meta-badge-gender">${prof.gender_label}</span>`;
   html += `</div>`;
 
-  // 개인화 인트로 배너
-  const goalKey = meta.health_goal || '';
-  const goalSummary = GOAL_SUMMARY_MAP[goalKey];
+  const goalSummary = GOAL_SUMMARY_MAP[primaryKey];
   if (goalSummary) {
-    const ageLabel   = prof.age_label   ? `<b>${prof.age_label}</b>` : '';
-    const genderLabel = (prof.gender_label && prof.gender_label !== '') ? `<b>${prof.gender_label}</b>` : '';
-    const goalsLabel  = (meta.goal_labels || [meta.goal_label]).filter(Boolean)
-                          .map(g => `<b>${g}</b>`).join(' + ');
+    const ageLabel    = prof.age_label    ? `<b>${prof.age_label}</b>`    : '';
+    const genderLabel = prof.gender_label ? `<b>${prof.gender_label}</b>` : '';
+    const goalsLabel  = goalLabels.map(g => `<b>${g}</b>`).join(' + ');
     const whoStr = [ageLabel, genderLabel].filter(Boolean).join(' ');
     html += `<div class="personalized-intro">💡 ${whoStr ? whoStr + '의 ' : ''}${goalsLabel} 관리에는 ${goalSummary}</div>`;
   }
@@ -535,16 +538,12 @@ function renderResultCards(meta) {
 
   // 음식
   const foods = rec.foods || [];
-  const primaryKey = meta.health_goal || '';
-  const multiGoal  = (meta.goal_labels || []).length > 1;
   if (foods.length) {
     html += `<div class="result-section"><div class="result-section-title"><span>🥗</span> 추천 음식</div><div class="food-grid">`;
     for (let fi = 0; fi < foods.length; fi++) {
       const f = foods[fi];
       const isSec = f.goal_key && f.goal_key !== primaryKey;
-      const foodBadge = isSec
-        ? `<span class="nutrient-goal-badge secondary">${GOAL_LABEL_MAP[f.goal_key] || f.goal_key}</span>`
-        : (multiGoal ? `<span class="nutrient-goal-badge primary">${GOAL_LABEL_MAP[primaryKey] || ''}</span>` : '');
+      const foodBadge = goalBadgeHtml(f, primaryKey, multiGoal);
       const rid = `recipe-${fi}`;
       const r = f.recipe;
       // 음식 영양소 뱃지 (모든 사용자에게 표시)
@@ -581,9 +580,7 @@ function renderResultCards(meta) {
     for (const h of habits) {
       const dc = h.difficulty === '쉬움' ? 'badge-easy' : 'badge-medium';
       const hIsSec = h.goal_key && h.goal_key !== primaryKey;
-      const hBadge = hIsSec
-        ? `<span class="nutrient-goal-badge secondary">${GOAL_LABEL_MAP[h.goal_key] || h.goal_key}</span>`
-        : (multiGoal ? `<span class="nutrient-goal-badge primary">${GOAL_LABEL_MAP[primaryKey] || ''}</span>` : '');
+      const hBadge = goalBadgeHtml(h, primaryKey, multiGoal);
       html += `<div class="habit-card${hIsSec ? ' secondary-goal' : ''}">
         <div class="habit-card-icon">${habitIcon(h.title)}</div>
         <div class="habit-card-body">
@@ -616,24 +613,15 @@ function renderResultCards(meta) {
     nutrients.forEach((n, i) => {
       const c = n.cautions || {};
       const lvl = c.level || 'info';
-      const lvlClass = {info:'caution-info',warning:'caution-warning',consult:'caution-consult'}[lvl] || 'caution-info';
-      const lvlIcon  = {info:'ℹ️',warning:'⚠️',consult:'🚨'}[lvl] || 'ℹ️';
       const isSecondary = n.goal_key && n.goal_key !== primaryKey;
-      const goalBadge = isSecondary
-        ? `<span class="nutrient-goal-badge secondary">${GOAL_LABEL_MAP[n.goal_key] || n.goal_key}</span>`
-        : (multiGoal ? `<span class="nutrient-goal-badge primary">${GOAL_LABEL_MAP[primaryKey] || ''}</span>` : '');
-      // 근거 수준 뱃지
+      const goalBadge  = goalBadgeHtml(n, primaryKey, multiGoal);
       const ev = EVIDENCE_CONFIG[n.evidence_level] || EVIDENCE_CONFIG.expert;
-      const evBadge = `<span class="evidence-badge ${ev.cls}">${ev.icon} ${ev.label}</span>`;
-      // 순위 레이블
-      const rankLabel = RANK_LABELS[i] || '';
-      // 메커니즘 태그
-      const mechTags = (n.mechanism_tags || []).map(t => `<span class="mech-tag">${t}</span>`).join('');
-      const mechRow = mechTags ? `<div class="mech-tags-row">${mechTags}</div>` : '';
-      // 나이대 맞춤 컨텍스트
+      const evBadge    = `<span class="evidence-badge ${ev.cls}">${ev.icon} ${ev.label}</span>`;
+      const rankLabel  = RANK_LABELS[i] || '';
+      const mechTags   = (n.mechanism_tags || []).map(t => `<span class="mech-tag">${t}</span>`).join('');
+      const mechRow    = mechTags ? `<div class="mech-tags-row">${mechTags}</div>` : '';
       const ageCtxHtml = n.age_boosted && n.age_context
-        ? `<div class="age-context-row">🎯 <em>${n.age_context} 특히 중요합니다</em></div>`
-        : '';
+        ? `<div class="age-context-row">🎯 <em>${n.age_context} 특히 중요합니다</em></div>` : '';
       html += `<div class="nutrient-card${isSecondary ? ' secondary-goal' : ''}">
         <div class="nutrient-card-header">
           <div class="nutrient-card-icon">${nutrientIcon(n.name)}</div>
@@ -680,7 +668,7 @@ function renderResultCards(meta) {
             </div>`;
           }
         } else {
-          // warning / consult: 최대 2개 표시, 추가 항목은 접기
+          const lvlClass = {warning:'caution-warning',consult:'caution-consult'}[lvl] || 'caution-warning';
           const MAX_V = 2;
           const visible = items.slice(0, MAX_V);
           const hidden  = items.slice(MAX_V);
@@ -809,9 +797,8 @@ function showError(msg) {
 function reset() {
   document.getElementById('result').style.display = 'none';
   document.getElementById('form-section').style.display = 'block';
-  document.querySelectorAll('.goal-btn, .chip').forEach(b => b.classList.remove('active'));
-  // 목표 버튼 비활성화 해제
-  document.querySelectorAll('.goal-btn').forEach(b => { b.classList.remove('goal-disabled'); b.disabled = false; });
+  document.querySelectorAll('.goal-btn').forEach(b => { b.classList.remove('active', 'goal-disabled'); b.disabled = false; });
+  document.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
   state.goals = []; state.age = ''; state.gender = '';
   state.allergy = []; state.condition = []; state.medication = [];
   document.getElementById('extra-note').value = '';
@@ -824,13 +811,11 @@ function reset() {
 function resetGoalOnly() {
   document.getElementById('result').style.display = 'none';
   document.getElementById('form-section').style.display = 'block';
-  // 목표 선택만 초기화, 나이·성별·기타 조건 유지
   state.goals = [];
   document.querySelectorAll('.goal-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('error-box').style.display = 'none';
   updateGoalDisplay();
   updateBtn();
-  // 목표 선택 영역으로 스크롤
   const goalSection = document.querySelector('.goal-grid');
   if (goalSection) setTimeout(() => goalSection.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
 }
