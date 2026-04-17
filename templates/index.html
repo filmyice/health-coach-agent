@@ -657,36 +657,13 @@ function renderResultCards(meta) {
       if ((c.items||[]).length) {
         const items = c.items || [];
         const interactions = c.interaction_flags || [];
-        if (lvl === 'info') {
-          // info: 항목이 1개이고 상호작용 없을 때만 접이식, 나머지는 그냥 표시
-          const foldable = items.length === 1 && interactions.length === 0;
-          if (foldable) {
-            html += `<details class="caution-details caution-info">
-              <summary class="caution-summary">ℹ️ 복용 참고사항</summary>
-              <ul class="caution-list">${items.map(it => `<li>${it}</li>`).join('')}</ul>
-            </details>`;
-          } else {
-            html += `<div class="nutrient-card-caution caution-info">
-              <ul class="caution-list">${items.map(it => `<li>${it}</li>`).join('')}</ul>
-              ${interactions.length ? `<div class="interaction-note">🔗 ${interactions.join(' / ')}</div>` : ''}
-            </div>`;
-          }
-        } else {
-          const lvlClass = {warning:'caution-warning',consult:'caution-consult'}[lvl] || 'caution-warning';
-          const MAX_V = 2;
-          const visible = items.slice(0, MAX_V);
-          const hidden  = items.slice(MAX_V);
-          const extraId = `cx-${i}-${Math.random().toString(36).slice(2,6)}`;
-          html += `<div class="nutrient-card-caution ${lvlClass}">`;
-          if (lvl === 'consult') html += `<div class="caution-title">🚨 전문가 상담 권고</div>`;
-          html += `<ul class="caution-list">${visible.map(it => `<li>${it}</li>`).join('')}</ul>`;
-          if (hidden.length) {
-            html += `<ul class="caution-list" id="${extraId}" style="display:none">${hidden.map(it => `<li>${it}</li>`).join('')}</ul>`;
-            html += `<button class="caution-more-btn" onclick="document.getElementById('${extraId}').style.display='block';this.style.display='none'">+ ${hidden.length}개 더 보기</button>`;
-          }
-          if (interactions.length) html += `<div class="interaction-note">🔗 ${interactions.join(' / ')}</div>`;
-          html += `</div>`;
-        }
+        const summaryText = { info:'ℹ️ 복용 참고사항', warning:'⚠️ 복용 참고사항', consult:'🚨 전문가 상담 권고' }[lvl] || 'ℹ️ 복용 참고사항';
+        const lvlClass = { info:'caution-info', warning:'caution-warning', consult:'caution-consult' }[lvl] || 'caution-info';
+        html += `<details class="nutrient-card-caution caution-details ${lvlClass}">
+          <summary class="caution-summary">${summaryText} <span class="caution-chevron">▾</span></summary>
+          <ul class="caution-list">${items.map(it => `<li>${it}</li>`).join('')}</ul>
+          ${interactions.length ? `<div class="interaction-note">🔗 ${interactions.join(' / ')}</div>` : ''}
+        </details>`;
       }
       html += `</div>`;
     });

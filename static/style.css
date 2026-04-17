@@ -599,28 +599,30 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 .caution-list li { margin-bottom: .15rem; }
 .interaction-note { margin-top: .4rem; font-size: .77rem; opacity: .85; }
 
-/* info 레벨 접이식 */
+/* 복용 참고사항 토글 (details/summary) */
 .caution-details {
-  margin: 0 .75rem .75rem;
-  border-radius: 8px;
-  padding: .4rem .75rem;
-  font-size: .8rem;
-  background: #f0f9ff; border-left: 3px solid #93c5fd; color: #1e40af;
+  cursor: pointer;
 }
+.caution-details .caution-list,
+.caution-details .interaction-note {
+  display: none;
+}
+.caution-details[open] .caution-list,
+.caution-details[open] .interaction-note {
+  display: block;
+}
+.caution-details[open] .caution-list { margin-top: .35rem; }
 .caution-summary {
-  cursor: pointer; font-size: .78rem; font-weight: 500;
+  cursor: pointer; font-size: .8rem; font-weight: 600;
   list-style: none; outline: none; user-select: none;
+  display: flex; align-items: center; justify-content: space-between;
 }
 .caution-summary::-webkit-details-marker { display: none; }
-.caution-details[open] .caution-summary { margin-bottom: .3rem; }
-
-/* 더 보기 버튼 */
-.caution-more-btn {
-  background: none; border: none; cursor: pointer;
-  font-size: .76rem; font-weight: 600; margin-top: .25rem;
-  padding: 0; opacity: .75; text-decoration: underline;
+.caution-chevron {
+  font-size: .7rem; opacity: .6; transition: transform .2s;
+  display: inline-block;
 }
-.caution-more-btn:hover { opacity: 1; }
+.caution-details[open] .caution-chevron { transform: rotate(180deg); }
 
 /* 개인화 인트로 배너 */
 .personalized-intro {
