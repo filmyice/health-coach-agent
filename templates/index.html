@@ -23,11 +23,26 @@
   <!-- ── 입력 폼 ──────────────────────────────── -->
   <div id="form-section">
 
+    <!-- 폼 상단 안내 -->
+    <div class="form-intro">
+      <p class="form-intro-title">3가지만 알려주시면 맞춤 건강 플랜을 만들어드려요 🌿</p>
+      <p class="form-intro-sub">평균 <strong>30~40초</strong> 소요 · 의료 진단이 아닌 생활 습관 가이드입니다</p>
+    </div>
+
+    <!-- 폼 진행 표시 -->
+    <div class="form-progress" id="form-progress">
+      <div class="fstep active" id="fp1"><span class="fstep-num">1</span><span class="fstep-label">목표</span></div>
+      <div class="fstep-line"></div>
+      <div class="fstep" id="fp2"><span class="fstep-num">2</span><span class="fstep-label">연령</span></div>
+      <div class="fstep-line"></div>
+      <div class="fstep" id="fp3"><span class="fstep-num">3</span><span class="fstep-label">성별</span></div>
+    </div>
+
     <!-- 건강 목표 (다중 선택, 최대 2개) -->
-    <div class="card">
-      <p class="section-label">Step 1</p>
-      <p class="section-title">건강 목표를 선택해주세요 <span class="multi-hint">최대 2개</span></p>
-      <p class="section-sub-hint">2개 선택 후 추가 선택 시 먼저 선택한 항목이 자동으로 해제됩니다</p>
+    <div class="card" id="card-goal">
+      <p class="section-label">STEP 1 · 필수</p>
+      <p class="section-title">어떤 건강 고민이 있으신가요?</p>
+      <p class="section-sub-hint">가장 신경 쓰이는 것 1~2가지를 선택하세요 · 2개 선택 시 두 목표를 함께 고려합니다</p>
       <div class="goal-grid">
         <button class="goal-btn" data-value="피로 관리"    onclick="selectGoal(this)"><span class="icon">⚡</span>피로 관리</button>
         <button class="goal-btn" data-value="수면 관리"    onclick="selectGoal(this)"><span class="icon">🌙</span>수면 관리</button>
@@ -48,9 +63,10 @@
     </div>
 
     <!-- 연령대 -->
-    <div class="card">
-      <p class="section-label">Step 2</p>
-      <p class="section-title">연령대를 선택해주세요</p>
+    <div class="card" id="card-age">
+      <p class="section-label">STEP 2 · 필수</p>
+      <p class="section-title">연령대를 알려주세요</p>
+      <p class="section-sub-hint">나이에 따라 필요한 영양소와 권장량이 달라집니다</p>
       <div class="chip-group" id="age-group">
         <button class="chip" data-value="어린이 (7~12세)" onclick="selectChip('age', this)">어린이 (7~12세)</button>
         <button class="chip" data-value="10대"      onclick="selectChip('age', this)">10대</button>
@@ -67,9 +83,10 @@
     </div>
 
     <!-- 성별 -->
-    <div class="card">
-      <p class="section-label">Step 3</p>
-      <p class="section-title">성별을 선택해주세요</p>
+    <div class="card" id="card-gender">
+      <p class="section-label">STEP 3 · 필수</p>
+      <p class="section-title">성별도 알려주세요</p>
+      <p class="section-sub-hint">호르몬·철분 수치 등 성별에 따라 추천이 달라집니다</p>
       <div class="chip-group" id="gender-group">
         <button class="chip" data-value="여성" onclick="selectChip('gender', this)">여성</button>
         <button class="chip" data-value="남성" onclick="selectChip('gender', this)">남성</button>
@@ -79,8 +96,9 @@
 
     <!-- 추가 정보 (선택) -->
     <div class="card extra-card">
-      <p class="section-label">Step 4 <span class="optional-label">선택사항</span></p>
-      <p class="section-title">추가 정보를 알려주세요 <span class="extra-hint">입력하면 더 정확한 추천을 받을 수 있어요</span></p>
+      <p class="section-label">STEP 4 · 선택사항</p>
+      <p class="section-title">안전한 추천을 위해 알려주세요 <span class="extra-hint">입력할수록 더 정확해져요</span></p>
+      <p class="section-sub-hint">알레르기·복용약이 있다면 꼭 입력해 주세요 — 부적합한 성분을 자동으로 제외합니다</p>
 
       <div class="extra-row">
         <label class="extra-label">알레르기·식이 제한</label>
@@ -125,16 +143,28 @@
     <div class="error-box" id="error-box"></div>
 
     <!-- 실행 버튼 -->
-    <button class="btn-run" id="run-btn" onclick="runPipeline()" disabled>
-      <span>🔍</span> 맞춤 추천 받기
-    </button>
+    <div class="run-wrap">
+      <div class="run-checklist" id="run-checklist">
+        <span class="rck" id="rck-goal">○ 건강 목표</span>
+        <span class="rck" id="rck-age">○ 연령대</span>
+        <span class="rck" id="rck-gender">○ 성별</span>
+      </div>
+      <button class="btn-run" id="run-btn" onclick="runPipeline()" disabled>
+        <span class="btn-run-icon">✨</span>
+        <span id="run-btn-label">내 맞춤 건강 플랜 받기</span>
+      </button>
+      <p class="run-disclaimer">의료 진단이 아닌 생활 습관 가이드입니다 · 무료 · 약 30~40초 소요</p>
+    </div>
   </div>
 
   <!-- ── 로딩 (Progress bar) ───────────────────── -->
-  <div class="card" id="loading" style="display:none; flex-direction:column; gap:1rem;">
-    <div class="progress-header">
-      <p class="loading-msg" id="loading-msg">건강 데이터를 분석하고 있습니다…</p>
-      <p class="loading-time-hint">약 30~60초 소요됩니다</p>
+  <div class="card loading-card" id="loading" style="display:none; flex-direction:column; gap:1.25rem;">
+    <div class="loading-top">
+      <div class="loading-spinner"></div>
+      <div>
+        <p class="loading-msg" id="loading-msg">잠깐만요, 맞춤 플랜을 만들고 있어요</p>
+        <p class="loading-time-hint">보통 30~40초 정도 걸려요 ☕</p>
+      </div>
     </div>
     <div class="progress-bar-wrap">
       <div class="progress-bar-track">
@@ -148,14 +178,14 @@
       <div class="pstep" id="ps3">💊 영양 성분</div>
       <div class="pstep" id="ps4">🔍 최종 검증</div>
     </div>
-    <button class="btn-cancel" id="cancel-btn" onclick="cancelPipeline()">✕ 취소</button>
+    <button class="btn-cancel" id="cancel-btn" onclick="cancelPipeline()">취소</button>
   </div>
 
   <!-- ── 결과 ──────────────────────────────────── -->
   <div id="result" style="display:none">
     <div class="card">
       <div class="result-header">
-        <span class="result-badge">✅ 추천 완료</span>
+        <span class="result-badge">✅ 플랜 완성</span>
         <div class="result-actions">
           <button class="btn-action" onclick="toggleEditPanel()" id="edit-panel-btn" title="나이·성별·추가조건 수정">⚙️ 조건 수정</button>
           <button class="btn-action" onclick="printResult()" title="PDF·인쇄로 저장">🖨️ 인쇄·저장</button>
@@ -574,15 +604,38 @@ function toggleExtra(type, el) {
 }
 
 function updateBtn() {
-  document.getElementById('run-btn').disabled = !(state.goals.length > 0 && state.age && state.gender);
+  const hasGoal   = state.goals.length > 0;
+  const hasAge    = !!state.age;
+  const hasGender = !!state.gender;
+  const ready     = hasGoal && hasAge && hasGender;
+
+  document.getElementById('run-btn').disabled = !ready;
+
+  // 체크리스트 업데이트
+  const rckGoal   = document.getElementById('rck-goal');
+  const rckAge    = document.getElementById('rck-age');
+  const rckGender = document.getElementById('rck-gender');
+  if (rckGoal)   { rckGoal.textContent   = hasGoal   ? '✓ 건강 목표' : '○ 건강 목표';   rckGoal.classList.toggle('done', hasGoal); }
+  if (rckAge)    { rckAge.textContent    = hasAge    ? '✓ 연령대'    : '○ 연령대';    rckAge.classList.toggle('done', hasAge); }
+  if (rckGender) { rckGender.textContent = hasGender ? '✓ 성별'      : '○ 성별';      rckGender.classList.toggle('done', hasGender); }
+
+  // 폼 진행 dots
+  const fp1 = document.getElementById('fp1');
+  const fp2 = document.getElementById('fp2');
+  const fp3 = document.getElementById('fp3');
+  if (fp1) fp1.classList.toggle('done', hasGoal);
+  if (fp2) fp2.classList.toggle('done', hasAge);
+  if (fp3) fp3.classList.toggle('done', hasGender);
+  if (fp2) fp2.classList.toggle('active', hasGoal && !hasAge);
+  if (fp3) fp3.classList.toggle('active', hasAge && !hasGender);
 }
 
 // ── Progress bar ─────────────────────────────────
 const STEPS = [
-  { id:'ps1', pct:20, msg:'목표를 분석하고 있습니다…' },
-  { id:'ps2', pct:45, msg:'맞춤 음식을 추천하고 있습니다…' },
-  { id:'ps3', pct:70, msg:'영양 성분을 선정하고 있습니다…' },
-  { id:'ps4', pct:90, msg:'최종 플랜을 작성하고 있습니다…' },
+  { id:'ps1', pct:20, msg:'고민을 꼼꼼히 살펴보고 있어요 🎯' },
+  { id:'ps2', pct:45, msg:'딱 맞는 음식들을 찾고 있어요 🥗' },
+  { id:'ps3', pct:70, msg:'부족한 영양소를 분석하는 중이에요 💊' },
+  { id:'ps4', pct:90, msg:'거의 다 됐어요! 마지막 검토 중 🔍' },
 ];
 let stepTimer = null, stepIdx = 0;
 let _abortCtrl = null;
@@ -717,13 +770,20 @@ function renderResultCards(meta) {
         <div class="summary-section">
           <div class="summary-section-title">✅ 오늘 바로 시작할 ${top3.length}가지</div>
           <ol class="summary-action-list">
-            ${top3.map(a => `<li><span class="summary-action-icon">${a.icon}</span>${a.text}</li>`).join('')}
+            ${top3.map((a, i) => {
+              const tabIdx = a.icon === '🥗' ? 1 : a.icon === '🏃' || a.icon === '💡' ? 2 : 3;
+              return `<li onclick="switchResultTab(${tabIdx}, document.querySelectorAll('.rtab')[${tabIdx}])" style="cursor:pointer">
+                <span class="summary-action-icon">${a.icon}</span>${a.text}
+                <span class="summary-action-link">자세히 →</span>
+              </li>`;
+            }).join('')}
           </ol>
         </div>
         ${nutriPriority && !isChildMode ? `
         <div class="summary-section">
           <div class="summary-section-title">💊 영양제 우선순위</div>
           <div class="summary-priority">${nutriPriority}</div>
+          <div class="summary-section-hint" onclick="switchResultTab(3, document.querySelectorAll('.rtab')[3])" style="cursor:pointer">영양제 탭에서 상세 복용법 보기 →</div>
         </div>` : ''}
         ${warnings.length ? `
         <div class="summary-section summary-warn-section">
@@ -910,19 +970,27 @@ function renderResultCards(meta) {
     tab3 = `<div class="tab-empty">추천 영양제 정보가 없습니다.</div>`;
   }
 
+  // ── 탭별 intro 문구 ──────────────────────────────
+  const TAB_INTRO = [
+    '', // 요약은 summary card가 이미 intro 역할
+    `<div class="tab-intro">평소 식단에 조금씩 추가해보세요 — 거창하게 바꿀 필요 없어요 🥗</div>`,
+    `<div class="tab-intro">작은 습관이 쌓이면 몸이 달라집니다 — 가장 쉬운 것부터 시작해보세요 🏃</div>`,
+    isChildMode ? '' : `<div class="tab-intro">부족한 영양소를 보충하는 방법이에요 — 식사로 먼저, 그래도 부족하면 영양제를 고려하세요 💊</div>`,
+  ];
+
   // ── 탭 바 조립 ────────────────────────────────────
   const tabBar = `<div class="result-tabs">
     <button class="rtab active" onclick="switchResultTab(0,this)">📋 요약</button>
     <button class="rtab" onclick="switchResultTab(1,this)">🥗 음식 <span class="rtab-count">${foods.length}</span></button>
     <button class="rtab" onclick="switchResultTab(2,this)">🏃 생활습관 <span class="rtab-count">${habits.length}</span></button>
-    <button class="rtab" onclick="switchResultTab(3,this)">💊 영양제 <span class="rtab-count">${nutrients.length}</span></button>
+    <button class="rtab" onclick="switchResultTab(3,this)">${isChildMode ? '🥦 영양 가이드' : '💊 영양제 <span class="rtab-count">' + nutrients.length + '</span>'}</button>
   </div>`;
 
   el.innerHTML = tabBar +
-    `<div class="rtab-panel active">${tab0}</div>` +
-    `<div class="rtab-panel">${tab1}</div>` +
-    `<div class="rtab-panel">${tab2}</div>` +
-    `<div class="rtab-panel">${tab3}</div>`;
+    `<div class="rtab-panel active">${TAB_INTRO[0]}${tab0}</div>` +
+    `<div class="rtab-panel">${TAB_INTRO[1]}${tab1}</div>` +
+    `<div class="rtab-panel">${TAB_INTRO[2]}${tab2}</div>` +
+    `<div class="rtab-panel">${TAB_INTRO[3]}${tab3}</div>`;
 }
 
 // ── 공유 (결과 텍스트 복사) ───────────────────────
