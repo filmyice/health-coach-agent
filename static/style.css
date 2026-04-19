@@ -1578,6 +1578,443 @@ body.large-text .shop-table      { font-size: 1rem; }
   .nutrient-card { page-break-inside: avoid; }
 }
 
+/* ══════════════════════════════════════════════════
+   결과 화면 v2 — 비주얼 리디자인
+   ══════════════════════════════════════════════════ */
+
+/* ── 공용 ───────────────────────────────────────── */
+.rs-count-label {
+  font-size: .8rem; font-weight: 400; color: var(--gray-400);
+  margin-left: .4rem;
+}
+.rs-warn {
+  background: #fff7ed; border: 1.5px solid #fed7aa;
+  border-radius: var(--radius); padding: .75rem 1rem;
+  font-size: .84rem; color: #c2410c; font-weight: 500;
+  margin: .75rem 0;
+}
+[data-theme="dark"] .rs-warn { background: #431407; border-color: #9a3412; color: #fdba74; }
+
+/* ── 히어로 카드 ─────────────────────────────────── */
+.rs-hero {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: .75rem 0 1rem;
+  color: white;
+  background: linear-gradient(135deg, #166534 0%, #16a34a 60%, #22c55e 100%);
+  box-shadow: 0 8px 32px rgba(22,163,74,.35);
+}
+.rs-hero-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 80% 20%, rgba(255,255,255,.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.rs-hero-body {
+  padding: 1.5rem 1.5rem .75rem;
+  position: relative;
+}
+.rs-hero-who {
+  font-size: .8rem; font-weight: 600; opacity: .8; letter-spacing: .04em;
+  margin-bottom: .3rem;
+}
+.rs-hero-goal {
+  font-size: 1.5rem; font-weight: 800; line-height: 1.2;
+  display: flex; align-items: center; gap: .4rem;
+}
+.rs-hero-icon { font-size: 1.4rem; }
+.rs-hero-desc {
+  font-size: .82rem; opacity: .85; margin-top: .5rem; line-height: 1.5;
+}
+.rs-stats {
+  display: flex; align-items: center;
+  padding: .85rem 1.5rem;
+  background: rgba(0,0,0,.12);
+  position: relative;
+}
+.rs-stat {
+  flex: 1; text-align: center; cursor: pointer;
+  transition: opacity .15s;
+}
+.rs-stat:hover { opacity: .8; }
+.rs-stat-num {
+  font-size: 1.6rem; font-weight: 800; line-height: 1;
+}
+.rs-stat-label { font-size: .72rem; opacity: .85; margin-top: .2rem; font-weight: 500; }
+.rs-stat-divider { width: 1px; height: 2rem; background: rgba(255,255,255,.3); }
+
+/* ── 오늘의 체크리스트 ──────────────────────────── */
+.rs-checklist {
+  background: white;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin: .5rem 0 1rem;
+}
+[data-theme="dark"] .rs-checklist { background: var(--surface); border-color: var(--border); }
+.rs-checklist-title {
+  font-size: .82rem; font-weight: 700; color: var(--gray-600);
+  margin-bottom: .75rem; letter-spacing: .03em;
+}
+[data-theme="dark"] .rs-checklist-title { color: var(--text-secondary); }
+.chk-item {
+  display: flex; align-items: center; gap: .65rem;
+  padding: .6rem .4rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s;
+  user-select: none;
+}
+.chk-item:hover { background: var(--gray-50); }
+[data-theme="dark"] .chk-item:hover { background: rgba(255,255,255,.04); }
+.chk-box {
+  width: 22px; height: 22px;
+  border: 2px solid var(--gray-300);
+  border-radius: 6px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.chk-mark { font-size: .7rem; color: white; opacity: 0; transition: opacity .15s; }
+.chk-item.checked .chk-box { background: var(--green-600); border-color: var(--green-600); }
+.chk-item.checked .chk-mark { opacity: 1; }
+.chk-item.checked .chk-text { text-decoration: line-through; color: var(--gray-400); }
+.chk-icon { font-size: 1.1rem; flex-shrink: 0; }
+.chk-text { flex: 1; font-size: .88rem; color: var(--gray-700); font-weight: 500; }
+[data-theme="dark"] .chk-text { color: var(--text-primary); }
+.chk-link {
+  font-size: .72rem; color: var(--green-600); font-weight: 600;
+  padding: .2rem .55rem;
+  border: 1px solid var(--green-400);
+  border-radius: 999px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .15s;
+  flex-shrink: 0;
+}
+.chk-item:hover .chk-link { opacity: 1; }
+
+/* ── 영양제 우선순위 스택 ────────────────────────── */
+.rs-priority {
+  background: white;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+[data-theme="dark"] .rs-priority { background: var(--surface); border-color: var(--border); }
+.rs-priority-title {
+  font-size: .82rem; font-weight: 700; color: var(--gray-600);
+  margin-bottom: .75rem;
+}
+[data-theme="dark"] .rs-priority-title { color: var(--text-secondary); }
+.rs-priority-item {
+  display: flex; align-items: center; gap: .65rem;
+  padding: .6rem .35rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.rs-priority-item:hover { background: var(--gray-50); }
+[data-theme="dark"] .rs-priority-item:hover { background: rgba(255,255,255,.04); }
+.rs-rank-badge {
+  width: 26px; height: 26px; border-radius: 8px;
+  color: white; font-size: .78rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.rs-rank-icon { font-size: 1.2rem; flex-shrink: 0; }
+.rs-rank-info { flex: 1; min-width: 0; }
+.rs-rank-name { font-size: .88rem; font-weight: 600; color: var(--gray-800); }
+[data-theme="dark"] .rs-rank-name { color: var(--text-primary); }
+.rs-rank-en   { font-size: .72rem; color: var(--gray-400); }
+.rs-rank-dose { font-size: .75rem; color: var(--green-700); font-weight: 600; background: var(--green-50); padding: .2rem .55rem; border-radius: 999px; flex-shrink: 0; }
+.rs-rank-arrow { color: var(--gray-400); font-size: 1rem; flex-shrink: 0; }
+
+/* ── 음식 카드 v2 ────────────────────────────────── */
+.food-grid-v2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+.food-card-v2 {
+  background: white;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform .15s, box-shadow .15s;
+}
+[data-theme="dark"] .food-card-v2 { background: var(--surface); border-color: var(--border); }
+.food-card-v2:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.1); }
+.food-card-v2.secondary-goal { border-color: #c4b5fd; }
+.fv2-top {
+  display: flex; align-items: center; gap: .85rem;
+  padding: 1rem 1rem .75rem;
+  border-bottom: 2px solid;
+  border-color: var(--cat, var(--green-400));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--cat, #16a34a) 8%, white), white);
+}
+[data-theme="dark"] .fv2-top { background: rgba(255,255,255,.03); }
+.fv2-icon-wrap {
+  width: 48px; height: 48px; flex-shrink: 0;
+  background: white;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.1);
+  font-size: 1.6rem;
+}
+.fv2-name {
+  font-size: .95rem; font-weight: 700; color: var(--gray-800); line-height: 1.3;
+}
+[data-theme="dark"] .fv2-name { color: var(--text-primary); }
+.fv2-cat {
+  font-size: .72rem; font-weight: 600; margin-top: .15rem;
+  opacity: .85;
+}
+.food-goal-badge {
+  display: inline-block; font-size: .65rem; font-weight: 700;
+  padding: .1rem .45rem; border-radius: 999px; margin-left: .35rem;
+  vertical-align: middle;
+}
+.food-goal-badge.sec  { background: #f3e8ff; color: #7c3aed; }
+.food-goal-badge.supp { background: #fef3c7; color: #92400e; }
+.fv2-nutrients {
+  display: flex; flex-wrap: wrap; gap: .3rem;
+  padding: .6rem 1rem .3rem;
+}
+.fv2-nbadge {
+  font-size: .7rem; font-weight: 600;
+  padding: .18rem .55rem; border-radius: 999px;
+  background: #eff6ff; color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+[data-theme="dark"] .fv2-nbadge { background: #1e3a5f; color: #93c5fd; border-color: #3b82f6; }
+.fv2-reason {
+  font-size: .82rem; color: var(--gray-600); line-height: 1.55;
+  padding: .4rem 1rem .5rem;
+}
+[data-theme="dark"] .fv2-reason { color: var(--text-secondary); }
+.fv2-tip {
+  margin: 0 1rem .75rem;
+  padding: .55rem .75rem;
+  background: var(--green-50); border-radius: 8px;
+  font-size: .78rem; color: var(--green-700); line-height: 1.4;
+  display: flex; flex-direction: column; gap: .15rem;
+}
+[data-theme="dark"] .fv2-tip { background: #052e16; color: var(--green-400); }
+.fv2-tip-label { font-weight: 700; font-size: .72rem; }
+
+/* ── 습관 카드 v2 ────────────────────────────────── */
+.habit-list-v2 { display: flex; flex-direction: column; gap: .85rem; }
+.habit-card-v2 {
+  display: flex; gap: .85rem;
+  background: white;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem;
+  transition: transform .15s, box-shadow .15s;
+}
+[data-theme="dark"] .habit-card-v2 { background: var(--surface); border-color: var(--border); }
+.habit-card-v2:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+.hv2-left {
+  display: flex; flex-direction: column; align-items: center; gap: .35rem;
+  flex-shrink: 0;
+}
+.hv2-medal { font-size: 1.5rem; line-height: 1; }
+.hv2-icon  { font-size: 1.5rem; line-height: 1; }
+.hv2-body  { flex: 1; min-width: 0; }
+.hv2-header {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .4rem;
+  margin-bottom: .3rem;
+}
+.hv2-title { font-size: .95rem; font-weight: 700; color: var(--gray-800); }
+[data-theme="dark"] .hv2-title { color: var(--text-primary); }
+.hv2-freq {
+  font-size: .7rem; font-weight: 600;
+  background: var(--green-50); color: var(--green-700);
+  border: 1px solid var(--green-200); border-radius: 999px;
+  padding: .15rem .5rem;
+}
+[data-theme="dark"] .hv2-freq { background: #052e16; color: var(--green-400); border-color: var(--green-600); }
+.hv2-effect {
+  font-size: .82rem; color: var(--gray-600); line-height: 1.5;
+  margin-bottom: .6rem;
+}
+[data-theme="dark"] .hv2-effect { color: var(--text-secondary); }
+.hv2-footer { display: flex; flex-direction: column; gap: .35rem; }
+.hv2-diff {
+  display: inline-flex; align-items: center; gap: .45rem;
+  font-size: .73rem; font-weight: 600;
+  padding: .3rem .7rem; border-radius: 999px;
+  width: fit-content;
+}
+.hv2-dots { display: flex; gap: .2rem; align-items: center; }
+.hv2-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(0,0,0,.15);
+  transition: background .15s;
+}
+.hv2-dot.on { /* color set inline */ }
+.hv2-tip {
+  font-size: .78rem; color: var(--gray-600);
+  padding-left: .25rem;
+}
+[data-theme="dark"] .hv2-tip { color: var(--text-secondary); }
+
+/* ── 영양제 카드 v2 ──────────────────────────────── */
+.nutrient-list-v2 { display: flex; flex-direction: column; gap: 1rem; }
+.nutrient-card-v2 {
+  background: white;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform .15s, box-shadow .15s;
+}
+[data-theme="dark"] .nutrient-card-v2 { background: var(--surface); border-color: var(--border); }
+.nutrient-card-v2:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,0,0,.09); }
+.nv2-header {
+  display: flex; align-items: center; gap: .7rem;
+  padding: 1rem 1.1rem .85rem;
+  border-bottom: 1px solid var(--gray-100);
+}
+[data-theme="dark"] .nv2-header { border-color: var(--border); }
+.nv2-rank {
+  width: 32px; height: 32px; border-radius: 10px;
+  color: white; font-size: .9rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.nv2-icon { font-size: 1.5rem; flex-shrink: 0; }
+.nv2-title { flex: 1; min-width: 0; }
+.nv2-name { font-size: .95rem; font-weight: 700; color: var(--gray-800); }
+[data-theme="dark"] .nv2-name { color: var(--text-primary); }
+.nv2-en   { font-size: .72rem; color: var(--gray-400); margin-top: .1rem; }
+.nv2-caution-badge {
+  font-size: .68rem; font-weight: 700;
+  padding: .22rem .6rem; border-radius: 999px;
+  border: 1.5px solid; flex-shrink: 0;
+  white-space: nowrap;
+}
+.nv2-age-ctx {
+  font-size: .78rem; color: var(--green-700); font-weight: 600;
+  padding: .35rem 1.1rem;
+  background: var(--green-50);
+}
+[data-theme="dark"] .nv2-age-ctx { background: #052e16; color: var(--green-400); }
+.nv2-reason {
+  font-size: .84rem; color: var(--gray-700); line-height: 1.6;
+  padding: .75rem 1.1rem .6rem;
+}
+[data-theme="dark"] .nv2-reason { color: var(--text-secondary); }
+.nv2-food-first {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .35rem;
+  padding: .4rem 1.1rem .5rem;
+}
+.nv2-ff-label {
+  font-size: .72rem; font-weight: 700; color: var(--green-700);
+}
+[data-theme="dark"] .nv2-ff-label { color: var(--green-400); }
+.nv2-ff-item {
+  font-size: .72rem; background: var(--green-50); color: var(--green-700);
+  border: 1px solid var(--green-200); border-radius: 999px;
+  padding: .1rem .45rem;
+}
+[data-theme="dark"] .nv2-ff-item { background: #052e16; border-color: var(--green-600); color: var(--green-400); }
+.nv2-dosage-row {
+  display: flex; flex-wrap: wrap; gap: .5rem;
+  padding: .4rem 1.1rem;
+}
+.nv2-dosage-pill {
+  display: flex; flex-direction: column;
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  border-radius: 10px; padding: .4rem .75rem;
+  min-width: 100px;
+}
+[data-theme="dark"] .nv2-dosage-pill { background: #0f172a; border-color: var(--border); }
+.nv2-dp-label {
+  font-size: .65rem; color: var(--gray-400); font-weight: 600;
+  margin-bottom: .15rem;
+}
+.nv2-dosage-pill strong { font-size: .88rem; color: var(--gray-800); }
+[data-theme="dark"] .nv2-dosage-pill strong { color: var(--text-primary); }
+.nv2-note {
+  font-size: .74rem; color: var(--gray-500);
+  padding: .1rem 1.1rem .4rem;
+  line-height: 1.5;
+}
+.nv2-interaction {
+  font-size: .76rem; color: #2563eb;
+  background: #eff6ff; border-radius: 6px;
+  padding: .35rem .9rem; margin: .2rem 1.1rem .4rem;
+}
+[data-theme="dark"] .nv2-interaction { background: #1e3a5f; color: #93c5fd; }
+.nv2-supp-tip {
+  font-size: .78rem; color: var(--gray-600);
+  padding: .3rem 1.1rem .5rem;
+  line-height: 1.5;
+}
+[data-theme="dark"] .nv2-supp-tip { color: var(--text-secondary); }
+.nv2-caution {
+  margin: .25rem .75rem .75rem;
+  border: 1.5px solid var(--cbr, #bfdbfe);
+  border-radius: 10px;
+  background: var(--cb, #eff6ff);
+  overflow: hidden;
+}
+.nv2-caution-sum {
+  padding: .6rem .9rem;
+  font-size: .8rem; font-weight: 700;
+  color: var(--cc, #2563eb);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  list-style: none;
+}
+.nv2-caution-sum::-webkit-details-marker { display: none; }
+.nv2-caution-list {
+  margin: 0; padding: .35rem .9rem .75rem 1.6rem;
+  font-size: .78rem; color: var(--cc, #2563eb);
+  line-height: 1.6;
+}
+[data-theme="dark"] .nv2-caution { filter: brightness(.8); }
+
+/* ── 쇼핑 카드 v2 ────────────────────────────────── */
+.shop-cards-v2 { display: flex; flex-direction: column; gap: .6rem; }
+.shop-card-v2 {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: .75rem;
+  background: white;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: .75rem 1rem;
+}
+[data-theme="dark"] .shop-card-v2 { background: var(--surface); border-color: var(--border); }
+.shop-v2-left { display: flex; align-items: center; gap: .6rem; flex: 1; min-width: 0; }
+.shop-v2-rank {
+  width: 22px; height: 22px; border-radius: 6px;
+  color: white; font-size: .7rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.shop-v2-icon { font-size: 1.2rem; flex-shrink: 0; }
+.shop-v2-info { min-width: 0; }
+.shop-v2-name { font-size: .85rem; font-weight: 700; color: var(--gray-800); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+[data-theme="dark"] .shop-v2-name { color: var(--text-primary); }
+.shop-v2-en   { font-size: .7rem; color: var(--gray-400); }
+.shop-v2-btns { display: flex; gap: .35rem; flex-shrink: 0; }
+.shop-v2-btns .shop-btn {
+  padding: .4rem .65rem;
+  font-size: .78rem; font-weight: 700;
+}
+
+/* ── 반응형 v2 ──────────────────────────────────── */
+@media (max-width: 600px) {
+  .food-grid-v2 { grid-template-columns: 1fr; }
+  .rs-hero-goal { font-size: 1.25rem; }
+  .rs-stat-num  { font-size: 1.3rem; }
+  .nv2-header   { flex-wrap: wrap; gap: .5rem; }
+  .nv2-caution-badge { font-size: .62rem; }
+}
+
 /* ── 저장된 결과 배너 ──────────────────────────────── */
 .saved-banner {
   display: flex;

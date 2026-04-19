@@ -738,6 +738,12 @@ function switchResultTab(idx, tabEl) {
   document.querySelectorAll('.rtab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
 }
 
+// ── 체크박스 토글 ────────────────────────────────
+function toggleCheck(el) {
+  const item = el.closest('.chk-item');
+  item.classList.toggle('checked');
+}
+
 // ── 카드 렌더링 ──────────────────────────────────
 function renderResultCards(meta) {
   const el = document.getElementById('result-content');
@@ -754,104 +760,131 @@ function renderResultCards(meta) {
   // ── 탭0: 요약 ────────────────────────────────────
   let tab0 = '';
   {
-    const actions = [];
-    if (habits[0])    actions.push({ icon: '🏃', text: habits[0].title });
-    if (habits[1])    actions.push({ icon: '💡', text: habits[1].title });
-    if (foods[0] && actions.length < 3) actions.push({ icon: '🥗', text: `${foods[0].name} 섭취하기` });
-    if (nutrients[0] && actions.length < 3) actions.push({ icon: '💊', text: `${nutrients[0].name} 보충 고려` });
-    const top3 = actions.slice(0, 3);
-    const nutriPriority = nutrients.slice(0, 4).map(n => n.name).join(' › ');
-    const warnings = [];
-    if (meta.top_warning) warnings.push(meta.top_warning);
-    if (isChildMode) warnings.push('어린이(7~12세)는 보호자·전문가 상담 후 복용하세요');
-    else if (nutrients.some(n => (n.cautions||{}).level === 'consult'))
-      warnings.push('일부 성분은 전문가 상담 후 복용하세요');
+    const GOAL_ICON_MAP = {
+      fatigue_management:'⚡', sleep_management:'🌙', immunity_management:'🛡️',
+      eye_health:'👁️', gut_health:'🌱', bone_health:'🦴', skin_antioxidant:'✨',
+      weight_management:'⚖️', blood_sugar_management:'🩺', stress_management:'🧘',
+      exercise_recovery:'🏋️', cardiovascular_health:'❤️', hair_health:'💇', liver_health:'🫀',
+    };
+    const goalIcon = GOAL_ICON_MAP[primaryKey] || '🎯';
+    const goalStr  = goalLabels.join(' + ');
+    const whoStr   = [prof.age_label, prof.gender_label].filter(Boolean).join(' · ');
+    const goalSummary = GOAL_SUMMARY_MAP[primaryKey] || '';
 
-    const goalStr = goalLabels.join(' + ');
-    const whoStr  = [prof.age_label, prof.gender_label].filter(Boolean).join(' · ');
-
-    tab0 += `<div class="summary-card">
-      <div class="summary-who">${whoStr ? `<span class="summary-who-label">${whoStr}</span>` : ''}<span class="summary-goal-label">🎯 핵심 목표: <strong>${goalStr}</strong></span></div>
-      <div class="summary-sections">
-        <div class="summary-section">
-          <div class="summary-section-title">✅ 오늘 바로 시작할 ${top3.length}가지</div>
-          <ol class="summary-action-list">
-            ${top3.map((a, i) => {
-              const tabIdx = a.icon === '🥗' ? 1 : a.icon === '🏃' || a.icon === '💡' ? 2 : 3;
-              return `<li onclick="switchResultTab(${tabIdx}, document.querySelectorAll('.rtab')[${tabIdx}])" style="cursor:pointer">
-                <span class="summary-action-icon">${a.icon}</span>${a.text}
-                <span class="summary-action-link">자세히 →</span>
-              </li>`;
-            }).join('')}
-          </ol>
+    // ── 히어로 카드
+    tab0 += `<div class="rs-hero">
+      <div class="rs-hero-bg"></div>
+      <div class="rs-hero-body">
+        <div class="rs-hero-who">${whoStr || '맞춤 플랜'}</div>
+        <div class="rs-hero-goal"><span class="rs-hero-icon">${goalIcon}</span>${goalStr}</div>
+        ${goalSummary ? `<div class="rs-hero-desc">${goalSummary}</div>` : ''}
+      </div>
+      <div class="rs-stats">
+        <div class="rs-stat" onclick="switchResultTab(1,document.querySelectorAll('.rtab')[1])">
+          <div class="rs-stat-num">${foods.length}</div>
+          <div class="rs-stat-label">🥗 음식</div>
         </div>
-        ${nutriPriority && !isChildMode ? `
-        <div class="summary-section">
-          <div class="summary-section-title">💊 영양제 우선순위</div>
-          <div class="summary-priority">${nutriPriority}</div>
-          <div class="summary-section-hint" onclick="switchResultTab(3, document.querySelectorAll('.rtab')[3])" style="cursor:pointer">영양제 탭에서 상세 복용법 보기 →</div>
-        </div>` : ''}
-        ${warnings.length ? `
-        <div class="summary-section summary-warn-section">
-          ${warnings.map(w => `<div class="summary-warn">⚠️ ${w}</div>`).join('')}
-        </div>` : ''}
+        <div class="rs-stat-divider"></div>
+        <div class="rs-stat" onclick="switchResultTab(2,document.querySelectorAll('.rtab')[2])">
+          <div class="rs-stat-num">${habits.length}</div>
+          <div class="rs-stat-label">🏃 습관</div>
+        </div>
+        <div class="rs-stat-divider"></div>
+        <div class="rs-stat" onclick="switchResultTab(3,document.querySelectorAll('.rtab')[3])">
+          <div class="rs-stat-num">${nutrients.length}</div>
+          <div class="rs-stat-label">${isChildMode ? '🥦 가이드' : '💊 영양제'}</div>
+        </div>
       </div>
     </div>`;
 
-    tab0 += `<div class="result-meta-badges">`;
-    goalLabels.forEach(g => tab0 += `<span class="meta-badge meta-badge-goal">🎯 ${g}</span>`);
-    if (prof.age_label)    tab0 += `<span class="meta-badge meta-badge-age">${prof.age_label}</span>`;
-    if (prof.gender_label) tab0 += `<span class="meta-badge meta-badge-gender">${prof.gender_label}</span>`;
-    tab0 += `</div>`;
+    // ── 오늘의 체크리스트
+    const chkItems = [];
+    habits.slice(0, 2).forEach(h => chkItems.push({ icon: habitIcon(h.title), text: h.title, tab: 2 }));
+    if (foods[0] && chkItems.length < 3) chkItems.push({ icon: foodIcon(foods[0].name), text: `${foods[0].name} 챙겨 먹기`, tab: 1 });
+    if (nutrients[0] && !isChildMode && chkItems.length < 3) chkItems.push({ icon: nutrientIcon(nutrients[0].name), text: `${nutrients[0].name} 복용 확인`, tab: 3 });
 
-    const goalSummary = GOAL_SUMMARY_MAP[primaryKey];
-    if (goalSummary) {
-      const ageLabel   = prof.age_label    ? `<b>${prof.age_label}</b>` : '';
-      const goalsLabel = goalLabels.map(g => `<b>${g}</b>`).join(' + ');
-      const whoS = [ageLabel, prof.gender_label ? `<b>${prof.gender_label}</b>` : ''].filter(Boolean).join(' ');
-      tab0 += `<div class="personalized-intro">💡 ${whoS ? whoS + '의 ' : ''}${goalsLabel} 관리에는 ${goalSummary}</div>`;
+    if (chkItems.length) {
+      tab0 += `<div class="rs-checklist">
+        <div class="rs-checklist-title">✅ 오늘 할 일</div>
+        ${chkItems.map((item, i) => `
+          <div class="chk-item" onclick="toggleCheck(this)">
+            <div class="chk-box"><span class="chk-mark">✓</span></div>
+            <span class="chk-icon">${item.icon}</span>
+            <span class="chk-text">${item.text}</span>
+            <span class="chk-link" onclick="event.stopPropagation();switchResultTab(${item.tab},document.querySelectorAll('.rtab')[${item.tab}])">자세히</span>
+          </div>`).join('')}
+      </div>`;
     }
-    if (meta.top_warning) tab0 += `<div class="warning-banner">⚠️ ${meta.top_warning}</div>`;
-    tab0 += `<div class="disclaimer-box">ℹ️ 이 내용은 의료적 진단이 아닙니다. 복용 중인 약이나 임신·수유 중이라면 전문가 상담이 필요할 수 있어요.</div>`;
+
+    // ── 영양제 우선순위 스택
+    if (!isChildMode && nutrients.length) {
+      const RANK_COLORS = ['#16a34a','#2563eb','#9333ea','#d97706'];
+      tab0 += `<div class="rs-priority">
+        <div class="rs-priority-title">💊 영양제 섭취 우선순위</div>
+        ${nutrients.slice(0, 4).map((n, i) => `
+          <div class="rs-priority-item" onclick="switchResultTab(3,document.querySelectorAll('.rtab')[3])">
+            <div class="rs-rank-badge" style="background:${RANK_COLORS[i]};">${i+1}</div>
+            <div class="rs-rank-icon">${nutrientIcon(n.name)}</div>
+            <div class="rs-rank-info">
+              <div class="rs-rank-name">${n.name}</div>
+              ${n.name_en ? `<div class="rs-rank-en">${n.name_en}</div>` : ''}
+            </div>
+            ${n.daily_intake ? `<div class="rs-rank-dose">${n.daily_intake.amount}</div>` : ''}
+            <span class="rs-rank-arrow">›</span>
+          </div>`).join('')}
+      </div>`;
+    }
+
+    // ── 주의 배너
+    const warnings = [];
+    if (meta.top_warning) warnings.push(meta.top_warning);
+    if (isChildMode) warnings.push('어린이(7~12세)는 보호자 · 전문가와 상담 후 복용하세요');
+    else if (nutrients.some(n => (n.cautions||{}).level === 'consult'))
+      warnings.push('일부 성분은 전문가 상담 후 복용하세요');
+    if (warnings.length) {
+      tab0 += warnings.map(w => `<div class="rs-warn">⚠️ ${w}</div>`).join('');
+    }
+    tab0 += `<div class="disclaimer-box">ℹ️ 의료적 진단이 아닙니다 · 복용 중인 약이 있거나 임신·수유 중이라면 전문가 상담이 필요할 수 있어요</div>`;
   }
 
   // ── 탭1: 음식 ────────────────────────────────────
+  const CAT_COLOR = {
+    '채소':'#16a34a','과일':'#ea580c','단백질':'#2563eb','유제품':'#7c3aed',
+    '생선':'#0891b2','탄수화물':'#d97706','건강보조식품':'#059669','견과류':'#92400e',
+    '발효식품':'#6d28d9','통곡물':'#b45309','복합탄수화물':'#b45309','항산화 식품':'#dc2626',
+    '건강한 지방':'#0d9488','향신채':'#65a30d','십자화과 채소':'#15803d','음료':'#0284c7',
+  };
   let tab1 = '';
   if (foods.length) {
-    tab1 += `<div class="result-section"><div class="result-section-title"><span>🥗</span> 추천 음식</div><div class="food-grid">`;
+    tab1 += `<div class="result-section"><div class="result-section-title"><span>🥗</span> 추천 음식 <span class="rs-count-label">${foods.length}가지</span></div><div class="food-grid-v2">`;
     for (let fi = 0; fi < foods.length; fi++) {
       const f = foods[fi];
       const isSec = f.goal_key && f.goal_key !== primaryKey;
-      const foodBadge = goalBadgeHtml(f, primaryKey, multiGoal);
-      const rid = `recipe-${fi}`;
+      const rid   = `recipe-${fi}`;
       const recipes = f.recipes || (f.recipe ? [Object.assign({label:'기본'}, f.recipe)] : []);
+      const catColor = CAT_COLOR[f.category] || '#16a34a';
       const foodNutrients = FOOD_NUTRIENTS_MAP[f.name] || [];
-      const nutrientBadgesHtml = foodNutrients.length
-        ? `<div class="food-nutrient-badges">${foodNutrients.map(n => `<span class="food-nutrient-badge">${n}</span>`).join('')}</div>` : '';
+      const secBadge = isSec && f.goal_key ? `<span class="food-goal-badge sec">${GOAL_LABEL_MAP[f.goal_key]||''}</span>` : '';
+      const suppBadge = f.category === '건강보조식품' ? `<span class="food-goal-badge supp">건강기능식품</span>` : '';
+
       let recipesHtml = '';
       if (recipes.length) {
-        const tabs = recipes.map((r, ri) =>
-          `<button class="recipe-tab${ri===0?' active':''}" onclick="switchRecipe('${rid}',${ri},this)">${r.label||'기본'}</button>`
-        ).join('');
-        const panels = recipes.map((r, ri) =>
-          `<div class="recipe-panel${ri===0?'':' hidden'}" id="${rid}-p${ri}">
-            <div class="recipe-header"><span class="recipe-name">${r.name}</span><span class="recipe-time">⏱ ${r.time}</span></div>
-            <ol class="recipe-steps">${r.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
-          </div>`
-        ).join('');
-        recipesHtml = `
-        <button class="recipe-toggle" onclick="toggleRecipe('${rid}', this)">🍳 레시피 보기</button>
-        <div class="recipe-box" id="${rid}"><div class="recipe-tabs">${tabs}</div>${panels}</div>`;
+        const rTabs   = recipes.map((r,ri) => `<button class="recipe-tab${ri===0?' active':''}" onclick="switchRecipe('${rid}',${ri},this)">${r.label||'기본'}</button>`).join('');
+        const rPanels = recipes.map((r,ri) => `<div class="recipe-panel${ri===0?'':' hidden'}" id="${rid}-p${ri}"><div class="recipe-header"><span class="recipe-name">${r.name}</span><span class="recipe-time">⏱ ${r.time}</span></div><ol class="recipe-steps">${r.steps.map(s=>`<li>${s}</li>`).join('')}</ol></div>`).join('');
+        recipesHtml = `<button class="recipe-toggle" onclick="toggleRecipe('${rid}',this)">🍳 레시피 보기</button><div class="recipe-box" id="${rid}"><div class="recipe-tabs">${rTabs}</div>${rPanels}</div>`;
       }
-      const matchBadges = getFoodMatchBadges(f, prof.age_group || prof.age_label, f.goal_key || primaryKey);
-      const matchBadgesHtml = matchBadges.length
-        ? `<div class="food-match-badges">${matchBadges.map(b => `<span class="food-match-badge ${b.cls}">${b.text}</span>`).join('')}</div>` : '';
-      tab1 += `<div class="food-card${isSec ? ' secondary-goal' : ''}">
-        <div class="food-card-icon">${foodIcon(f.name)}</div>
-        <div class="food-card-name">${f.name} ${foodBadge}${f.category === '건강보조식품' ? '<span class="food-supp-badge">건강기능식품</span>' : ''}</div>
-        ${nutrientBadgesHtml}${matchBadgesHtml}
-        <div class="food-card-reason">${f.reason || ''}</div>
-        ${f.serving_suggestion ? `<div class="food-card-tip">🍽️ ${f.serving_suggestion}</div>` : ''}
+
+      tab1 += `<div class="food-card-v2${isSec?' secondary-goal':''}">
+        <div class="fv2-top" style="--cat:${catColor}">
+          <div class="fv2-icon-wrap"><span class="fv2-icon">${foodIcon(f.name)}</span></div>
+          <div class="fv2-meta">
+            <div class="fv2-name">${f.name}${secBadge}${suppBadge}</div>
+            ${f.category ? `<div class="fv2-cat" style="color:${catColor}">${f.category}</div>` : ''}
+          </div>
+        </div>
+        ${foodNutrients.length ? `<div class="fv2-nutrients">${foodNutrients.map(n=>`<span class="fv2-nbadge">${n}</span>`).join('')}</div>` : ''}
+        <div class="fv2-reason">${f.reason || ''}</div>
+        ${f.serving_suggestion ? `<div class="fv2-tip"><span class="fv2-tip-label">🍽️ 섭취 방법</span>${f.serving_suggestion}</div>` : ''}
         ${recipesHtml}
       </div>`;
     }
@@ -861,33 +894,36 @@ function renderResultCards(meta) {
   }
 
   // ── 탭2: 생활습관 ─────────────────────────────────
+  const MEDAL = ['🥇','🥈','🥉'];
+  const DIFF_CFG = {
+    '쉬움':   { color:'#16a34a', bg:'#f0fdf4', dots:1, label:'쉬움' },
+    '보통':   { color:'#d97706', bg:'#fffbeb', dots:2, label:'보통' },
+    '어려움': { color:'#dc2626', bg:'#fef2f2', dots:3, label:'어려움' },
+  };
   let tab2 = '';
   if (habits.length) {
-    const DIFF_META = {
-      '쉬움': { cls:'diff-easy', bar:1, label:'쉬움' },
-      '보통': { cls:'diff-medium', bar:2, label:'보통' },
-      '어려움': { cls:'diff-hard', bar:3, label:'어려움' },
-    };
-    tab2 += `<div class="result-section"><div class="result-section-title"><span>🏃</span> 생활습관 제안</div><div class="habit-list">`;
+    tab2 += `<div class="result-section"><div class="result-section-title"><span>🏃</span> 생활습관 제안 <span class="rs-count-label">${habits.length}가지</span></div><div class="habit-list-v2">`;
     habits.forEach((h, hi) => {
-      const hIsSec = h.goal_key && h.goal_key !== primaryKey;
-      const hBadge = goalBadgeHtml(h, primaryKey, multiGoal);
-      const dm = DIFF_META[h.difficulty] || DIFF_META['보통'];
-      const bars = [1,2,3].map(n => `<span class="diff-bar${n <= dm.bar ? ' filled' : ''}"></span>`).join('');
-      tab2 += `<div class="habit-card${hIsSec ? ' secondary-goal' : ''}">
-        <div class="habit-rank">${hi + 1}순위</div>
-        <div class="habit-card-icon">${habitIcon(h.title)}</div>
-        <div class="habit-card-body">
-          <div class="habit-card-header">
-            <span class="habit-card-title">${h.title}</span>
-            ${hBadge}
-            ${h.frequency ? `<span class="badge badge-freq">${h.frequency}</span>` : ''}
+      const dc = DIFF_CFG[h.difficulty] || DIFF_CFG['보통'];
+      const dots = [1,2,3].map(n=>`<span class="hv2-dot${n<=dc.dots?' on':''}" style="${n<=dc.dots?'background:'+dc.color:''}"></span>`).join('');
+      const secBadge = (h.goal_key && h.goal_key !== primaryKey) ? `<span class="food-goal-badge sec">${GOAL_LABEL_MAP[h.goal_key]||''}</span>` : '';
+      tab2 += `<div class="habit-card-v2">
+        <div class="hv2-left">
+          <div class="hv2-medal">${MEDAL[hi] || `${hi+1}`}</div>
+          <div class="hv2-icon">${habitIcon(h.title)}</div>
+        </div>
+        <div class="hv2-body">
+          <div class="hv2-header">
+            <span class="hv2-title">${h.title}</span>${secBadge}
+            ${h.frequency ? `<span class="hv2-freq">${h.frequency}</span>` : ''}
           </div>
-          <div class="habit-meta-row">
-            <span class="habit-effect">⚡ ${h.effect || h.description || ''}</span>
-            <span class="habit-diff ${dm.cls}"><span class="diff-bars">${bars}</span>${dm.label}</span>
+          <div class="hv2-effect">${h.effect || h.description || ''}</div>
+          <div class="hv2-footer">
+            <div class="hv2-diff" style="background:${dc.bg};color:${dc.color}">
+              <span class="hv2-dots">${dots}</span> ${dc.label}
+            </div>
+            ${h.start_tip ? `<div class="hv2-tip">▶ ${h.start_tip}</div>` : ''}
           </div>
-          ${h.start_tip ? `<div class="habit-start-tip">▶ 시작법: ${h.start_tip}</div>` : ''}
         </div>
       </div>`;
     });
@@ -897,6 +933,17 @@ function renderResultCards(meta) {
   }
 
   // ── 탭3: 영양제 + 쇼핑 ───────────────────────────
+  const CAUTION_CFG = {
+    info:    { color:'#2563eb', bg:'#eff6ff', border:'#bfdbfe', label:'일반 정보',     icon:'ℹ️' },
+    warning: { color:'#d97706', bg:'#fffbeb', border:'#fde68a', label:'주의 필요',     icon:'⚠️' },
+    consult: { color:'#dc2626', bg:'#fef2f2', border:'#fecaca', label:'전문가 상담',   icon:'🚨' },
+  };
+  const PRIO_GRAD = [
+    'linear-gradient(135deg,#16a34a,#22c55e)',
+    'linear-gradient(135deg,#2563eb,#60a5fa)',
+    'linear-gradient(135deg,#9333ea,#c084fc)',
+    'linear-gradient(135deg,#d97706,#fbbf24)',
+  ];
   let tab3 = '';
   if (isChildMode) {
     tab3 += `<div class="result-section child-nutrition-notice">
@@ -908,88 +955,96 @@ function renderResultCards(meta) {
       </div>
     </div>`;
   } else if (nutrients.length) {
-    const REC_LEVEL = {
-      '높음': { cls:'rl-high', label:'추천도 높음' },
-      '중간': { cls:'rl-mid', label:'추천도 중간' },
-      '보통': { cls:'rl-normal', label:'추천도 보통' },
-    };
-    tab3 += `<div class="result-section"><div class="result-section-title"><span>💊</span> 영양 성분 제안</div><div class="nutrient-list">`;
+    tab3 += `<div class="result-section"><div class="result-section-title"><span>💊</span> 영양 성분 <span class="rs-count-label">${nutrients.length}가지</span></div><div class="nutrient-list-v2">`;
     nutrients.forEach((n, i) => {
-      const c = n.cautions || {};
+      const c   = n.cautions || {};
       const lvl = c.level || 'info';
-      const isSecondary = n.goal_key && n.goal_key !== primaryKey;
-      const goalBadge = goalBadgeHtml(n, primaryKey, multiGoal);
-      const rl = REC_LEVEL[n.recommendation_level] || REC_LEVEL['중간'];
-      const ageCtxHtml = n.age_boosted && n.age_context ? `<span class="nc-age-ctx">🎯 ${n.age_context}</span>` : '';
-      const foodFirstHtml = (n.food_first||[]).length
-        ? `<div class="nc-food-first">🥗 먼저 해볼 것: <span>${n.food_first.join(' · ')}</span></div>` : '';
-      const suppTipHtml = n.supplement_tip
-        ? `<div class="nc-supp-tip">💊 영양제로 갈 경우: ${n.supplement_tip}</div>` : '';
-      let tier2 = '';
-      if (n.daily_intake || n.best_time || (c.interaction_flags||[]).length) {
-        tier2 += `<details class="nc-tier2"><summary class="nc-tier2-summary">📋 상세 복용 정보 <span class="caution-chevron">▾</span></summary><div class="nc-tier2-body">`;
-        if (n.daily_intake) tier2 += `<div class="nc-detail-row"><span class="nc-detail-label">📊 하루 권장량</span><span>${n.daily_intake.amount}</span>${n.daily_intake.note ? `<span class="nc-detail-note">${n.daily_intake.note}</span>` : ''}</div>`;
-        if (n.best_time)    tier2 += `<div class="nc-detail-row"><span class="nc-detail-label">⏰ 복용 시간</span><span>${n.best_time.when}</span>${n.best_time.tip ? `<span class="nc-detail-note">${n.best_time.tip}</span>` : ''}</div>`;
-        if ((c.interaction_flags||[]).length) tier2 += `<div class="nc-detail-row"><span class="nc-detail-label">🔗 상호작용</span><span>${c.interaction_flags.join(' / ')}</span></div>`;
-        tier2 += `</div></details>`;
+      const cc  = CAUTION_CFG[lvl] || CAUTION_CFG.info;
+      const grad = PRIO_GRAD[i] || PRIO_GRAD[PRIO_GRAD.length-1];
+      const secBadge = (n.goal_key && n.goal_key !== primaryKey) ? `<span class="food-goal-badge sec">${GOAL_LABEL_MAP[n.goal_key]||''}</span>` : '';
+      const ageCtx = n.age_boosted && n.age_context ? `<div class="nv2-age-ctx">🎯 ${n.age_context}</div>` : '';
+      const foodFirst = (n.food_first||[]).length
+        ? `<div class="nv2-food-first"><span class="nv2-ff-label">🥗 먼저 식사로</span>${n.food_first.map(f=>`<span class="nv2-ff-item">${f}</span>`).join('')}</div>` : '';
+
+      let dosageHtml = '';
+      if (n.daily_intake || n.best_time) {
+        dosageHtml += `<div class="nv2-dosage-row">`;
+        if (n.daily_intake) dosageHtml += `<div class="nv2-dosage-pill"><span class="nv2-dp-label">📊 권장량</span><strong>${n.daily_intake.amount}</strong></div>`;
+        if (n.best_time)    dosageHtml += `<div class="nv2-dosage-pill"><span class="nv2-dp-label">⏰ 복용 시간</span><strong>${n.best_time.when}</strong></div>`;
+        dosageHtml += `</div>`;
+        if (n.daily_intake?.note) dosageHtml += `<div class="nv2-note">${n.daily_intake.note}</div>`;
+        if (n.best_time?.tip)     dosageHtml += `<div class="nv2-note">${n.best_time.tip}</div>`;
       }
-      let tier3 = '';
+
+      let interactionHtml = '';
+      if ((c.interaction_flags||[]).length) {
+        interactionHtml = `<div class="nv2-interaction">🔗 상호작용: ${c.interaction_flags.join(' / ')}</div>`;
+      }
+
+      let cautionHtml = '';
       if ((c.items||[]).length) {
-        const lvlClass = { info:'caution-info', warning:'caution-warning', consult:'caution-consult' }[lvl] || 'caution-info';
-        const tier3Label = lvl === 'consult' ? '🚨 전문가 상담 필요 항목' : lvl === 'warning' ? '⚠️ 주의사항' : 'ℹ️ 세부 정보';
-        tier3 = `<details class="nc-tier3 caution-details ${lvlClass}"><summary class="caution-summary">${tier3Label} <span class="caution-chevron">▾</span></summary><ul class="caution-list">${c.items.map(it=>`<li>${it}</li>`).join('')}</ul></details>`;
+        cautionHtml = `<details class="nv2-caution" style="--cc:${cc.color};--cb:${cc.bg};--cbr:${cc.border}">
+          <summary class="nv2-caution-sum">${cc.icon} ${cc.label} <span class="caution-chevron">▾</span></summary>
+          <ul class="nv2-caution-list">${c.items.map(it=>`<li>${it}</li>`).join('')}</ul>
+        </details>`;
       }
-      tab3 += `<div class="nutrient-card${isSecondary ? ' secondary-goal' : ''}">
-        <div class="nc-header">
-          <div class="nc-icon">${nutrientIcon(n.name)}</div>
-          <div class="nc-title-block">
-            <div class="nc-name">${n.name} ${goalBadge}${ageCtxHtml}</div>
-            ${n.name_en ? `<div class="nc-name-en">${n.name_en}</div>` : ''}
+
+      tab3 += `<div class="nutrient-card-v2">
+        <div class="nv2-header">
+          <div class="nv2-rank" style="background:${grad}">${i+1}</div>
+          <div class="nv2-icon">${nutrientIcon(n.name)}</div>
+          <div class="nv2-title">
+            <div class="nv2-name">${n.name}${secBadge}</div>
+            ${n.name_en ? `<div class="nv2-en">${n.name_en}</div>` : ''}
           </div>
-          <span class="nc-rec-level ${rl.cls}">${rl.label}</span>
+          <div class="nv2-caution-badge" style="background:${cc.bg};color:${cc.color};border-color:${cc.border}">${cc.icon} ${cc.label}</div>
         </div>
-        <div class="nc-reason">${n.reason || ''}</div>
-        ${foodFirstHtml}${suppTipHtml}${tier2}${tier3}
+        ${ageCtx}
+        <div class="nv2-reason">${n.reason || ''}</div>
+        ${foodFirst}
+        ${dosageHtml}
+        ${interactionHtml}
+        ${n.supplement_tip ? `<div class="nv2-supp-tip">💊 ${n.supplement_tip}</div>` : ''}
+        ${cautionHtml}
       </div>`;
     });
     tab3 += `</div></div>`;
 
     // 쇼핑
     tab3 += `<div class="result-section">
-      <div class="result-section-title"><span>🛒</span> 쇼핑몰에서 검색하기</div>
-      <div class="shop-notice">💡 아래 버튼을 클릭하면 각 쇼핑몰에서 직접 검색됩니다. 이 서비스는 특정 제품을 추천하거나 가격을 직접 비교하지 않습니다.</div>
-      <div class="shop-cards">`;
-    for (const n of nutrients) {
+      <div class="result-section-title"><span>🛒</span> 쇼핑몰 검색</div>
+      <div class="shop-notice">💡 아래 버튼으로 각 쇼핑몰에서 직접 검색할 수 있어요 · 특정 제품을 추천하지 않습니다</div>
+      <div class="shop-cards-v2">`;
+    nutrients.forEach((n, i) => {
       const qKo = encodeURIComponent(n.name);
       const qEn = encodeURIComponent(n.name_en || n.name);
-      tab3 += `<div class="shop-card">
-        <div class="shop-card-name">${nutrientIcon(n.name)} <strong>${n.name}</strong>${n.name_en ? `<span class="shop-name-en">${n.name_en}</span>` : ''}</div>
-        <div class="shop-card-btns">
-          <a class="shop-btn shop-naver" href="https://search.shopping.naver.com/search/all?query=${qKo}" target="_blank" rel="noopener"><span class="shop-btn-logo">N</span>네이버 쇼핑</a>
-          <a class="shop-btn shop-coupang" href="https://www.coupang.com/np/search?q=${qKo}" target="_blank" rel="noopener"><span class="shop-btn-logo">🛒</span>쿠팡</a>
-          ${n.name_en ? `<a class="shop-btn shop-iherb" href="https://www.iherb.com/search?kw=${qEn}" target="_blank" rel="noopener"><span class="shop-btn-logo">🌿</span>iHerb</a>` : ''}
+      tab3 += `<div class="shop-card-v2">
+        <div class="shop-v2-left">
+          <span class="shop-v2-rank" style="background:${PRIO_GRAD[i]||PRIO_GRAD[PRIO_GRAD.length-1]}">${i+1}</span>
+          <span class="shop-v2-icon">${nutrientIcon(n.name)}</span>
+          <div class="shop-v2-info">
+            <div class="shop-v2-name">${n.name}</div>
+            ${n.name_en ? `<div class="shop-v2-en">${n.name_en}</div>` : ''}
+          </div>
+        </div>
+        <div class="shop-v2-btns">
+          <a class="shop-btn shop-naver" href="https://search.shopping.naver.com/search/all?query=${qKo}" target="_blank" rel="noopener">N</a>
+          <a class="shop-btn shop-coupang" href="https://www.coupang.com/np/search?q=${qKo}" target="_blank" rel="noopener">🛒</a>
+          ${n.name_en ? `<a class="shop-btn shop-iherb" href="https://www.iherb.com/search?kw=${qEn}" target="_blank" rel="noopener">🌿</a>` : ''}
         </div>
       </div>`;
-    }
+    });
     tab3 += `</div></div>`;
   } else {
     tab3 = `<div class="tab-empty">추천 영양제 정보가 없습니다.</div>`;
   }
 
-  // ── 탭별 intro 문구 ──────────────────────────────
-  const TAB_INTRO = [
-    '', // 요약은 summary card가 이미 intro 역할
-    `<div class="tab-intro">평소 식단에 조금씩 추가해보세요 — 거창하게 바꿀 필요 없어요 🥗</div>`,
-    `<div class="tab-intro">작은 습관이 쌓이면 몸이 달라집니다 — 가장 쉬운 것부터 시작해보세요 🏃</div>`,
-    isChildMode ? '' : `<div class="tab-intro">부족한 영양소를 보충하는 방법이에요 — 식사로 먼저, 그래도 부족하면 영양제를 고려하세요 💊</div>`,
-  ];
-
-  // ── 탭 바 조립 ────────────────────────────────────
+  // ── 탭 바 ─────────────────────────────────────────
   const tabBar = `<div class="result-tabs">
     <button class="rtab active" onclick="switchResultTab(0,this)">📋 요약</button>
     <button class="rtab" onclick="switchResultTab(1,this)">🥗 음식 <span class="rtab-count">${foods.length}</span></button>
-    <button class="rtab" onclick="switchResultTab(2,this)">🏃 생활습관 <span class="rtab-count">${habits.length}</span></button>
-    <button class="rtab" onclick="switchResultTab(3,this)">${isChildMode ? '🥦 영양 가이드' : '💊 영양제 <span class="rtab-count">' + nutrients.length + '</span>'}</button>
+    <button class="rtab" onclick="switchResultTab(2,this)">🏃 습관 <span class="rtab-count">${habits.length}</span></button>
+    <button class="rtab" onclick="switchResultTab(3,this)">${isChildMode ? '🥦 가이드' : '💊 영양제 <span class="rtab-count">'+nutrients.length+'</span>'}</button>
   </div>`;
 
   const feedbackHtml = `
@@ -1002,10 +1057,10 @@ function renderResultCards(meta) {
     </div>`;
 
   el.innerHTML = tabBar +
-    `<div class="rtab-panel active">${TAB_INTRO[0]}${tab0}${feedbackHtml}</div>` +
-    `<div class="rtab-panel">${TAB_INTRO[1]}${tab1}</div>` +
-    `<div class="rtab-panel">${TAB_INTRO[2]}${tab2}</div>` +
-    `<div class="rtab-panel">${TAB_INTRO[3]}${tab3}</div>`;
+    `<div class="rtab-panel active">${tab0}${feedbackHtml}</div>` +
+    `<div class="rtab-panel">${tab1}</div>` +
+    `<div class="rtab-panel">${tab2}</div>` +
+    `<div class="rtab-panel">${tab3}</div>`;
 }
 
 // ── 공유 (결과 텍스트 복사) ───────────────────────
