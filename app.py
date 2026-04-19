@@ -4,15 +4,20 @@
 """
 import json
 import os
+import shutil
 import subprocess
 import sys
 import threading
+import uuid
 from pathlib import Path
 
 from flask import Flask, jsonify, render_template, request
 
 PROJECT_ROOT = Path(__file__).parent
 app = Flask(__name__)
+
+# Vercel 환경에서는 /tmp 아래에 작업 디렉토리를 만들어 사용
+_IS_VERCEL = os.environ.get("VERCEL") == "1"
 
 # 동시 실행 방지 락
 _pipeline_lock = threading.Lock()
@@ -28,6 +33,7 @@ def run_pipeline():
     if not _pipeline_lock.acquire(blocking=False):
         return jsonify({"error": "다른 추천이 진행 중입니다. 잠시 후 다시 시도해주세요."}), 429
 
+    work_dir = None
     try:
         data = request.get_json(force=True) or {}
         # Support both array (health_goals) and legacy scalar (health_goal)
@@ -48,16 +54,24 @@ def run_pipeline():
         if not all([health_goal, age_group, gender]):
             return jsonify({"error": "모든 항목을 선택해주세요."}), 400
 
-        env = {**os.environ, "PYTHONUTF8": "1"}
+        # Vercel: /tmp 아래에 요청별 임시 작업 디렉토리 생성
+        if _IS_VERCEL:
+            work_dir = Path("/tmp") / f"hca-{uuid.uuid4().hex}"
+            work_dir.mkdir(parents=True, exist_ok=True)
+        else:
+            work_dir = PROJECT_ROOT
 
-        # 리셋
-        subprocess.run(
-            [sys.executable, "run.py", "--reset"],
-            capture_output=True, cwd=PROJECT_ROOT, env=env,
-        )
+        env = {**os.environ, "PYTHONUTF8": "1", "HCA_WORKDIR": str(work_dir)}
+
+        # 리셋 (로컬 모드에서만 의미 있음)
+        if not _IS_VERCEL:
+            subprocess.run(
+                [sys.executable, str(PROJECT_ROOT / "run.py"), "--reset"],
+                capture_output=True, cwd=PROJECT_ROOT, env=env,
+            )
 
         # 입력 파일 생성
-        intake_dir = PROJECT_ROOT / "output" / "intake"
+        intake_dir = work_dir / "output" / "intake"
         intake_dir.mkdir(parents=True, exist_ok=True)
         with open(intake_dir / "raw_minimal_input.json", "w", encoding="utf-8") as f:
             json.dump(
@@ -76,16 +90,14 @@ def run_pipeline():
 
         # 파이프라인 실행
         result = subprocess.run(
-            [sys.executable, "run.py", "--skip-shopping"],
+            [sys.executable, str(PROJECT_ROOT / "run.py"), "--skip-shopping"],
             capture_output=True, text=True,
             encoding="utf-8", errors="replace",
             cwd=PROJECT_ROOT, env=env,
         )
 
         if result.returncode != 0:
-            # stdout/stderr 모두에서 에러 메시지 추출
             combined = result.stdout + result.stderr
-            # normalize.py가 stdout에 JSON 에러를 출력하는 경우 파싱
             for line in result.stdout.splitlines():
                 try:
                     obj = json.loads(line)
@@ -100,8 +112,8 @@ def run_pipeline():
             return jsonify({"error": err_msg}), 400
 
         # 결과 읽기
-        md_path   = PROJECT_ROOT / "output" / "final" / "user_result.md"
-        json_path = PROJECT_ROOT / "output" / "final" / "user_result.json"
+        md_path   = work_dir / "output" / "final" / "user_result.md"
+        json_path = work_dir / "output" / "final" / "user_result.json"
 
         if not json_path.exists():
             return jsonify({"error": "결과 파일을 생성하지 못했습니다. 입력값을 확인해주세요."}), 500
@@ -119,6 +131,9 @@ def run_pipeline():
 
     finally:
         _pipeline_lock.release()
+        # Vercel 임시 디렉토리 정리
+        if _IS_VERCEL and work_dir and work_dir.exists():
+            shutil.rmtree(work_dir, ignore_errors=True)
 
 
 if __name__ == "__main__":

@@ -157,13 +157,74 @@
       <div class="result-header">
         <span class="result-badge">✅ 추천 완료</span>
         <div class="result-actions">
-          <button class="btn-action" onclick="showWorkflow()" title="워크플로우">📋 워크플로우</button>
+          <button class="btn-action" onclick="toggleEditPanel()" id="edit-panel-btn" title="나이·성별·추가조건 수정">⚙️ 조건 수정</button>
+          <button class="btn-action" onclick="printResult()" title="PDF·인쇄로 저장">🖨️ 인쇄·저장</button>
           <button class="btn-action" onclick="shareResult()" title="링크 복사">🔗 공유</button>
           <button class="btn-action" onclick="saveResult()" title="저장">💾 저장</button>
           <button class="btn-action" onclick="resetGoalOnly()" title="목표만 바꿔서 재추천">🎯 목표 변경</button>
           <button class="btn-reset" onclick="reset()">← 전체 초기화</button>
         </div>
       </div>
+
+      <!-- ── 조건 수정 패널 ─────────────────────── -->
+      <div id="edit-panel" class="edit-panel" style="display:none">
+        <div class="edit-panel-title">⚙️ 조건을 수정하고 다시 추천받으세요</div>
+        <div class="edit-panel-grid">
+          <div class="edit-panel-group">
+            <label class="edit-panel-label">연령대</label>
+            <div class="chip-group chip-group-sm" id="edit-age-group">
+              <button class="chip chip-sm" data-value="어린이 (7~12세)" onclick="editChip('age',this)">어린이</button>
+              <button class="chip chip-sm" data-value="10대" onclick="editChip('age',this)">10대</button>
+              <button class="chip chip-sm" data-value="20대" onclick="editChip('age',this)">20대</button>
+              <button class="chip chip-sm" data-value="30대" onclick="editChip('age',this)">30대</button>
+              <button class="chip chip-sm" data-value="40대" onclick="editChip('age',this)">40대</button>
+              <button class="chip chip-sm" data-value="50대" onclick="editChip('age',this)">50대</button>
+              <button class="chip chip-sm" data-value="60대" onclick="editChip('age',this)">60대</button>
+              <button class="chip chip-sm" data-value="70대 이상" onclick="editChip('age',this)">70대+</button>
+            </div>
+          </div>
+          <div class="edit-panel-group">
+            <label class="edit-panel-label">성별</label>
+            <div class="chip-group chip-group-sm" id="edit-gender-group">
+              <button class="chip chip-sm" data-value="여성" onclick="editChip('gender',this)">여성</button>
+              <button class="chip chip-sm" data-value="남성" onclick="editChip('gender',this)">남성</button>
+              <button class="chip chip-sm" data-value="무관" onclick="editChip('gender',this)">무관</button>
+            </div>
+          </div>
+          <div class="edit-panel-group">
+            <label class="edit-panel-label">알레르기·식이제한</label>
+            <div class="chip-group chip-group-sm" id="edit-allergy-group">
+              <button class="chip chip-sm" data-value="견과류" onclick="editToggle('allergy',this)">🥜 견과류</button>
+              <button class="chip chip-sm" data-value="유제품" onclick="editToggle('allergy',this)">🥛 유제품</button>
+              <button class="chip chip-sm" data-value="해산물" onclick="editToggle('allergy',this)">🦐 해산물</button>
+              <button class="chip chip-sm" data-value="밀·글루텐" onclick="editToggle('allergy',this)">🌾 밀·글루텐</button>
+              <button class="chip chip-sm" data-value="채식" onclick="editToggle('allergy',this)">🥦 채식</button>
+            </div>
+          </div>
+          <div class="edit-panel-group">
+            <label class="edit-panel-label">기저질환</label>
+            <div class="chip-group chip-group-sm" id="edit-condition-group">
+              <button class="chip chip-sm" data-value="고혈압" onclick="editToggle('condition',this)">🩺 고혈압</button>
+              <button class="chip chip-sm" data-value="당뇨" onclick="editToggle('condition',this)">💉 당뇨</button>
+              <button class="chip chip-sm" data-value="갑상선" onclick="editToggle('condition',this)">🦋 갑상선</button>
+              <button class="chip chip-sm" data-value="신장질환" onclick="editToggle('condition',this)">🫘 신장질환</button>
+              <button class="chip chip-sm" data-value="간질환" onclick="editToggle('condition',this)">🫀 간질환</button>
+            </div>
+          </div>
+          <div class="edit-panel-group">
+            <label class="edit-panel-label">복용 중인 약</label>
+            <div class="chip-group chip-group-sm" id="edit-medication-group">
+              <button class="chip chip-sm" data-value="혈압약" onclick="editToggle('medication',this)">💊 혈압약</button>
+              <button class="chip chip-sm" data-value="당뇨약" onclick="editToggle('medication',this)">💊 당뇨약</button>
+              <button class="chip chip-sm" data-value="항응고제" onclick="editToggle('medication',this)">🩸 항응고제</button>
+              <button class="chip chip-sm" data-value="항우울제" onclick="editToggle('medication',this)">🧠 항우울제</button>
+              <button class="chip chip-sm" data-value="없음" onclick="editToggle('medication',this)">✅ 없음</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn-rerun" onclick="rerunFromEdit()">🔄 이 조건으로 다시 추천받기</button>
+      </div>
+
       <!-- 저장된 결과 불러오기 배너 -->
       <div id="saved-banner" class="saved-banner" style="display:none">
         💾 저장된 추천 결과입니다.
@@ -865,18 +926,29 @@ function renderResultCards(meta) {
 
   // 쇼핑 검색 (어린이 모드에서는 숨김)
   if (!isChildMode && nutrients.length) {
-    html += `<div class="result-section"><div class="result-section-title"><span>🛒</span> 영양 성분 검색</div>
-      <div class="shop-table-wrap"><table class="shop-table"><thead><tr><th>성분</th><th>네이버</th><th>쿠팡</th><th>iHerb</th></tr></thead><tbody>`;
+    html += `<div class="result-section">
+      <div class="result-section-title"><span>🛒</span> 쇼핑몰에서 검색하기</div>
+      <div class="shop-notice">💡 아래 버튼을 클릭하면 각 쇼핑몰에서 직접 검색됩니다. 이 서비스는 특정 제품을 추천하거나 가격을 직접 비교하지 않습니다.</div>
+      <div class="shop-cards">`;
     for (const n of nutrients) {
-      const qKo = encodeURIComponent(n.name), qEn = encodeURIComponent(n.name_en || n.name);
-      html += `<tr>
-        <td><strong>${nutrientIcon(n.name)} ${n.name}</strong></td>
-        <td><a class="shop-link shop-naver"   href="https://search.shopping.naver.com/search/all?query=${qKo}" target="_blank">검색</a></td>
-        <td><a class="shop-link shop-coupang" href="https://www.coupang.com/np/search?q=${qKo}" target="_blank">검색</a></td>
-        <td>${n.name_en ? `<a class="shop-link shop-iherb" href="https://www.iherb.com/search?kw=${qEn}" target="_blank">검색</a>` : '-'}</td>
-      </tr>`;
+      const qKo = encodeURIComponent(n.name);
+      const qEn = encodeURIComponent(n.name_en || n.name);
+      html += `<div class="shop-card">
+        <div class="shop-card-name">${nutrientIcon(n.name)} <strong>${n.name}</strong>${n.name_en ? `<span class="shop-name-en">${n.name_en}</span>` : ''}</div>
+        <div class="shop-card-btns">
+          <a class="shop-btn shop-naver" href="https://search.shopping.naver.com/search/all?query=${qKo}" target="_blank" rel="noopener">
+            <span class="shop-btn-logo">N</span>네이버 쇼핑
+          </a>
+          <a class="shop-btn shop-coupang" href="https://www.coupang.com/np/search?q=${qKo}" target="_blank" rel="noopener">
+            <span class="shop-btn-logo">🛒</span>쿠팡
+          </a>
+          ${n.name_en ? `<a class="shop-btn shop-iherb" href="https://www.iherb.com/search?kw=${qEn}" target="_blank" rel="noopener">
+            <span class="shop-btn-logo">🌿</span>iHerb
+          </a>` : ''}
+        </div>
+      </div>`;
     }
-    html += `</tbody></table></div></div>`;
+    html += `</div></div>`;
   }
 
   html += `<div class="disclaimer-box">ℹ️ 이 내용은 의료적 진단이 아닙니다. 복용 중인 약이나 임신·수유 중이라면 전문가 상담이 필요할 수 있어요.</div>`;

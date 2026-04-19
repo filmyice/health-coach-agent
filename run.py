@@ -28,6 +28,9 @@ if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
 PROJECT_ROOT = Path(__file__).parent
 SKILLS = PROJECT_ROOT / ".claude" / "skills"
 
+# Vercel/서버리스 환경에서는 HCA_WORKDIR 환경변수로 작업 디렉토리를 재지정
+_WORK_DIR = Path(os.environ["HCA_WORKDIR"]) if os.environ.get("HCA_WORKDIR") else PROJECT_ROOT
+
 # ─────────────────────────────────────────────
 # 스텝 정의
 # type: "script" | "agent" | "agent+script"
@@ -219,7 +222,7 @@ def header(msg): print(f"\n{BOLD}{msg}{RESET}")
 def _merge_raw_crawl_results():
     """플랫폼별 raw_*_results.json → raw_product_results.json 병합."""
     import json as _json
-    shopping_dir = PROJECT_ROOT / "output" / "shopping"
+    shopping_dir = _WORK_DIR / "output" / "shopping"
     merged = []
     for f in sorted(shopping_dir.glob("raw_*_results.json")):
         try:
@@ -244,7 +247,7 @@ def run_script(script_path: Path, args: list[str] = None) -> bool:
         encoding="utf-8",
         errors="replace",
         env=env,
-        cwd=PROJECT_ROOT,
+        cwd=_WORK_DIR,
     )
     if result.stdout.strip():
         for line in result.stdout.strip().splitlines():
@@ -264,7 +267,7 @@ def check_playwright() -> bool:
 
 
 def output_exists(path_str: str) -> bool:
-    return (PROJECT_ROOT / path_str).exists()
+    return (_WORK_DIR / path_str).exists()
 
 
 def is_conditional_skipped(step: dict) -> bool:
@@ -272,7 +275,7 @@ def is_conditional_skipped(step: dict) -> bool:
     cond_key  = step.get("conditional_key")
     if not cond_file or not cond_key:
         return False
-    cond_path = PROJECT_ROOT / cond_file
+    cond_path = _WORK_DIR / cond_file
     if not cond_path.exists():
         return True
     with open(cond_path, encoding="utf-8") as f:
