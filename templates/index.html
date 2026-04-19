@@ -12,11 +12,17 @@
   <span class="logo">🌿</span>
   <span class="brand">건강 코치 에이전트</span>
   <span class="tagline">AI 기반 맞춤 건강 추천</span>
+  <button class="btn-dark-mode" id="dark-mode-btn" onclick="toggleDarkMode()" title="다크 모드">
+    <span id="dark-mode-icon">🌙</span>
+  </button>
   <button class="btn-font-size" id="font-size-toggle" onclick="toggleLargeText()" title="글씨 크기 변경">
     <span id="font-size-icon">가</span>
     <span id="font-size-label">큰글씨</span>
   </button>
 </header>
+
+<!-- 스크롤 상단 버튼 -->
+<button id="scroll-top-btn" onclick="scrollToTop()" title="맨 위로">↑</button>
 
 <main>
 
@@ -44,20 +50,20 @@
       <p class="section-title">어떤 건강 고민이 있으신가요?</p>
       <p class="section-sub-hint">가장 신경 쓰이는 것 1~2가지를 선택하세요 · 2개 선택 시 두 목표를 함께 고려합니다</p>
       <div class="goal-grid">
-        <button class="goal-btn" data-value="피로 관리"    onclick="selectGoal(this)"><span class="icon">⚡</span>피로 관리</button>
-        <button class="goal-btn" data-value="수면 관리"    onclick="selectGoal(this)"><span class="icon">🌙</span>수면 관리</button>
-        <button class="goal-btn" data-value="면역 관리"    onclick="selectGoal(this)"><span class="icon">🛡️</span>면역 관리</button>
-        <button class="goal-btn" data-value="눈 건강"      onclick="selectGoal(this)"><span class="icon">👁️</span>눈 건강</button>
-        <button class="goal-btn" data-value="장 건강"      onclick="selectGoal(this)"><span class="icon">🌱</span>장 건강</button>
-        <button class="goal-btn" data-value="뼈 건강"      onclick="selectGoal(this)"><span class="icon">🦴</span>뼈 건강</button>
-        <button class="goal-btn" data-value="피부·항산화"  onclick="selectGoal(this)"><span class="icon">✨</span>피부·항산화</button>
-        <button class="goal-btn" data-value="체중 관리"    onclick="selectGoal(this)"><span class="icon">⚖️</span>체중 관리</button>
-        <button class="goal-btn" data-value="혈당 관리"    onclick="selectGoal(this)"><span class="icon">🩺</span>혈당 관리</button>
-        <button class="goal-btn" data-value="스트레스 관리" onclick="selectGoal(this)"><span class="icon">🧘</span>스트레스 관리</button>
-        <button class="goal-btn" data-value="운동 관리"    onclick="selectGoal(this)"><span class="icon">🏋️</span>운동 관리</button>
-        <button class="goal-btn" data-value="심혈관 건강"  onclick="selectGoal(this)"><span class="icon">❤️</span>심혈관 건강</button>
-        <button class="goal-btn" data-value="모발 건강"    onclick="selectGoal(this)"><span class="icon">💇</span>모발 건강</button>
-        <button class="goal-btn" data-value="간 건강"      onclick="selectGoal(this)"><span class="icon">🫀</span>간 건강</button>
+        <button class="goal-btn" data-value="피로 관리"    onclick="selectGoal(this)"><span class="icon">⚡</span>피로 관리<span class="goal-tip">만성 피로·집중력 저하·체력 부족을 개선하고 싶을 때</span></button>
+        <button class="goal-btn" data-value="수면 관리"    onclick="selectGoal(this)"><span class="icon">🌙</span>수면 관리<span class="goal-tip">잠들기 어렵거나 수면의 질·수면 시간이 부족할 때</span></button>
+        <button class="goal-btn" data-value="면역 관리"    onclick="selectGoal(this)"><span class="icon">🛡️</span>면역 관리<span class="goal-tip">자주 감기에 걸리거나 면역력이 약하다고 느낄 때</span></button>
+        <button class="goal-btn" data-value="눈 건강"      onclick="selectGoal(this)"><span class="icon">👁️</span>눈 건강<span class="goal-tip">눈 피로·건조함·시력 보호가 필요할 때</span></button>
+        <button class="goal-btn" data-value="장 건강"      onclick="selectGoal(this)"><span class="icon">🌱</span>장 건강<span class="goal-tip">소화 불량·변비·장내 환경 개선이 필요할 때</span></button>
+        <button class="goal-btn" data-value="뼈 건강"      onclick="selectGoal(this)"><span class="icon">🦴</span>뼈 건강<span class="goal-tip">골밀도·관절 건강·골다공증 예방이 필요할 때</span></button>
+        <button class="goal-btn" data-value="피부·항산화"  onclick="selectGoal(this)"><span class="icon">✨</span>피부·항산화<span class="goal-tip">피부 탄력·노화 예방·기미·건조함을 개선하고 싶을 때</span></button>
+        <button class="goal-btn" data-value="체중 관리"    onclick="selectGoal(this)"><span class="icon">⚖️</span>체중 관리<span class="goal-tip">체중 감량·체지방 감소·건강한 체형 유지가 목표일 때</span></button>
+        <button class="goal-btn" data-value="혈당 관리"    onclick="selectGoal(this)"><span class="icon">🩺</span>혈당 관리<span class="goal-tip">혈당 안정·당뇨 예방·식후 혈당 급상승을 줄이고 싶을 때</span></button>
+        <button class="goal-btn" data-value="스트레스 관리" onclick="selectGoal(this)"><span class="icon">🧘</span>스트레스 관리<span class="goal-tip">불안·긴장·번아웃·심리적 안정이 필요할 때</span></button>
+        <button class="goal-btn" data-value="운동 관리"    onclick="selectGoal(this)"><span class="icon">🏋️</span>운동 관리<span class="goal-tip">근력 향상·운동 후 회복·DOMS 감소가 필요할 때</span></button>
+        <button class="goal-btn" data-value="심혈관 건강"  onclick="selectGoal(this)"><span class="icon">❤️</span>심혈관 건강<span class="goal-tip">혈압·콜레스테롤·혈액순환 개선이 필요할 때</span></button>
+        <button class="goal-btn" data-value="모발 건강"    onclick="selectGoal(this)"><span class="icon">💇</span>모발 건강<span class="goal-tip">탈모·머리카락 손상·두피 건강이 걱정될 때</span></button>
+        <button class="goal-btn" data-value="간 건강"      onclick="selectGoal(this)"><span class="icon">🫀</span>간 건강<span class="goal-tip">간 기능·해독·지방간 예방이 필요할 때</span></button>
       </div>
       <div id="goal-selected-display" class="goal-selected-display" style="display:none"></div>
     </div>
@@ -986,8 +992,17 @@ function renderResultCards(meta) {
     <button class="rtab" onclick="switchResultTab(3,this)">${isChildMode ? '🥦 영양 가이드' : '💊 영양제 <span class="rtab-count">' + nutrients.length + '</span>'}</button>
   </div>`;
 
+  const feedbackHtml = `
+    <div class="feedback-section" id="feedback-section">
+      <div class="feedback-question">이 추천이 도움이 됐나요?</div>
+      <div class="feedback-btns">
+        <button class="fb-btn" onclick="sendFeedback('좋아요',this)">👍 도움됐어요</button>
+        <button class="fb-btn" onclick="sendFeedback('별로',this)">👎 아쉬워요</button>
+      </div>
+    </div>`;
+
   el.innerHTML = tabBar +
-    `<div class="rtab-panel active">${TAB_INTRO[0]}${tab0}</div>` +
+    `<div class="rtab-panel active">${TAB_INTRO[0]}${tab0}${feedbackHtml}</div>` +
     `<div class="rtab-panel">${TAB_INTRO[1]}${tab1}</div>` +
     `<div class="rtab-panel">${TAB_INTRO[2]}${tab2}</div>` +
     `<div class="rtab-panel">${TAB_INTRO[3]}${tab3}</div>`;
@@ -1093,6 +1108,7 @@ function reset() {
   state.allergy = []; state.condition = []; state.medication = [];
   document.getElementById('extra-note').value = '';
   document.getElementById('error-box').style.display = 'none';
+  localStorage.removeItem('hca_form_state');
   updateGoalDisplay();
   updateBtn();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1226,10 +1242,180 @@ function toggleLargeText() {
   document.getElementById('font-size-toggle').classList.toggle('active', isLarge);
 }
 
-// ── 페이지 로드 시 저장 결과 확인 ────────────────
+// ── 다크 모드 ─────────────────────────────────────
+function toggleDarkMode() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const next = isDark ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  document.getElementById('dark-mode-icon').textContent = next === 'dark' ? '☀️' : '🌙';
+}
+
+// ── 스크롤 상단 FAB ───────────────────────────────
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+window.addEventListener('scroll', () => {
+  const fab = document.getElementById('scroll-top-btn');
+  if (fab) fab.classList.toggle('visible', window.scrollY > 300);
+}, { passive: true });
+
+// ── 인쇄·저장 ────────────────────────────────────
+function printResult() {
+  // 모든 탭 패널을 일시적으로 표시해서 인쇄
+  document.querySelectorAll('.rtab-panel').forEach(p => p.style.display = 'block');
+  window.print();
+  // 인쇄 후 복원
+  setTimeout(() => {
+    document.querySelectorAll('.rtab-panel').forEach((p, i) => {
+      p.style.display = '';
+      p.classList.toggle('active', i === _activeTabIdx);
+    });
+  }, 500);
+}
+let _activeTabIdx = 0;
+
+// ── 탭 전환 (activeIdx 추적) ─────────────────────
+function switchResultTab(idx, tabEl) {
+  _activeTabIdx = idx;
+  document.querySelectorAll('.rtab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  document.querySelectorAll('.rtab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+}
+
+// ── 피드백 ───────────────────────────────────────
+function sendFeedback(val, btn) {
+  document.querySelectorAll('.fb-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  localStorage.setItem('hca_feedback', JSON.stringify({ val, at: new Date().toISOString() }));
+  const q = document.querySelector('.feedback-question');
+  if (q) {
+    q.innerHTML = val === '좋아요'
+      ? '<span class="feedback-thanks">감사해요! 더 좋은 추천을 위해 계속 발전할게요 🌿</span>'
+      : '<span class="feedback-thanks">소중한 의견 감사해요. 더 나은 서비스가 될게요 💪</span>';
+  }
+  document.querySelector('.feedback-btns')?.remove();
+}
+
+// ── 조건 수정 패널 ────────────────────────────────
+function toggleEditPanel() {
+  const panel = document.getElementById('edit-panel');
+  if (!panel) return;
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen) _populateEditPanel();
+}
+
+function _populateEditPanel() {
+  // 현재 state 값으로 edit panel chips 동기화
+  ['age','gender'].forEach(type => {
+    const grpId = `edit-${type}-group`;
+    document.querySelectorAll(`#${grpId} .chip`).forEach(c => {
+      c.classList.toggle('active', c.dataset.value === state[type]);
+    });
+  });
+  ['allergy','condition','medication'].forEach(type => {
+    const grpId = `edit-${type}-group`;
+    document.querySelectorAll(`#${grpId} .chip`).forEach(c => {
+      c.classList.toggle('active', state[type].includes(c.dataset.value));
+    });
+  });
+}
+
+function editChip(type, el) {
+  const grpId = `edit-${type}-group`;
+  document.querySelectorAll(`#${grpId} .chip`).forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function editToggle(type, el) {
+  el.classList.toggle('active');
+}
+
+async function rerunFromEdit() {
+  const panel = document.getElementById('edit-panel');
+  // 연령대
+  const ageEl = document.querySelector('#edit-age-group .chip.active');
+  if (ageEl) state.age = ageEl.dataset.value;
+  // 성별
+  const genderEl = document.querySelector('#edit-gender-group .chip.active');
+  if (genderEl) state.gender = genderEl.dataset.value;
+  // 알레르기
+  state.allergy   = [...document.querySelectorAll('#edit-allergy-group .chip.active')].map(c => c.dataset.value);
+  state.condition = [...document.querySelectorAll('#edit-condition-group .chip.active')].map(c => c.dataset.value);
+  state.medication= [...document.querySelectorAll('#edit-medication-group .chip.active')].map(c => c.dataset.value);
+
+  panel.style.display = 'none';
+  saveFormState();
+  await runPipeline();
+}
+
+// ── 폼 상태 자동저장·복원 ─────────────────────────
+function saveFormState() {
+  localStorage.setItem('hca_form_state', JSON.stringify({
+    goals: state.goals, age: state.age, gender: state.gender,
+    allergy: state.allergy, condition: state.condition, medication: state.medication,
+    extraNote: document.getElementById('extra-note')?.value || '',
+  }));
+}
+
+function restoreFormState() {
+  const raw = localStorage.getItem('hca_form_state');
+  if (!raw) return;
+  try {
+    const s = JSON.parse(raw);
+    // 목표
+    (s.goals || []).forEach(g => {
+      const btn = document.querySelector(`.goal-btn[data-value="${g}"]`);
+      if (btn) { state.goals.push(g); btn.classList.add('active'); }
+    });
+    // 연령
+    if (s.age) {
+      state.age = s.age;
+      document.querySelector(`#age-group .chip[data-value="${s.age}"]`)?.classList.add('active');
+      filterGoalsByAge(s.age);
+    }
+    // 성별
+    if (s.gender) {
+      state.gender = s.gender;
+      document.querySelector(`#gender-group .chip[data-value="${s.gender}"]`)?.classList.add('active');
+    }
+    // 추가 항목
+    ['allergy','condition','medication'].forEach(type => {
+      (s[type] || []).forEach(v => {
+        state[type].push(v);
+        document.querySelector(`#${type}-group .chip[data-value="${v}"]`)?.classList.add('active');
+      });
+    });
+    // 특이사항
+    const noteEl = document.getElementById('extra-note');
+    if (noteEl && s.extraNote) noteEl.value = s.extraNote;
+
+    updateGoalDisplay();
+    updateBtn();
+  } catch(e) { localStorage.removeItem('hca_form_state'); }
+}
+
+// ── 페이지 로드 ──────────────────────────────────
 window.addEventListener('load', () => {
-  loadSavedResult();
+  // 테마 복원
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  document.getElementById('dark-mode-icon').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+  // 큰글씨 복원
   if (localStorage.getItem('largeText') === '1') toggleLargeText();
+
+  // 폼 상태 복원
+  restoreFormState();
+
+  // 저장된 결과 불러오기
+  loadSavedResult();
+});
+
+// 폼 변경 시 자동저장
+document.addEventListener('change', saveFormState);
+document.addEventListener('click', e => {
+  if (e.target.closest('.goal-btn, .chip, #extra-note')) saveFormState();
 });
 </script>
 

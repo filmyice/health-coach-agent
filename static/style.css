@@ -1281,7 +1281,12 @@ body.large-text .shop-table      { font-size: 1rem; }
   border-bottom: 2px solid var(--gray-100);
   overflow-x: auto;
   scrollbar-width: none;
+  position: sticky;
+  top: 62px; /* header height */
+  background: white;
+  z-index: 9;
 }
+[data-theme="dark"] .result-tabs { background: var(--surface); }
 .result-tabs::-webkit-scrollbar { display: none; }
 
 .rtab {
@@ -1344,3 +1349,256 @@ body.large-text .shop-table      { font-size: 1rem; }
   margin: .75rem 0 .25rem;
   line-height: 1.5;
 }
+
+/* ── 탭 전환 애니메이션 ─────────────────────────────── */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.rtab-panel.active { animation: fadeSlideIn .2s ease; }
+
+/* ── 다크 모드 ─────────────────────────────────────── */
+:root {
+  --bg:      #f9fafb;
+  --surface: #ffffff;
+  --border:  #e5e7eb;
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+}
+[data-theme="dark"] {
+  --bg:      #0f172a;
+  --surface: #1e293b;
+  --border:  #334155;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --green-50:  #052e16;
+  --green-100: #14532d;
+  --green-400: #4ade80;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+  --green-700: #4ade80;
+  --gray-50:   #0f172a;
+  --gray-100:  #1e293b;
+  --gray-200:  #334155;
+  --gray-400:  #64748b;
+  --gray-600:  #94a3b8;
+  --gray-700:  #cbd5e1;
+  --gray-800:  #f1f5f9;
+  --orange-400:#fb923c;
+  --blue-500:  #60a5fa;
+}
+[data-theme="dark"] body        { background: var(--bg); color: var(--text-primary); }
+[data-theme="dark"] header      { background: var(--surface); border-color: var(--border); }
+[data-theme="dark"] .card       { background: var(--surface); }
+[data-theme="dark"] .goal-btn   { background: var(--surface); border-color: var(--border); color: var(--text-primary); }
+[data-theme="dark"] .goal-btn:hover  { background: #052e16; border-color: var(--green-500); }
+[data-theme="dark"] .goal-btn.active { background: #052e16; border-color: var(--green-500); color: var(--green-400); }
+[data-theme="dark"] .chip            { background: var(--surface); border-color: var(--border); color: var(--text-secondary); }
+[data-theme="dark"] .chip.active     { background: var(--green-600); border-color: var(--green-600); color: white; }
+[data-theme="dark"] .result-tabs     { border-color: var(--border); background: var(--surface); }
+[data-theme="dark"] .rtab           { color: var(--text-muted); }
+[data-theme="dark"] .rtab:hover     { background: var(--border); color: var(--text-primary); }
+[data-theme="dark"] .rtab.active    { background: var(--surface); color: var(--green-400); border-bottom-color: var(--green-500); }
+[data-theme="dark"] .food-card      { background: #1e293b; border-color: var(--border); }
+[data-theme="dark"] .habit-card     { background: #1e293b; border-color: var(--border); }
+[data-theme="dark"] .nutrient-card  { background: #1e293b; border-color: var(--border); }
+[data-theme="dark"] .summary-card   { background: #052e16; border-color: var(--green-600); }
+[data-theme="dark"] .tab-intro      { background: #052e16; color: var(--green-400); border-color: var(--green-500); }
+[data-theme="dark"] .form-intro-title { color: var(--text-primary); }
+[data-theme="dark"] .section-title  { color: var(--text-primary); }
+[data-theme="dark"] .nc-name        { color: var(--text-primary); }
+[data-theme="dark"] .nc-reason      { color: var(--text-secondary); }
+[data-theme="dark"] .age-notice     { background: #422006; border-color: #92400e; color: #fde68a; }
+[data-theme="dark"] .disclaimer-box { background: #1e293b; border-color: var(--border); color: var(--text-muted); }
+[data-theme="dark"] .error-box      { background: #450a0a; border-color: #7f1d1d; color: #fca5a5; }
+[data-theme="dark"] .nc-tier2 summary, [data-theme="dark"] .nc-tier3 summary { color: var(--text-secondary); }
+[data-theme="dark"] .nc-detail-row  { color: var(--text-secondary); }
+[data-theme="dark"] .progress-bar-track { background: var(--border); }
+[data-theme="dark"] .personalized-intro { background: #052e16; border-color: #14532d; color: var(--green-400); }
+
+/* 다크 모드 토글 버튼 */
+.btn-dark-mode {
+  display: flex; align-items: center; gap: .3rem;
+  margin-left: .5rem;
+  padding: .4rem .7rem;
+  background: var(--gray-100);
+  border: 1.5px solid var(--gray-200);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: .82rem; color: var(--gray-700);
+  transition: all .15s;
+  white-space: nowrap;
+}
+.btn-dark-mode:hover { background: var(--gray-200); }
+[data-theme="dark"] .btn-dark-mode { background: var(--border); color: var(--text-primary); border-color: var(--border); }
+
+/* ── 목표 툴팁 ──────────────────────────────────────── */
+.goal-btn { position: relative; }
+.goal-tip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%; transform: translateX(-50%);
+  background: var(--gray-800);
+  color: white;
+  font-size: .71rem; font-weight: 500;
+  padding: .4rem .7rem;
+  border-radius: 7px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .15s;
+  z-index: 100;
+  max-width: 200px;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.4;
+}
+.goal-tip::after {
+  content: '';
+  position: absolute;
+  top: 100%; left: 50%; transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--gray-800);
+}
+.goal-btn:hover .goal-tip,
+.goal-btn:focus .goal-tip { opacity: 1; }
+[data-theme="dark"] .goal-tip { background: #334155; }
+[data-theme="dark"] .goal-tip::after { border-top-color: #334155; }
+
+/* ── 스크롤 상단 FAB ──────────────────────────────── */
+#scroll-top-btn {
+  position: fixed;
+  bottom: 2rem; right: 1.5rem;
+  width: 44px; height: 44px;
+  background: var(--green-600);
+  color: white;
+  border: none; border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(22,163,74,.4);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s, transform .2s;
+  z-index: 50;
+}
+#scroll-top-btn.visible { opacity: 1; pointer-events: auto; }
+#scroll-top-btn:hover { transform: translateY(-2px); background: var(--green-700); }
+
+/* ── 피드백 섹션 ──────────────────────────────────── */
+.feedback-section {
+  margin: 1.5rem 0 .5rem;
+  padding: 1.25rem 1.5rem;
+  background: white;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius);
+  text-align: center;
+}
+[data-theme="dark"] .feedback-section { background: var(--surface); border-color: var(--border); }
+.feedback-question {
+  font-size: .88rem; font-weight: 600; color: var(--gray-700);
+  margin-bottom: .85rem;
+}
+[data-theme="dark"] .feedback-question { color: var(--text-secondary); }
+.feedback-btns {
+  display: flex; gap: .6rem; justify-content: center;
+}
+.fb-btn {
+  display: flex; align-items: center; gap: .4rem;
+  padding: .55rem 1.25rem;
+  border: 2px solid var(--gray-200);
+  border-radius: 999px;
+  background: white;
+  font-size: .85rem; font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  color: var(--gray-600);
+}
+[data-theme="dark"] .fb-btn { background: var(--surface); border-color: var(--border); color: var(--text-secondary); }
+.fb-btn:hover { border-color: var(--green-400); color: var(--green-700); background: var(--green-50); }
+.fb-btn.selected { border-color: var(--green-600); background: var(--green-600); color: white; }
+.feedback-thanks { font-size: .82rem; color: var(--green-700); font-weight: 600; }
+[data-theme="dark"] .feedback-thanks { color: var(--green-400); }
+
+/* ── 조건 수정 패널 ────────────────────────────────── */
+.edit-panel {
+  background: var(--gray-50);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin: 1rem 0;
+  animation: fadeSlideIn .2s ease;
+}
+[data-theme="dark"] .edit-panel { background: #0f172a; border-color: var(--border); }
+.edit-panel-title {
+  font-size: .88rem; font-weight: 700; color: var(--gray-700);
+  margin-bottom: 1rem;
+}
+[data-theme="dark"] .edit-panel-title { color: var(--text-primary); }
+.edit-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: .85rem;
+  margin-bottom: 1rem;
+}
+.edit-panel-group { display: flex; flex-direction: column; gap: .4rem; }
+.edit-panel-label {
+  font-size: .72rem; font-weight: 700; color: var(--gray-500);
+  text-transform: uppercase; letter-spacing: .05em;
+}
+[data-theme="dark"] .edit-panel-label { color: var(--text-muted); }
+.chip-group-sm { gap: .35rem; }
+.btn-rerun {
+  width: 100%;
+  padding: .75rem;
+  background: var(--green-600); color: white;
+  border: none; border-radius: var(--radius);
+  font-size: .9rem; font-weight: 700;
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-rerun:hover { background: var(--green-700); }
+
+/* ── 인쇄 ────────────────────────────────────────── */
+@media print {
+  header, .result-header, .result-actions, .result-tabs,
+  .edit-panel, #edit-panel, .feedback-section, #scroll-top-btn,
+  .btn-action, .btn-reset, .shop-cards, .result-section:has(.shop-cards),
+  .nc-tier2, .nc-tier3, .recipe-toggle, .recipe-box,
+  .disclaimer-box { display: none !important; }
+
+  body { background: white; font-size: 11pt; }
+  main { max-width: 100%; padding: 0; }
+  .rtab-panel { display: block !important; }
+  .card { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+  .result-meta-badges { margin-bottom: .5rem; }
+  .summary-card { background: #f0fdf4 !important; page-break-inside: avoid; }
+  .food-grid { grid-template-columns: repeat(3, 1fr); }
+  .nutrient-card { page-break-inside: avoid; }
+}
+
+/* ── 저장된 결과 배너 ──────────────────────────────── */
+.saved-banner {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .75rem 1.1rem;
+  background: #eff6ff;
+  border: 1.5px solid #bfdbfe;
+  border-radius: var(--radius);
+  font-size: .82rem;
+  color: #1d4ed8;
+  font-weight: 500;
+  margin-bottom: .75rem;
+  flex-wrap: wrap;
+}
+[data-theme="dark"] .saved-banner { background: #1e3a5f; border-color: #3b82f6; color: #93c5fd; }
+.banner-close {
+  background: none; border: none;
+  font-size: .78rem; color: inherit;
+  cursor: pointer; opacity: .7;
+  padding: .1rem .4rem;
+  border-radius: 4px;
+}
+.banner-close:hover { opacity: 1; background: rgba(0,0,0,.06); }
