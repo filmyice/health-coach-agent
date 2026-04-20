@@ -775,6 +775,62 @@ function toggleCheck(el) {
   item.classList.toggle('checked');
 }
 
+// ── 목표별 히어로 컬러 ───────────────────────────
+const GOAL_HERO_GRAD = {
+  fatigue_management:     'linear-gradient(135deg,#b45309 0%,#f59e0b 60%,#fbbf24 100%)',
+  sleep_management:       'linear-gradient(135deg,#4c1d95 0%,#7c3aed 60%,#a78bfa 100%)',
+  immunity_management:    'linear-gradient(135deg,#166534 0%,#16a34a 60%,#22c55e 100%)',
+  eye_health:             'linear-gradient(135deg,#1e3a8a 0%,#2563eb 60%,#60a5fa 100%)',
+  gut_health:             'linear-gradient(135deg,#065f46 0%,#059669 60%,#34d399 100%)',
+  bone_health:            'linear-gradient(135deg,#155e75 0%,#0891b2 60%,#22d3ee 100%)',
+  skin_antioxidant:       'linear-gradient(135deg,#831843 0%,#db2777 60%,#f472b6 100%)',
+  weight_management:      'linear-gradient(135deg,#78350f 0%,#ea580c 60%,#fb923c 100%)',
+  blood_sugar_management: 'linear-gradient(135deg,#7f1d1d 0%,#dc2626 60%,#f87171 100%)',
+  stress_management:      'linear-gradient(135deg,#312e81 0%,#4f46e5 60%,#818cf8 100%)',
+  exercise_recovery:      'linear-gradient(135deg,#1c1917 0%,#44403c 60%,#78716c 100%)',
+  cardiovascular_health:  'linear-gradient(135deg,#881337 0%,#e11d48 60%,#fb7185 100%)',
+  hair_health:            'linear-gradient(135deg,#3b0764 0%,#7e22ce 60%,#c084fc 100%)',
+  liver_health:           'linear-gradient(135deg,#1a2e05 0%,#3f6212 60%,#65a30d 100%)',
+};
+
+// ── 복용 타임라인 헬퍼 ───────────────────────────
+const TIME_SLOTS = [
+  { key:'morning',  label:'아침',       icon:'☀️',  color:'#f59e0b', pattern:/아침|오전/ },
+  { key:'meal',     label:'식사 중',    icon:'🍽️', color:'#16a34a', pattern:/식사와 함께|식후|식사 후|식사와/ },
+  { key:'prefood',  label:'식전 공복',  icon:'⏰',  color:'#2563eb', pattern:/공복|식전|식사 전/ },
+  { key:'exercise', label:'운동 전후',  icon:'🏋️', color:'#ea580c', pattern:/운동/ },
+  { key:'bedtime',  label:'취침 전',    icon:'🌙',  color:'#7c3aed', pattern:/취침/ },
+];
+function getTimeSlot(when) {
+  if (!when) return null;
+  return TIME_SLOTS.find(s => s.pattern.test(when)) || TIME_SLOTS[1];
+}
+function buildDoseTimeline(nutrients) {
+  const slots = {};
+  nutrients.forEach(n => {
+    const when = n.best_time?.when;
+    if (!when) return;
+    const s = getTimeSlot(when);
+    if (!s) return;
+    if (!slots[s.key]) slots[s.key] = { ...s, items: [] };
+    slots[s.key].items.push(n);
+  });
+  const ordered = TIME_SLOTS.map(s => slots[s.key]).filter(Boolean);
+  if (ordered.length < 2) return '';
+  const rows = ordered.map(s =>
+    `<div class="dose-slot">
+      <div class="dose-slot-time" style="--slot-color:${s.color}">${s.icon} ${s.label}</div>
+      <div class="dose-slot-items">${s.items.map(n =>
+        `<span class="dose-slot-pill">${nutrientIcon(n.name)} ${n.name}</span>`
+      ).join('')}</div>
+    </div>`
+  ).join('');
+  return `<div class="dose-timeline">
+    <div class="dose-timeline-title">⏱ 오늘 복용 스케줄</div>
+    <div class="dose-timeline-slots">${rows}</div>
+  </div>`;
+}
+
 // ── 카드 렌더링 ──────────────────────────────────
 function renderResultCards(meta) {
   const el = document.getElementById('result-content');
@@ -803,7 +859,8 @@ function renderResultCards(meta) {
     const goalSummary = GOAL_SUMMARY_MAP[primaryKey] || '';
 
     // ── 히어로 카드
-    tab0 += `<div class="rs-hero">
+    const heroGrad = GOAL_HERO_GRAD[primaryKey] || GOAL_HERO_GRAD.immunity_management;
+    tab0 += `<div class="rs-hero" style="background:${heroGrad}">
       <div class="rs-hero-bg"></div>
       <div class="rs-hero-body">
         <div class="rs-hero-who">${whoStr || '맞춤 플랜'}</div>
@@ -991,6 +1048,7 @@ function renderResultCards(meta) {
       </div>
     </div>`;
   } else if (nutrients.length) {
+    tab3 += buildDoseTimeline(nutrients);
     tab3 += `<div class="result-section"><div class="result-section-title"><span>💊</span> 영양 성분 <span class="rs-count-label">${nutrients.length}가지</span></div><div class="nutrient-list-v2">`;
     nutrients.forEach((n, i) => {
       const c   = n.cautions || {};
@@ -1478,16 +1536,19 @@ function restoreFormState() {
       document.querySelector(`#gender-group .chip[data-value="${s.gender}"]`)?.classList.add('active');
     }
     // 추가 항목
+    let hasExtra = false;
     ['allergy','condition','medication'].forEach(type => {
       (s[type] || []).forEach(v => {
         state[type].push(v);
         document.querySelector(`#${type}-group .chip[data-value="${v}"]`)?.classList.add('active');
+        hasExtra = true;
       });
     });
     // 특이사항
     const noteEl = document.getElementById('extra-note');
-    if (noteEl && s.extraNote) noteEl.value = s.extraNote;
+    if (noteEl && s.extraNote) { noteEl.value = s.extraNote; hasExtra = true; }
 
+    if (hasExtra) openExtra4();
     updateGoalDisplay();
     updateBtn();
   } catch(e) { localStorage.removeItem('hca_form_state'); }

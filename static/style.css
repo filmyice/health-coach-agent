@@ -1579,7 +1579,8 @@ body.large-text .shop-table      { font-size: 1rem; }
 @media print {
   header, .result-header, .result-actions, .result-tabs,
   .edit-panel, #edit-panel, .feedback-section, #scroll-top-btn,
-  .btn-action, .btn-reset, .shop-cards, .result-section:has(.shop-cards),
+  .btn-action, .btn-reset, .shop-cards, .shop-cards-v2,
+  .result-section:has(.shop-cards), .result-section:has(.shop-cards-v2),
   .nc-tier2, .nc-tier3, .recipe-toggle, .recipe-box,
   .disclaimer-box { display: none !important; }
 
@@ -1879,6 +1880,39 @@ body.large-text .shop-table      { font-size: 1rem; }
 
 /* ── 영양제 카드 v2 ──────────────────────────────── */
 .nutrient-list-v2 { display: flex; flex-direction: column; gap: 1rem; }
+
+/* ── 복용 타임라인 카드 ──────────────────────────── */
+.dose-timeline {
+  background: var(--gray-50);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  margin-bottom: 1.25rem;
+}
+.dose-timeline-title {
+  font-size: .82rem; font-weight: 700; color: var(--gray-700);
+  margin-bottom: .75rem; display: flex; align-items: center; gap: .4rem;
+}
+.dose-timeline-slots { display: flex; flex-direction: column; gap: .55rem; }
+.dose-slot { display: flex; align-items: flex-start; gap: .6rem; }
+.dose-slot-time {
+  display: flex; align-items: center; gap: .3rem;
+  font-size: .72rem; font-weight: 700; color: white;
+  background: var(--slot-color, var(--gray-600));
+  border-radius: 99px; padding: .2rem .6rem;
+  white-space: nowrap; flex-shrink: 0; min-width: 68px;
+  justify-content: center;
+}
+.dose-slot-items { display: flex; flex-wrap: wrap; gap: .3rem; align-items: center; }
+.dose-slot-pill {
+  font-size: .72rem; color: var(--gray-700);
+  background: white; border: 1px solid var(--gray-200);
+  border-radius: 99px; padding: .18rem .55rem;
+  display: flex; align-items: center; gap: .2rem;
+}
+[data-theme="dark"] .dose-timeline { background: var(--surface); border-color: var(--border); }
+[data-theme="dark"] .dose-timeline-title { color: var(--text-primary); }
+[data-theme="dark"] .dose-slot-pill { background: var(--surface); border-color: var(--border); color: var(--text-primary); }
 .nutrient-card-v2 {
   background: white;
   border: 1.5px solid var(--gray-200);
