@@ -532,12 +532,18 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 .md-body tr:nth-child(even) td { background: var(--gray-50); }
 
 /* ── 오류 ──────────────────────────────────────── */
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%,60% { transform: translateX(-6px); }
+  40%,80% { transform: translateX(6px); }
+}
 .error-box {
   background: #fef2f2; border: 1px solid #fecaca;
   border-radius: var(--radius); padding: 1.25rem;
   color: #b91c1c; font-size: .9rem;
   display: none;
 }
+.error-box.shake { animation: shake .4s ease; }
 
 /* ── 결과 카드 공통 ───────────────────────────── */
 .result-section { margin-bottom: 2rem; }
@@ -1009,6 +1015,15 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
   font-weight: 400; margin-top: .25rem;
 }
 .extra-card { border: 1.5px dashed var(--gray-200); }
+.extra-card-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; user-select: none; padding-bottom: .5rem;
+}
+.extra-card-arrow { font-size: 1rem; transition: transform .25s; color: var(--gray-400); }
+.extra-card.collapsed .extra-card-arrow { transform: rotate(-90deg); }
+.extra-card-body { overflow: hidden; transition: max-height .35s ease, opacity .25s; }
+.extra-card.open .extra-card-body { max-height: 800px; opacity: 1; }
+.extra-card.collapsed .extra-card-body { max-height: 0; opacity: 0; }
 .extra-row {
   margin-bottom: 1.1rem;
 }
@@ -1950,11 +1965,22 @@ body.large-text .shop-table      { font-size: 1rem; }
 }
 [data-theme="dark"] .nv2-interaction { background: #1e3a5f; color: #93c5fd; }
 .nv2-supp-tip {
-  font-size: .78rem; color: var(--gray-600);
-  padding: .3rem 1.1rem .5rem;
-  line-height: 1.5;
+  margin: .25rem .75rem .75rem;
+  background: #eff6ff;
+  border: 1.5px solid #bfdbfe;
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: .78rem; line-height: 1.5;
 }
-[data-theme="dark"] .nv2-supp-tip { color: var(--text-secondary); }
+.nv2-supp-tip-label {
+  display: block; font-size: .7rem; font-weight: 700;
+  color: #1d4ed8; background: #dbeafe;
+  padding: .3rem .85rem;
+}
+.nv2-supp-tip-body { color: #1e40af; padding: .4rem .85rem .5rem; display: block; }
+[data-theme="dark"] .nv2-supp-tip { background: #1e3a5f; border-color: #1d4ed8; }
+[data-theme="dark"] .nv2-supp-tip-label { background: #1e3a8a; color: #93c5fd; }
+[data-theme="dark"] .nv2-supp-tip-body { color: #93c5fd; }
 .nv2-caution {
   margin: .25rem .75rem .75rem;
   border: 1.5px solid var(--cbr, #bfdbfe);
@@ -2044,6 +2070,7 @@ body.large-text .shop-table      { font-size: 1rem; }
 .shop-v2-btns .shop-btn {
   padding: .4rem .65rem;
   font-size: .78rem; font-weight: 700;
+  white-space: nowrap;
 }
 
 /* ── 반응형 v2 ──────────────────────────────────── */
@@ -2089,7 +2116,9 @@ body.large-text .shop-table      { font-size: 1rem; }
   .nv2-ff-item  { font-size: .68rem; }
   .nv2-dosage-row { padding: .35rem .9rem; gap: .4rem; }
   .nv2-dosage-pill { min-width: 85px; padding: .35rem .6rem; }
-  .nv2-supp-tip { font-size: .74rem; padding: .25rem .9rem .45rem; }
+  .nv2-supp-tip { font-size: .74rem; margin: .2rem .6rem .6rem; }
+  .nv2-supp-tip-label { font-size: .66rem; padding: .25rem .7rem; }
+  .nv2-supp-tip-body  { font-size: .74rem; padding: .35rem .7rem .45rem; }
 
   /* 쇼핑 카드 */
   .shop-card-v2 { padding: .6rem .75rem; gap: .5rem; }

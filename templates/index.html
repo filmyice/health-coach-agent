@@ -101,9 +101,15 @@
     </div>
 
     <!-- 추가 정보 (선택) -->
-    <div class="card extra-card">
-      <p class="section-label">STEP 4 · 선택사항</p>
-      <p class="section-title">안전한 추천을 위해 알려주세요 <span class="extra-hint">입력할수록 더 정확해져요</span></p>
+    <div class="card extra-card collapsed" id="extra-card">
+      <div class="extra-card-toggle" onclick="toggleExtra4()">
+        <div>
+          <p class="section-label">STEP 4 · 선택사항</p>
+          <p class="section-title">안전한 추천을 위해 알려주세요 <span class="extra-hint">입력할수록 더 정확해져요</span></p>
+        </div>
+        <span class="extra-card-arrow">▾</span>
+      </div>
+      <div class="extra-card-body">
       <p class="section-sub-hint">알레르기·복용약이 있다면 꼭 입력해 주세요 — 부적합한 성분을 자동으로 제외합니다</p>
 
       <div class="extra-row">
@@ -143,6 +149,7 @@
         <label class="extra-label">특이사항</label>
         <input type="text" id="extra-note" class="extra-input" placeholder="예: 임신 6개월, 혈압약 복용 중, 당뇨 있음, 유당불내증 — 안전한 추천을 위해 해당 사항을 입력해주세요 (선택)" maxlength="100" />
       </div>
+      </div><!-- /extra-card-body -->
     </div>
 
     <!-- 오류 -->
@@ -534,12 +541,12 @@ const GOAL_LABEL_MAP = {
 function selectGoal(el) {
   const val = el.dataset.value;
   const idx = state.goals.indexOf(val);
+  const wasEmpty = state.goals.length === 0;
   if (idx !== -1) {
     state.goals.splice(idx, 1);
     el.classList.remove('active');
   } else {
     if (state.goals.length >= 2) {
-      // 가장 먼저 선택한 것 해제
       const first = state.goals.shift();
       document.querySelector(`.goal-btn[data-value="${first}"]`)?.classList.remove('active');
     }
@@ -548,6 +555,9 @@ function selectGoal(el) {
   }
   updateGoalDisplay();
   updateBtn();
+  if (wasEmpty && state.goals.length === 1) {
+    setTimeout(() => document.getElementById('card-age')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+  }
 }
 
 function updateGoalDisplay() {
@@ -580,15 +590,36 @@ function filterGoalsByAge(ageVal) {
 
 function selectChip(type, el) {
   const group = type === 'age' ? 'age-group' : 'gender-group';
+  const hadValue = type === 'age' ? !!state.age : !!state.gender;
   document.querySelectorAll(`#${group} .chip`).forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   if (type === 'age') {
     state.age = el.dataset.value;
     filterGoalsByAge(el.dataset.value);
+    if (!hadValue) setTimeout(() => document.getElementById('card-gender')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
   } else {
     state.gender = el.dataset.value;
+    if (!hadValue) {
+      openExtra4();
+      setTimeout(() => document.getElementById('run-btn')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 380);
+    }
   }
   updateBtn();
+}
+
+function toggleExtra4() {
+  const card = document.getElementById('extra-card');
+  const isCollapsed = card.classList.contains('collapsed');
+  card.classList.toggle('collapsed', !isCollapsed);
+  card.classList.toggle('open', isCollapsed);
+}
+
+function openExtra4() {
+  const card = document.getElementById('extra-card');
+  if (card.classList.contains('collapsed')) {
+    card.classList.remove('collapsed');
+    card.classList.add('open');
+  }
 }
 
 function toggleExtra(type, el) {
@@ -1012,7 +1043,7 @@ function renderResultCards(meta) {
         ${foodFirst}
         ${dosageHtml}
         ${interactionHtml}
-        ${n.supplement_tip ? `<div class="nv2-supp-tip">💊 ${n.supplement_tip}</div>` : ''}
+        ${n.supplement_tip ? `<div class="nv2-supp-tip"><span class="nv2-supp-tip-label">💊 보충제로 갈 경우</span><span class="nv2-supp-tip-body">${n.supplement_tip}</span></div>` : ''}
         ${cautionHtml}
       </div>`;
     });
@@ -1036,9 +1067,9 @@ function renderResultCards(meta) {
           </div>
         </div>
         <div class="shop-v2-btns">
-          <a class="shop-btn shop-naver" href="https://search.shopping.naver.com/search/all?query=${qKo}" target="_blank" rel="noopener">N</a>
-          <a class="shop-btn shop-coupang" href="https://www.coupang.com/np/search?q=${qKo}" target="_blank" rel="noopener">🛒</a>
-          ${n.name_en ? `<a class="shop-btn shop-iherb" href="https://www.iherb.com/search?kw=${qEn}" target="_blank" rel="noopener">🌿</a>` : ''}
+          <a class="shop-btn shop-naver" href="https://search.shopping.naver.com/search/all?query=${qKo}" target="_blank" rel="noopener">네이버쇼핑</a>
+          <a class="shop-btn shop-coupang" href="https://www.coupang.com/np/search?q=${qKo}" target="_blank" rel="noopener">쿠팡</a>
+          ${n.name_en ? `<a class="shop-btn shop-iherb" href="https://www.iherb.com/search?kw=${qEn}" target="_blank" rel="noopener">iHerb</a>` : ''}
         </div>
       </div>`;
     });
@@ -1159,6 +1190,10 @@ function showError(msg) {
   err.textContent = '⚠️ ' + msg;
   err.style.display = 'block';
   document.getElementById('form-section').style.display = 'block';
+  err.classList.remove('shake');
+  void err.offsetWidth;
+  err.classList.add('shake');
+  err.addEventListener('animationend', () => err.classList.remove('shake'), { once: true });
   setTimeout(() => err.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
 }
 
