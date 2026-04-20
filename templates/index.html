@@ -866,6 +866,10 @@ function renderResultCards(meta) {
       const foodNutrients = FOOD_NUTRIENTS_MAP[f.name] || [];
       const secBadge = isSec && f.goal_key ? `<span class="food-goal-badge sec">${GOAL_LABEL_MAP[f.goal_key]||''}</span>` : '';
       const suppBadge = f.category === '건강보조식품' ? `<span class="food-goal-badge supp">건강기능식품</span>` : '';
+      const matchBadges = getFoodMatchBadges(f, prof.age_group || state.age, primaryKey);
+      const matchBadgeHtml = matchBadges.length
+        ? `<div class="fv2-match-badges">${matchBadges.map(b=>`<span class="fv2-mbadge ${b.cls}">${b.text}</span>`).join('')}</div>`
+        : '';
 
       let recipesHtml = '';
       if (recipes.length) {
@@ -882,6 +886,7 @@ function renderResultCards(meta) {
             ${f.category ? `<div class="fv2-cat" style="color:${catColor}">${f.category}</div>` : ''}
           </div>
         </div>
+        ${matchBadgeHtml}
         ${foodNutrients.length ? `<div class="fv2-nutrients">${foodNutrients.map(n=>`<span class="fv2-nbadge">${n}</span>`).join('')}</div>` : ''}
         <div class="fv2-reason">${f.reason || ''}</div>
         ${f.serving_suggestion ? `<div class="fv2-tip"><span class="fv2-tip-label">🍽️ 섭취 방법</span>${f.serving_suggestion}</div>` : ''}
@@ -964,7 +969,10 @@ function renderResultCards(meta) {
       const secBadge = (n.goal_key && n.goal_key !== primaryKey) ? `<span class="food-goal-badge sec">${GOAL_LABEL_MAP[n.goal_key]||''}</span>` : '';
       const ageCtx = n.age_boosted && n.age_context ? `<div class="nv2-age-ctx">🎯 ${n.age_context}</div>` : '';
       const foodFirst = (n.food_first||[]).length
-        ? `<div class="nv2-food-first"><span class="nv2-ff-label">🥗 먼저 식사로</span>${n.food_first.map(f=>`<span class="nv2-ff-item">${f}</span>`).join('')}</div>` : '';
+        ? `<div class="nv2-food-first"><span class="nv2-ff-label">🥗 먼저 식사로</span>${n.food_first.map(ff=>`<span class="nv2-ff-item">${ff}</span>`).join('')}</div>` : '';
+      const RL_CFG = { '높음': { cls:'nv2-rl-high', label:'추천도 높음' }, '중간': { cls:'nv2-rl-mid', label:'추천도 중간' }, '보통': { cls:'nv2-rl-normal', label:'추천도 보통' } };
+      const rl = RL_CFG[n.recommendation_level] || null;
+      const rlBadge = rl ? `<span class="nv2-rec-level ${rl.cls}">${rl.label}</span>` : '';
 
       let dosageHtml = '';
       if (n.daily_intake || n.best_time) {
@@ -995,7 +1003,7 @@ function renderResultCards(meta) {
           <div class="nv2-icon">${nutrientIcon(n.name)}</div>
           <div class="nv2-title">
             <div class="nv2-name">${n.name}${secBadge}</div>
-            ${n.name_en ? `<div class="nv2-en">${n.name_en}</div>` : ''}
+            <div class="nv2-badges-row">${n.name_en ? `<span class="nv2-en">${n.name_en}</span>` : ''}${rlBadge}</div>
           </div>
           <div class="nv2-caution-badge" style="background:${cc.bg};color:${cc.color};border-color:${cc.border}">${cc.icon} ${cc.label}</div>
         </div>

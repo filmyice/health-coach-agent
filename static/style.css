@@ -1752,6 +1752,7 @@ body.large-text .shop-table      { font-size: 1rem; }
   padding: 1rem 1rem .75rem;
   border-bottom: 2px solid;
   border-color: var(--cat, var(--green-400));
+  background: #f9fafb; /* fallback for older browsers */
   background: linear-gradient(135deg, color-mix(in srgb, var(--cat, #16a34a) 8%, white), white);
 }
 [data-theme="dark"] .fv2-top { background: rgba(255,255,255,.03); }
@@ -1977,6 +1978,45 @@ body.large-text .shop-table      { font-size: 1rem; }
 }
 [data-theme="dark"] .nv2-caution { filter: brightness(.8); }
 
+/* 영양제 카드 배지 행 (영문명 + 추천도) */
+.nv2-badges-row {
+  display: flex; align-items: center; gap: .35rem; flex-wrap: wrap;
+  margin-top: .1rem;
+}
+.nv2-en { font-size: .72rem; color: var(--gray-400); }
+/* 추천도 배지 (nv2 전용) */
+.nv2-rec-level {
+  font-size: .62rem; font-weight: 700;
+  border-radius: 999px; padding: .1rem .42rem;
+  white-space: nowrap;
+}
+.nv2-rl-high   { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+.nv2-rl-mid    { background: #fef9c3; color: #92400e; border: 1px solid #fde68a; }
+.nv2-rl-normal { background: var(--gray-100); color: var(--gray-500); border: 1px solid var(--gray-200); }
+
+/* 음식 카드 맞춤 배지 (v2) */
+.fv2-match-badges {
+  display: flex; flex-wrap: wrap; gap: .3rem;
+  padding: .45rem 1rem .1rem;
+}
+.fv2-mbadge {
+  font-size: .68rem; font-weight: 700;
+  border-radius: 6px; padding: .15rem .5rem;
+  white-space: nowrap;
+}
+.mb-goal {
+  background: #fef9c3; color: #854d0e;
+  border: 1px solid #fde68a;
+}
+.mb-goal::before { content: '✓ '; }
+.mb-age {
+  background: #f0fdf4; color: #166534;
+  border: 1px solid #bbf7d0;
+}
+.mb-age::before { content: '👤 '; }
+[data-theme="dark"] .fv2-match-badges .mb-goal { background: #451a03; color: #fde68a; border-color: #92400e; }
+[data-theme="dark"] .fv2-match-badges .mb-age  { background: #052e16; color: var(--green-400); border-color: var(--green-600); }
+
 /* ── 쇼핑 카드 v2 ────────────────────────────────── */
 .shop-cards-v2 { display: flex; flex-direction: column; gap: .6rem; }
 .shop-card-v2 {
@@ -2009,10 +2049,52 @@ body.large-text .shop-table      { font-size: 1rem; }
 /* ── 반응형 v2 ──────────────────────────────────── */
 @media (max-width: 600px) {
   .food-grid-v2 { grid-template-columns: 1fr; }
-  .rs-hero-goal { font-size: 1.25rem; }
+
+  /* 요약 히어로 */
+  .rs-hero-goal { font-size: 1.2rem; }
+  .rs-hero-desc { font-size: .8rem; }
   .rs-stat-num  { font-size: 1.3rem; }
-  .nv2-header   { flex-wrap: wrap; gap: .5rem; }
-  .nv2-caution-badge { font-size: .62rem; }
+  .rs-stats     { padding: .75rem .5rem; gap: .5rem; }
+
+  /* 음식 카드 */
+  .fv2-top { gap: .6rem; padding: .75rem .75rem .6rem; }
+  .fv2-icon-wrap { width: 40px; height: 40px; font-size: 1.35rem; }
+  .fv2-name { font-size: .88rem; }
+  .fv2-reason { font-size: .78rem; padding: .35rem .75rem .45rem; }
+  .fv2-nutrients { padding: .45rem .75rem .2rem; }
+  .fv2-nbadge { font-size: .65rem; }
+  .fv2-match-badges { padding: .35rem .75rem .1rem; }
+  .fv2-mbadge { font-size: .64rem; }
+  .fv2-tip { margin: 0 .75rem .6rem; font-size: .75rem; }
+  .recipe-toggle { margin: 0 .75rem .6rem; font-size: .8rem; }
+  .recipe-box { margin: 0 .75rem .75rem; }
+
+  /* 습관 카드 */
+  .habit-card-v2 { padding: .8rem .9rem; gap: .6rem; }
+  .hv2-medal, .hv2-icon { font-size: 1.3rem; }
+  .hv2-title { font-size: .88rem; }
+  .hv2-effect { font-size: .78rem; }
+  .hv2-tip { font-size: .74rem; }
+  .hv2-diff { font-size: .7rem; padding: .25rem .55rem; }
+
+  /* 영양제 카드 */
+  .nv2-header   { flex-wrap: wrap; gap: .45rem; padding: .8rem .9rem .7rem; }
+  .nv2-rank     { width: 28px; height: 28px; font-size: .8rem; }
+  .nv2-icon     { font-size: 1.35rem; }
+  .nv2-name     { font-size: .88rem; }
+  .nv2-caution-badge { font-size: .6rem; padding: .15rem .45rem; }
+  .nv2-reason   { font-size: .8rem; padding: .6rem .9rem .5rem; }
+  .nv2-food-first { padding: .35rem .9rem .4rem; }
+  .nv2-ff-label { font-size: .68rem; }
+  .nv2-ff-item  { font-size: .68rem; }
+  .nv2-dosage-row { padding: .35rem .9rem; gap: .4rem; }
+  .nv2-dosage-pill { min-width: 85px; padding: .35rem .6rem; }
+  .nv2-supp-tip { font-size: .74rem; padding: .25rem .9rem .45rem; }
+
+  /* 쇼핑 카드 */
+  .shop-card-v2 { padding: .6rem .75rem; gap: .5rem; }
+  .shop-v2-name { font-size: .8rem; }
+  .shop-btn { padding: .32rem .5rem; font-size: .72rem; }
 }
 
 /* ── 저장된 결과 배너 ──────────────────────────────── */
