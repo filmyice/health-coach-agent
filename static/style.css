@@ -546,13 +546,13 @@ main { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
 .error-box.shake { animation: shake .4s ease; }
 
 /* ── 결과 카드 공통 ───────────────────────────── */
-.result-section { margin-bottom: 2rem; }
+.result-section { margin-bottom: 2.25rem; }
 .result-section-title {
-  font-size: 1rem; font-weight: 700;
+  font-size: 1.05rem; font-weight: 700;
   color: var(--green-700);
   display: flex; align-items: center; gap: .5rem;
-  margin-bottom: 1rem;
-  padding-bottom: .5rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: .6rem;
   border-bottom: 2px solid var(--green-100);
 }
 
@@ -1308,9 +1308,9 @@ body.large-text .shop-table      { font-size: 1rem; }
   flex-shrink: 0;
   background: none;
   border: none;
-  padding: .55rem 1.1rem;
+  padding: .6rem 1.2rem;
   border-radius: 8px 8px 0 0;
-  font-size: .9rem;
+  font-size: .92rem;
   font-weight: 600;
   color: var(--gray-400);
   cursor: pointer;
@@ -1318,6 +1318,7 @@ body.large-text .shop-table      { font-size: 1rem; }
   border-bottom: 3px solid transparent;
   position: relative;
   bottom: -2px;
+  white-space: nowrap;
 }
 .rtab:hover { color: var(--gray-700); background: var(--gray-100); }
 .rtab.active {
@@ -1329,11 +1330,11 @@ body.large-text .shop-table      { font-size: 1rem; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 18px;
+  min-width: 19px;
+  height: 19px;
   padding: 0 5px;
   border-radius: 99px;
-  font-size: .7rem;
+  font-size: .72rem;
   font-weight: 700;
   background: var(--gray-200);
   color: var(--gray-600);
@@ -1346,7 +1347,7 @@ body.large-text .shop-table      { font-size: 1rem; }
 }
 
 .rtab-panel { display: none; }
-.rtab-panel.active { display: block; }
+.rtab-panel.active { display: block; padding: 1.5rem 0 .5rem; }
 
 .tab-empty {
   padding: 3rem 1rem;
@@ -1600,7 +1601,7 @@ body.large-text .shop-table      { font-size: 1rem; }
 
 /* ── 공용 ───────────────────────────────────────── */
 .rs-count-label {
-  font-size: .8rem; font-weight: 400; color: var(--gray-400);
+  font-size: .82rem; font-weight: 400; color: var(--gray-400);
   margin-left: .4rem;
 }
 .rs-warn {
@@ -1664,13 +1665,13 @@ body.large-text .shop-table      { font-size: 1rem; }
   background: white;
   border: 1.5px solid var(--gray-200);
   border-radius: var(--radius);
-  padding: 1rem 1.25rem;
-  margin: .5rem 0 1rem;
+  padding: 1.1rem 1.35rem;
+  margin: .75rem 0 1.1rem;
 }
 [data-theme="dark"] .rs-checklist { background: var(--surface); border-color: var(--border); }
 .rs-checklist-title {
-  font-size: .82rem; font-weight: 700; color: var(--gray-600);
-  margin-bottom: .75rem; letter-spacing: .03em;
+  font-size: .85rem; font-weight: 700; color: var(--gray-600);
+  margin-bottom: .85rem; letter-spacing: .03em;
 }
 [data-theme="dark"] .rs-checklist-title { color: var(--text-secondary); }
 .chk-item {
@@ -1695,8 +1696,8 @@ body.large-text .shop-table      { font-size: 1rem; }
 .chk-item.checked .chk-box { background: var(--green-600); border-color: var(--green-600); }
 .chk-item.checked .chk-mark { opacity: 1; }
 .chk-item.checked .chk-text { text-decoration: line-through; color: var(--gray-400); }
-.chk-icon { font-size: 1.1rem; flex-shrink: 0; }
-.chk-text { flex: 1; font-size: .88rem; color: var(--gray-700); font-weight: 500; }
+.chk-icon { font-size: 1.15rem; flex-shrink: 0; }
+.chk-text { flex: 1; font-size: .9rem; color: var(--gray-700); font-weight: 500; }
 [data-theme="dark"] .chk-text { color: var(--text-primary); }
 .chk-link {
   font-size: .72rem; color: var(--green-600); font-weight: 600;
@@ -1715,13 +1716,13 @@ body.large-text .shop-table      { font-size: 1rem; }
   background: white;
   border: 1.5px solid var(--gray-200);
   border-radius: var(--radius);
-  padding: 1rem 1.25rem;
-  margin-bottom: 1rem;
+  padding: 1.1rem 1.35rem;
+  margin-bottom: 1.1rem;
 }
 [data-theme="dark"] .rs-priority { background: var(--surface); border-color: var(--border); }
 .rs-priority-title {
-  font-size: .82rem; font-weight: 700; color: var(--gray-600);
-  margin-bottom: .75rem;
+  font-size: .85rem; font-weight: 700; color: var(--gray-600);
+  margin-bottom: .85rem;
 }
 [data-theme="dark"] .rs-priority-title { color: var(--text-secondary); }
 .rs-priority-item {
@@ -1741,7 +1742,7 @@ body.large-text .shop-table      { font-size: 1rem; }
 }
 .rs-rank-icon { font-size: 1.2rem; flex-shrink: 0; }
 .rs-rank-info { flex: 1; min-width: 0; }
-.rs-rank-name { font-size: .88rem; font-weight: 600; color: var(--gray-800); }
+.rs-rank-name { font-size: .92rem; font-weight: 600; color: var(--gray-800); }
 [data-theme="dark"] .rs-rank-name { color: var(--text-primary); }
 .rs-rank-en   { font-size: .72rem; color: var(--gray-400); }
 .rs-rank-dose { font-size: .75rem; color: var(--green-700); font-weight: 600; background: var(--green-50); padding: .2rem .55rem; border-radius: 999px; flex-shrink: 0; }
@@ -1750,8 +1751,8 @@ body.large-text .shop-table      { font-size: 1rem; }
 /* ── 음식 카드 v2 ────────────────────────────────── */
 .food-grid-v2 {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
 }
 .food-card-v2 {
   background: white;
@@ -1764,71 +1765,62 @@ body.large-text .shop-table      { font-size: 1rem; }
 .food-card-v2:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.1); }
 .food-card-v2.secondary-goal { border-color: #c4b5fd; }
 .fv2-top {
-  display: flex; align-items: center; gap: .85rem;
-  padding: 1rem 1rem .75rem;
+  display: flex; align-items: center; gap: .95rem;
+  padding: 1.1rem 1.15rem .95rem;
   border-bottom: 2px solid;
   border-color: var(--cat, var(--green-400));
-  background: #f9fafb; /* fallback for older browsers */
+  background: #f9fafb;
   background: linear-gradient(135deg, color-mix(in srgb, var(--cat, #16a34a) 8%, white), white);
 }
 [data-theme="dark"] .fv2-top { background: rgba(255,255,255,.03); }
 .fv2-icon-wrap {
-  width: 48px; height: 48px; flex-shrink: 0;
+  width: 52px; height: 52px; flex-shrink: 0;
   background: white;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 2px 8px rgba(0,0,0,.1);
-  font-size: 1.6rem;
+  font-size: 1.75rem;
 }
 .fv2-name {
-  font-size: .95rem; font-weight: 700; color: var(--gray-800); line-height: 1.3;
+  font-size: 1rem; font-weight: 700; color: var(--gray-800); line-height: 1.3;
 }
 [data-theme="dark"] .fv2-name { color: var(--text-primary); }
 .fv2-cat {
-  font-size: .72rem; font-weight: 600; margin-top: .15rem;
+  font-size: .75rem; font-weight: 600; margin-top: .2rem;
   opacity: .85;
 }
 .food-goal-badge {
-  display: inline-block; font-size: .65rem; font-weight: 700;
-  padding: .1rem .45rem; border-radius: 999px; margin-left: .35rem;
+  display: inline-block; font-size: .68rem; font-weight: 700;
+  padding: .12rem .48rem; border-radius: 999px; margin-left: .35rem;
   vertical-align: middle;
 }
 .food-goal-badge.sec  { background: #f3e8ff; color: #7c3aed; }
 .food-goal-badge.supp { background: #fef3c7; color: #92400e; }
-.fv2-nutrients {
-  display: flex; flex-wrap: wrap; gap: .3rem;
-  padding: .6rem 1rem .3rem;
-}
-.fv2-nbadge {
-  font-size: .7rem; font-weight: 600;
-  padding: .18rem .55rem; border-radius: 999px;
-  background: #eff6ff; color: #1d4ed8;
-  border: 1px solid #bfdbfe;
-}
-[data-theme="dark"] .fv2-nbadge { background: #1e3a5f; color: #93c5fd; border-color: #3b82f6; }
+.fv2-nutrients { display: none; } /* 노이즈 제거 */
+.fv2-nbadge { display: none; }
 .fv2-reason {
-  font-size: .82rem; color: var(--gray-600); line-height: 1.55;
-  padding: .4rem 1rem .5rem;
+  font-size: .88rem; color: var(--gray-600); line-height: 1.65;
+  padding: .75rem 1.15rem .7rem;
 }
 [data-theme="dark"] .fv2-reason { color: var(--text-secondary); }
 .fv2-tip {
-  margin: 0 1rem .75rem;
-  padding: .55rem .75rem;
+  margin: 0 1.15rem .9rem;
+  padding: .6rem .85rem;
   background: var(--green-50); border-radius: 8px;
-  font-size: .78rem; color: var(--green-700); line-height: 1.4;
+  font-size: .82rem; color: var(--green-700); line-height: 1.5;
   display: flex; flex-direction: column; gap: .15rem;
 }
 [data-theme="dark"] .fv2-tip { background: #052e16; color: var(--green-400); }
-.fv2-tip-label { font-weight: 700; font-size: .72rem; }
+.fv2-tip-label { font-weight: 700; font-size: .75rem; }
 
 /* ── 습관 카드 v2 ────────────────────────────────── */
-.habit-list-v2 { display: flex; flex-direction: column; gap: .85rem; }
+.habit-list-v2 { display: flex; flex-direction: column; gap: 1rem; }
 .habit-card-v2 {
-  display: flex; gap: .85rem;
+  display: flex; gap: 1rem;
   background: white;
   border: 1.5px solid var(--gray-200);
   border-radius: var(--radius);
-  padding: 1rem 1.15rem;
+  padding: 1.2rem 1.25rem;
   transition: transform .15s, box-shadow .15s;
 }
 [data-theme="dark"] .habit-card-v2 { background: var(--surface); border-color: var(--border); }
@@ -1841,28 +1833,28 @@ body.large-text .shop-table      { font-size: 1rem; }
 .hv2-icon  { font-size: 1.5rem; line-height: 1; }
 .hv2-body  { flex: 1; min-width: 0; }
 .hv2-header {
-  display: flex; flex-wrap: wrap; align-items: center; gap: .4rem;
-  margin-bottom: .3rem;
+  display: flex; flex-wrap: wrap; align-items: center; gap: .45rem;
+  margin-bottom: .4rem;
 }
-.hv2-title { font-size: .95rem; font-weight: 700; color: var(--gray-800); }
+.hv2-title { font-size: 1rem; font-weight: 700; color: var(--gray-800); }
 [data-theme="dark"] .hv2-title { color: var(--text-primary); }
 .hv2-freq {
-  font-size: .7rem; font-weight: 600;
+  font-size: .73rem; font-weight: 600;
   background: var(--green-50); color: var(--green-700);
   border: 1px solid var(--green-200); border-radius: 999px;
-  padding: .15rem .5rem;
+  padding: .18rem .55rem;
 }
 [data-theme="dark"] .hv2-freq { background: #052e16; color: var(--green-400); border-color: var(--green-600); }
 .hv2-effect {
-  font-size: .82rem; color: var(--gray-600); line-height: 1.5;
-  margin-bottom: .6rem;
+  font-size: .88rem; color: var(--gray-600); line-height: 1.65;
+  margin-bottom: .75rem;
 }
 [data-theme="dark"] .hv2-effect { color: var(--text-secondary); }
-.hv2-footer { display: flex; flex-direction: column; gap: .35rem; }
+.hv2-footer { display: flex; align-items: center; gap: .65rem; flex-wrap: wrap; }
 .hv2-diff {
   display: inline-flex; align-items: center; gap: .45rem;
-  font-size: .73rem; font-weight: 600;
-  padding: .3rem .7rem; border-radius: 999px;
+  font-size: .75rem; font-weight: 600;
+  padding: .32rem .75rem; border-radius: 999px;
   width: fit-content;
 }
 .hv2-dots { display: flex; gap: .2rem; align-items: center; }
@@ -1873,13 +1865,13 @@ body.large-text .shop-table      { font-size: 1rem; }
 }
 .hv2-dot.on { /* color set inline */ }
 .hv2-tip {
-  font-size: .78rem; color: var(--gray-600);
-  padding-left: .25rem;
+  font-size: .8rem; color: var(--gray-500);
+  padding-left: .1rem; font-style: italic;
 }
 [data-theme="dark"] .hv2-tip { color: var(--text-secondary); }
 
 /* ── 영양제 카드 v2 ──────────────────────────────── */
-.nutrient-list-v2 { display: flex; flex-direction: column; gap: 1rem; }
+.nutrient-list-v2 { display: flex; flex-direction: column; gap: 1.25rem; }
 
 /* ── 복용 타임라인 카드 ──────────────────────────── */
 .dose-timeline {
@@ -1923,79 +1915,79 @@ body.large-text .shop-table      { font-size: 1rem; }
 [data-theme="dark"] .nutrient-card-v2 { background: var(--surface); border-color: var(--border); }
 .nutrient-card-v2:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,0,0,.09); }
 .nv2-header {
-  display: flex; align-items: center; gap: .7rem;
-  padding: 1rem 1.1rem .85rem;
+  display: flex; align-items: center; gap: .8rem;
+  padding: 1.1rem 1.2rem 1rem;
   border-bottom: 1px solid var(--gray-100);
 }
 [data-theme="dark"] .nv2-header { border-color: var(--border); }
 .nv2-rank {
-  width: 32px; height: 32px; border-radius: 10px;
-  color: white; font-size: .9rem; font-weight: 800;
+  width: 34px; height: 34px; border-radius: 10px;
+  color: white; font-size: .95rem; font-weight: 800;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.nv2-icon { font-size: 1.5rem; flex-shrink: 0; }
+.nv2-icon { font-size: 1.6rem; flex-shrink: 0; }
 .nv2-title { flex: 1; min-width: 0; }
-.nv2-name { font-size: .95rem; font-weight: 700; color: var(--gray-800); }
+.nv2-name { font-size: 1rem; font-weight: 700; color: var(--gray-800); }
 [data-theme="dark"] .nv2-name { color: var(--text-primary); }
-.nv2-en   { font-size: .72rem; color: var(--gray-400); margin-top: .1rem; }
+.nv2-en   { font-size: .75rem; color: var(--gray-400); margin-top: .1rem; }
 .nv2-caution-badge {
-  font-size: .68rem; font-weight: 700;
-  padding: .22rem .6rem; border-radius: 999px;
+  font-size: .7rem; font-weight: 700;
+  padding: .25rem .65rem; border-radius: 999px;
   border: 1.5px solid; flex-shrink: 0;
   white-space: nowrap;
 }
 .nv2-age-ctx {
-  font-size: .78rem; color: var(--green-700); font-weight: 600;
-  padding: .35rem 1.1rem;
+  font-size: .82rem; color: var(--green-700); font-weight: 600;
+  padding: .4rem 1.2rem;
   background: var(--green-50);
 }
 [data-theme="dark"] .nv2-age-ctx { background: #052e16; color: var(--green-400); }
 .nv2-reason {
-  font-size: .84rem; color: var(--gray-700); line-height: 1.6;
-  padding: .75rem 1.1rem .6rem;
+  font-size: .9rem; color: var(--gray-700); line-height: 1.7;
+  padding: .9rem 1.2rem .75rem;
 }
 [data-theme="dark"] .nv2-reason { color: var(--text-secondary); }
 .nv2-food-first {
-  display: flex; flex-wrap: wrap; align-items: center; gap: .35rem;
-  padding: .4rem 1.1rem .5rem;
+  display: flex; flex-wrap: wrap; align-items: center; gap: .4rem;
+  padding: .4rem 1.2rem .55rem;
 }
 .nv2-ff-label {
-  font-size: .72rem; font-weight: 700; color: var(--green-700);
+  font-size: .75rem; font-weight: 700; color: var(--green-700);
 }
 [data-theme="dark"] .nv2-ff-label { color: var(--green-400); }
 .nv2-ff-item {
-  font-size: .72rem; background: var(--green-50); color: var(--green-700);
+  font-size: .75rem; background: var(--green-50); color: var(--green-700);
   border: 1px solid var(--green-200); border-radius: 999px;
-  padding: .1rem .45rem;
+  padding: .12rem .5rem;
 }
 [data-theme="dark"] .nv2-ff-item { background: #052e16; border-color: var(--green-600); color: var(--green-400); }
 .nv2-dosage-row {
-  display: flex; flex-wrap: wrap; gap: .5rem;
-  padding: .4rem 1.1rem;
+  display: flex; flex-wrap: wrap; gap: .6rem;
+  padding: .5rem 1.2rem;
 }
 .nv2-dosage-pill {
   display: flex; flex-direction: column;
   background: var(--gray-50); border: 1px solid var(--gray-200);
-  border-radius: 10px; padding: .4rem .75rem;
-  min-width: 100px;
+  border-radius: 10px; padding: .5rem .85rem;
+  min-width: 110px;
 }
 [data-theme="dark"] .nv2-dosage-pill { background: #0f172a; border-color: var(--border); }
 .nv2-dp-label {
-  font-size: .65rem; color: var(--gray-400); font-weight: 600;
-  margin-bottom: .15rem;
+  font-size: .7rem; color: var(--gray-400); font-weight: 600;
+  margin-bottom: .18rem;
 }
-.nv2-dosage-pill strong { font-size: .88rem; color: var(--gray-800); }
+.nv2-dosage-pill strong { font-size: .9rem; color: var(--gray-800); }
 [data-theme="dark"] .nv2-dosage-pill strong { color: var(--text-primary); }
 .nv2-note {
-  font-size: .74rem; color: var(--gray-500);
-  padding: .1rem 1.1rem .4rem;
-  line-height: 1.5;
+  font-size: .78rem; color: var(--gray-500);
+  padding: .15rem 1.2rem .5rem;
+  line-height: 1.55;
 }
 .nv2-interaction {
-  font-size: .76rem; color: #2563eb;
+  font-size: .78rem; color: #2563eb;
   background: #eff6ff; border-radius: 6px;
-  padding: .35rem .9rem; margin: .2rem 1.1rem .4rem;
+  padding: .4rem 1rem; margin: .25rem 1.2rem .5rem;
 }
 [data-theme="dark"] .nv2-interaction { background: #1e3a5f; color: #93c5fd; }
 .nv2-supp-tip {
@@ -2007,11 +1999,17 @@ body.large-text .shop-table      { font-size: 1rem; }
   font-size: .78rem; line-height: 1.5;
 }
 .nv2-supp-tip-label {
-  display: block; font-size: .7rem; font-weight: 700;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: .72rem; font-weight: 700;
   color: #1d4ed8; background: #dbeafe;
-  padding: .3rem .85rem;
+  padding: .35rem .85rem;
+  cursor: pointer; list-style: none;
+  user-select: none;
 }
-.nv2-supp-tip-body { color: #1e40af; padding: .4rem .85rem .5rem; display: block; }
+.nv2-supp-tip-label::-webkit-details-marker { display: none; }
+details.nv2-supp-tip[open] .caution-chevron { transform: rotate(180deg); }
+.caution-chevron { transition: transform .2s; display: inline-block; }
+.nv2-supp-tip-body { color: #1e40af; padding: .45rem .85rem .55rem; display: block; }
 [data-theme="dark"] .nv2-supp-tip { background: #1e3a5f; border-color: #1d4ed8; }
 [data-theme="dark"] .nv2-supp-tip-label { background: #1e3a8a; color: #93c5fd; }
 [data-theme="dark"] .nv2-supp-tip-body { color: #93c5fd; }
@@ -2118,40 +2116,38 @@ body.large-text .shop-table      { font-size: 1rem; }
   .rs-stats     { padding: .75rem .5rem; gap: .5rem; }
 
   /* 음식 카드 */
-  .fv2-top { gap: .6rem; padding: .75rem .75rem .6rem; }
-  .fv2-icon-wrap { width: 40px; height: 40px; font-size: 1.35rem; }
-  .fv2-name { font-size: .88rem; }
-  .fv2-reason { font-size: .78rem; padding: .35rem .75rem .45rem; }
-  .fv2-nutrients { padding: .45rem .75rem .2rem; }
-  .fv2-nbadge { font-size: .65rem; }
-  .fv2-match-badges { padding: .35rem .75rem .1rem; }
-  .fv2-mbadge { font-size: .64rem; }
-  .fv2-tip { margin: 0 .75rem .6rem; font-size: .75rem; }
-  .recipe-toggle { margin: 0 .75rem .6rem; font-size: .8rem; }
-  .recipe-box { margin: 0 .75rem .75rem; }
+  .fv2-top { gap: .7rem; padding: .85rem .85rem .7rem; }
+  .fv2-icon-wrap { width: 44px; height: 44px; font-size: 1.5rem; }
+  .fv2-name { font-size: .92rem; }
+  .fv2-reason { font-size: .83rem; padding: .55rem .85rem .55rem; }
+  .fv2-match-badges { padding: .35rem .85rem .1rem; }
+  .fv2-mbadge { font-size: .68rem; }
+  .fv2-tip { margin: 0 .85rem .7rem; font-size: .78rem; }
+  .recipe-toggle { margin: 0 .85rem .6rem; font-size: .82rem; }
+  .recipe-box { margin: 0 .85rem .85rem; }
 
   /* 습관 카드 */
-  .habit-card-v2 { padding: .8rem .9rem; gap: .6rem; }
-  .hv2-medal, .hv2-icon { font-size: 1.3rem; }
-  .hv2-title { font-size: .88rem; }
-  .hv2-effect { font-size: .78rem; }
-  .hv2-tip { font-size: .74rem; }
-  .hv2-diff { font-size: .7rem; padding: .25rem .55rem; }
+  .habit-card-v2 { padding: .9rem 1rem; gap: .7rem; }
+  .hv2-medal, .hv2-icon { font-size: 1.35rem; }
+  .hv2-title { font-size: .92rem; }
+  .hv2-effect { font-size: .83rem; }
+  .hv2-tip { font-size: .78rem; }
+  .hv2-diff { font-size: .72rem; padding: .28rem .6rem; }
 
   /* 영양제 카드 */
-  .nv2-header   { flex-wrap: wrap; gap: .45rem; padding: .8rem .9rem .7rem; }
-  .nv2-rank     { width: 28px; height: 28px; font-size: .8rem; }
-  .nv2-icon     { font-size: 1.35rem; }
-  .nv2-name     { font-size: .88rem; }
-  .nv2-caution-badge { font-size: .6rem; padding: .15rem .45rem; }
-  .nv2-reason   { font-size: .8rem; padding: .6rem .9rem .5rem; }
-  .nv2-food-first { padding: .35rem .9rem .4rem; }
-  .nv2-ff-label { font-size: .68rem; }
-  .nv2-ff-item  { font-size: .68rem; }
-  .nv2-dosage-row { padding: .35rem .9rem; gap: .4rem; }
-  .nv2-dosage-pill { min-width: 85px; padding: .35rem .6rem; }
-  .nv2-supp-tip { font-size: .74rem; margin: .2rem .6rem .6rem; }
-  .nv2-supp-tip-label { font-size: .66rem; padding: .25rem .7rem; }
+  .nv2-header   { flex-wrap: wrap; gap: .5rem; padding: .9rem .95rem .8rem; }
+  .nv2-rank     { width: 30px; height: 30px; font-size: .85rem; }
+  .nv2-icon     { font-size: 1.45rem; }
+  .nv2-name     { font-size: .92rem; }
+  .nv2-caution-badge { font-size: .65rem; padding: .18rem .5rem; }
+  .nv2-reason   { font-size: .84rem; padding: .7rem .95rem .6rem; }
+  .nv2-food-first { padding: .38rem .95rem .45rem; }
+  .nv2-ff-label { font-size: .72rem; }
+  .nv2-ff-item  { font-size: .72rem; }
+  .nv2-dosage-row { padding: .4rem .95rem; gap: .45rem; }
+  .nv2-dosage-pill { min-width: 90px; padding: .4rem .65rem; }
+  .nv2-supp-tip { font-size: .78rem; margin: .2rem .65rem .65rem; }
+  .nv2-supp-tip-label { font-size: .7rem; padding: .28rem .75rem; }
   .nv2-supp-tip-body  { font-size: .74rem; padding: .35rem .7rem .45rem; }
 
   /* 쇼핑 카드 */

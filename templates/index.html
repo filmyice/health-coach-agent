@@ -954,7 +954,7 @@ function renderResultCards(meta) {
       const foodNutrients = FOOD_NUTRIENTS_MAP[f.name] || [];
       const secBadge = isSec && f.goal_key ? `<span class="food-goal-badge sec">${GOAL_LABEL_MAP[f.goal_key]||''}</span>` : '';
       const suppBadge = f.category === '건강보조식품' ? `<span class="food-goal-badge supp">건강기능식품</span>` : '';
-      const matchBadges = getFoodMatchBadges(f, prof.age_group || state.age, primaryKey);
+      const matchBadges = getFoodMatchBadges(f, prof.age_group || state.age, primaryKey).slice(0, 1); // 목표 배지 1개만
       const matchBadgeHtml = matchBadges.length
         ? `<div class="fv2-match-badges">${matchBadges.map(b=>`<span class="fv2-mbadge ${b.cls}">${b.text}</span>`).join('')}</div>`
         : '';
@@ -975,7 +975,6 @@ function renderResultCards(meta) {
           </div>
         </div>
         ${matchBadgeHtml}
-        ${foodNutrients.length ? `<div class="fv2-nutrients">${foodNutrients.map(n=>`<span class="fv2-nbadge">${n}</span>`).join('')}</div>` : ''}
         <div class="fv2-reason">${f.reason || ''}</div>
         ${f.serving_suggestion ? `<div class="fv2-tip"><span class="fv2-tip-label">🍽️ 섭취 방법</span>${f.serving_suggestion}</div>` : ''}
         ${recipesHtml}
@@ -1101,7 +1100,7 @@ function renderResultCards(meta) {
         ${foodFirst}
         ${dosageHtml}
         ${interactionHtml}
-        ${n.supplement_tip ? `<div class="nv2-supp-tip"><span class="nv2-supp-tip-label">💊 보충제로 갈 경우</span><span class="nv2-supp-tip-body">${n.supplement_tip}</span></div>` : ''}
+        ${n.supplement_tip ? `<details class="nv2-supp-tip"><summary class="nv2-supp-tip-label">💊 보충제로 갈 경우 <span class="caution-chevron">▾</span></summary><span class="nv2-supp-tip-body">${n.supplement_tip}</span></details>` : ''}
         ${cautionHtml}
       </div>`;
     });
