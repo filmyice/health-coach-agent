@@ -214,8 +214,8 @@ def scan_vitamin():
                     return body["candidates"][0]["content"]["parts"][0]["text"].strip()
                 except urllib.error.HTTPError as e:
                     last_err = e
-                    if e.code == 429:
-                        time.sleep(3)
+                    if e.code in (429, 503, 500):
+                        time.sleep(4)
                         continue
                     raise
             # 429 계속되면 다음 모델 시도
