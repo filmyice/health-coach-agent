@@ -240,6 +240,7 @@
       <button class="vt-btn vt-btn-primary" id="btn-barcode" onclick="startBarcodeMode()">📷 바코드 스캔</button>
       <button class="vt-btn vt-btn-secondary" id="btn-photo" onclick="startPhotoMode()">🤖 AI 사진 분석</button>
       <button class="vt-btn vt-btn-secondary" onclick="document.getElementById('vt-file-input').click()">🖼️ 사진 선택</button>
+      <button class="vt-btn vt-btn-green" onclick="manualBarcode()">✏️ 바코드 직접 입력</button>
       <button class="vt-btn vt-btn-primary" id="btn-capture" onclick="capturePhoto()" style="display:none">📸 촬영</button>
       <button class="vt-btn vt-btn-danger"  id="btn-stop"    onclick="stopAll()"     style="display:none">✕ 종료</button>
     </div>
@@ -347,15 +348,19 @@ let barcodeReader = null;
 let scanMode = null; // 'barcode' | 'photo'
 
 let _barcodeTimer = null;
+let _barcodeDetecting = false;
 
 async function startBarcodeMode() {
   scanMode = "barcode";
   setStep(1);
-  setStatus("카메라를 시작합니다...", "loading");
+
+  const hasBD = "BarcodeDetector" in window;
+  const hasZX = typeof ZXing !== "undefined" && !window._zxingFailed;
+  setStatus(`카메라 시작 중... (${hasBD ? "BarcodeDetector" : hasZX ? "ZXing" : "미지원"})`, "loading");
+
   try {
     stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
-      audio: false,
+      video: { facingMode: "environment" }, audio: false,
     });
     const video = document.getElementById("vt-video");
     video.srcObject = stream;
@@ -364,15 +369,22 @@ async function startBarcodeMode() {
     document.getElementById("btn-barcode").style.display = "none";
     document.getElementById("btn-photo").style.display = "none";
     document.getElementById("btn-stop").style.display = "";
-    setStatus("📦 바코드를 박스 안에 맞춰주세요...", "loading");
 
-    await video.play().catch(()=>{});
+    // 비디오 재생 대기
+    await new Promise(resolve => {
+      if (video.readyState >= 2) { resolve(); return; }
+      video.addEventListener("canplay", resolve, { once: true });
+    });
+    await video.play().catch(() => {});
 
-    // BarcodeDetector (Chrome/Android 내장 API) 우선 사용
-    if ("BarcodeDetector" in window) {
-      const detector = new BarcodeDetector({ formats: ["ean_13","ean_8","upc_a","upc_e","qr_code","code_128","code_39","itf","data_matrix"] });
-      const scanLoop = async () => {
-        if (!stream) return;
+    if (hasBD) {
+      setStatus("📦 바코드를 박스 안에 비춰주세요 (자동 인식)...", "loading");
+      const detector = new BarcodeDetector({
+        formats: ["ean_13","ean_8","upc_a","upc_e","qr_code","code_128","code_39","itf","data_matrix","codabar"],
+      });
+      const tick = async () => {
+        if (!stream || _barcodeDetecting) return;
+        _barcodeDetecting = true;
         try {
           const codes = await detector.detect(video);
           if (codes.length > 0) {
@@ -382,13 +394,13 @@ async function startBarcodeMode() {
             return;
           }
         } catch {}
-        _barcodeTimer = requestAnimationFrame(scanLoop);
+        _barcodeDetecting = false;
+        _barcodeTimer = setTimeout(tick, 300);
       };
-      await new Promise(r => video.addEventListener("loadedmetadata", r, {once:true}));
-      _barcodeTimer = requestAnimationFrame(scanLoop);
+      _barcodeTimer = setTimeout(tick, 500);
 
-    // ZXing 폴백
-    } else if (typeof ZXing !== "undefined") {
+    } else if (hasZX) {
+      setStatus("📦 바코드를 박스 안에 비춰주세요 (ZXing)...", "loading");
       barcodeReader = new ZXing.BrowserMultiFormatReader();
       barcodeReader.decodeFromVideoDevice(undefined, "vt-video", (result, err) => {
         if (result) {
@@ -400,7 +412,7 @@ async function startBarcodeMode() {
       });
 
     } else {
-      setStatus("이 브라우저는 바코드 스캔을 지원하지 않습니다. 촬영 모드로 전환합니다.", "error");
+      setStatus("⚠️ 이 브라우저는 바코드 자동 인식이 안 됩니다. 📸 촬영 후 바코드를 수동 입력하거나 AI 분석을 사용하세요.", "error");
       document.getElementById("btn-capture").style.display = "";
     }
   } catch(e) {
@@ -434,7 +446,8 @@ function switchToPhotoCapture() {
 }
 
 function stopAll() {
-  if (_barcodeTimer) { cancelAnimationFrame(_barcodeTimer); _barcodeTimer = null; }
+  if (_barcodeTimer) { clearTimeout(_barcodeTimer); _barcodeTimer = null; }
+  _barcodeDetecting = false;
   if (barcodeReader) { try{barcodeReader.reset();}catch{} barcodeReader = null; }
   if (stream) { stream.getTracks().forEach(t=>t.stop()); stream = null; }
   document.getElementById("vt-video").style.display = "none";
@@ -505,6 +518,11 @@ function resizeCanvas(canvas, maxSize) {
 function showPreview(b64) {
   const img = document.getElementById("vt-preview");
   img.src = b64; img.style.display = "block";
+}
+
+function manualBarcode() {
+  const code = prompt("바코드 번호를 입력하세요 (예: 0021245678901)");
+  if (code && code.trim()) lookupBarcode(code.trim());
 }
 
 /* ── Open Food Facts 바코드 조회 ── */
