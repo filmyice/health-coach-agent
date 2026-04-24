@@ -165,10 +165,12 @@ def scan_vitamin():
 
     data = request.get_json(force=True) or {}
     image_b64 = data.get("image", "")
-    if not image_b64:
-        return jsonify({"error": "이미지가 없습니다."}), 400
+    direct_name = (data.get("product_name") or "").strip()
 
-    if not image_b64.startswith("data:"):
+    if not image_b64 and not direct_name:
+        return jsonify({"error": "이미지 또는 제품명이 없습니다."}), 400
+
+    if image_b64 and not image_b64.startswith("data:"):
         image_b64 = "data:image/jpeg;base64," + image_b64
 
     api_key = os.environ.get("GOOGLE_API_KEY", "")
@@ -238,6 +240,21 @@ def scan_vitamin():
         raise ValueError("JSON not found")
 
     try:
+        # ── 제품명이 직접 전달된 경우 바로 Step 2로 ──
+        if direct_name:
+            search_prompt = (
+                f'"{direct_name}" 영양제의 정확한 Supplement Facts를 알려주세요.\n'
+                "iHerb 또는 제조사 공식 사이트의 1회 제공량 기준 성분표를 바탕으로 "
+                "모든 비타민·미네랄 성분명과 함량을 아래 JSON 배열 형식으로만 반환하세요:\n"
+                "[{\"name\":\"비타민A\",\"amount\":750,\"unit\":\"mcg\"},"
+                "{\"name\":\"비타민C\",\"amount\":200,\"unit\":\"mg\"}]\n"
+                "name=한국어 성분명, amount=숫자, unit=mg/mcg/IU/g. JSON 배열 외 텍스트 금지."
+            )
+            text2 = call_gemini(search_prompt)
+            nutrients = extract_json(text2)
+            if not isinstance(nutrients, list): nutrients = []
+            return jsonify({"nutrients": nutrients, "source": "search", "product_name": direct_name})
+
         # ── Step 1: 이미지에서 제품명 인식 ──
         name_prompt = (
             "이 사진에서 비타민/영양제 제품의 브랜드명과 제품명을 읽어주세요.\n"

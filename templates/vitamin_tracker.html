@@ -6,19 +6,43 @@
   <title>비타민 트래커 — 건강 코치</title>
   <link rel="stylesheet" href="/static/style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
   <style>
-    /* ── 비타민 트래커 전용 스타일 ── */
     .vt-wrap { max-width: 860px; margin: 2rem auto; padding: 0 1.25rem 4rem; }
 
     .vt-hero {
       background: linear-gradient(135deg,#1e3a5f 0%,#1d4ed8 60%,#60a5fa 100%);
-      border-radius: 18px; padding: 2rem 2rem 1.75rem;
-      color: white; margin-bottom: 2rem;
+      border-radius: 18px; padding: 2rem 2rem 1.75rem; color: white; margin-bottom: 2rem;
     }
     .vt-hero h1 { font-size: 1.55rem; font-weight: 800; margin-bottom: .3rem; }
     .vt-hero p  { font-size: .9rem; opacity: .85; }
 
-    /* ── 카메라 / 업로드 영역 ── */
+    /* 스텝 인디케이터 */
+    .vt-steps {
+      display: flex; align-items: center; gap: 0;
+      margin-bottom: 1.25rem; background: white;
+      border: 1.5px solid var(--gray-200); border-radius: var(--radius);
+      padding: .75rem 1rem; overflow: hidden;
+    }
+    [data-theme="dark"] .vt-steps { background: var(--surface); border-color: var(--border); }
+    .vt-step {
+      display: flex; align-items: center; gap: .4rem;
+      font-size: .8rem; font-weight: 600; color: var(--gray-400);
+      flex: 1; justify-content: center;
+    }
+    .vt-step.active { color: #1d4ed8; }
+    .vt-step.done   { color: #15803d; }
+    .vt-step-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--gray-200); color: var(--gray-500);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .72rem; font-weight: 800; flex-shrink: 0;
+    }
+    .vt-step.active .vt-step-num { background: #1d4ed8; color: white; }
+    .vt-step.done   .vt-step-num { background: #15803d; color: white; }
+    .vt-step-line { width: 24px; height: 2px; background: var(--gray-200); flex-shrink: 0; }
+
+    /* 카메라 영역 */
     .vt-cam-area {
       background: white; border: 1.5px solid var(--gray-200);
       border-radius: var(--radius); padding: 1.5rem;
@@ -26,15 +50,38 @@
     }
     [data-theme="dark"] .vt-cam-area { background: var(--surface); border-color: var(--border); }
 
+    .vt-video-wrap { position: relative; display: inline-block; max-width: 480px; width: 100%; }
     #vt-video {
-      width: 100%; max-width: 480px; border-radius: 10px;
-      background: #000; display: none;
+      width: 100%; border-radius: 10px; background: #000;
+      display: none;
     }
-    #vt-canvas { display: none; }
-    #vt-preview {
-      max-width: 320px; border-radius: 10px;
-      display: none; margin: .75rem auto 0;
+    /* 바코드 스캔 가이드 오버레이 */
+    .vt-scan-overlay {
+      position: absolute; inset: 0;
+      display: none; align-items: center; justify-content: center;
+      pointer-events: none;
     }
+    .vt-scan-overlay.active { display: flex; }
+    .vt-scan-box {
+      width: 70%; height: 80px;
+      border: 2.5px solid #1d4ed8;
+      border-radius: 8px;
+      box-shadow: 0 0 0 9999px rgba(0,0,0,.35);
+    }
+    .vt-scan-line {
+      position: absolute; left: 15%; right: 15%;
+      height: 2px; background: #1d4ed8;
+      animation: scanMove 1.8s ease-in-out infinite;
+    }
+    @keyframes scanMove {
+      0%   { top: 35%; }
+      50%  { top: 55%; }
+      100% { top: 35%; }
+    }
+
+    #vt-canvas  { display: none; }
+    #vt-preview { max-width: 320px; border-radius: 10px; display: none; margin: .75rem auto 0; }
+
     .vt-cam-btns { display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center; margin-top: 1rem; }
 
     .vt-btn {
@@ -47,21 +94,21 @@
     .vt-btn-primary   { background: #1d4ed8; color: white; }
     .vt-btn-secondary { background: var(--gray-100); color: var(--gray-700); border: 1.5px solid var(--gray-200); }
     [data-theme="dark"] .vt-btn-secondary { background: var(--surface); color: var(--text-primary); border-color: var(--border); }
-    .vt-btn-danger    { background: #fee2e2; color: #dc2626; border: 1.5px solid #fca5a5; }
-    .vt-btn-green     { background: #dcfce7; color: #15803d; border: 1.5px solid #86efac; }
-    .vt-btn:disabled  { opacity: .45; cursor: not-allowed; transform: none; }
+    .vt-btn-danger  { background: #fee2e2; color: #dc2626; border: 1.5px solid #fca5a5; }
+    .vt-btn-green   { background: #dcfce7; color: #15803d; border: 1.5px solid #86efac; }
+    .vt-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
 
-    /* ── 스캔 상태 ── */
     .vt-scan-status {
-      font-size: .85rem; color: var(--gray-600); margin-top: .75rem;
-      min-height: 1.2em;
+      font-size: .85rem; color: var(--gray-600); margin-top: .75rem; min-height: 1.4em;
+      line-height: 1.4;
     }
     [data-theme="dark"] .vt-scan-status { color: var(--text-secondary); }
     .vt-scan-status.loading { color: #1d4ed8; }
     .vt-scan-status.success { color: #15803d; }
     .vt-scan-status.error   { color: #dc2626; }
 
-    /* ── 스캔된 항목 목록 ── */
+    /* 스캔 목록 */
+    .vt-scanned-section { margin-bottom: 1.75rem; }
     .vt-scanned-section h2, .vt-chart-section h2, .vt-detail-section h2 {
       font-size: 1.05rem; font-weight: 700; color: var(--gray-800);
       margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem;
@@ -70,7 +117,6 @@
     [data-theme="dark"] .vt-chart-section h2,
     [data-theme="dark"] .vt-detail-section h2 { color: var(--text-primary); }
 
-    .vt-scanned-section { margin-bottom: 1.75rem; }
     .vt-scanned-list { display: flex; flex-direction: column; gap: .55rem; }
     .vt-item-card {
       display: flex; align-items: center; gap: .75rem;
@@ -78,95 +124,63 @@
       border-radius: 10px; padding: .7rem 1rem;
     }
     [data-theme="dark"] .vt-item-card { background: var(--surface); border-color: var(--border); }
-    .vt-item-thumb {
-      width: 48px; height: 48px; border-radius: 8px;
-      object-fit: cover; flex-shrink: 0;
-      background: var(--gray-100);
-    }
+    .vt-item-thumb { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
     .vt-item-no-thumb {
-      width: 48px; height: 48px; border-radius: 8px;
-      background: var(--gray-100); flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem;
+      width: 48px; height: 48px; border-radius: 8px; background: var(--gray-100);
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
     }
     .vt-item-info { flex: 1; min-width: 0; }
     .vt-item-name { font-size: .9rem; font-weight: 700; color: var(--gray-800); }
     [data-theme="dark"] .vt-item-name { color: var(--text-primary); }
-    .vt-item-nutrients {
-      display: flex; flex-wrap: wrap; gap: .25rem; margin-top: .3rem;
-    }
+    .vt-item-src { font-size: .72rem; color: var(--gray-400); margin-top: .1rem; }
+    .vt-item-nutrients { display: flex; flex-wrap: wrap; gap: .25rem; margin-top: .3rem; }
     .vt-nutrient-pill {
       font-size: .72rem; background: #eff6ff; color: #1d4ed8;
-      border: 1px solid #bfdbfe; border-radius: 999px;
-      padding: .12rem .5rem;
+      border: 1px solid #bfdbfe; border-radius: 999px; padding: .12rem .5rem;
     }
     [data-theme="dark"] .vt-nutrient-pill { background: #1e3a5f; border-color: #1d4ed8; color: #93c5fd; }
     .vt-item-del {
-      background: none; border: none; cursor: pointer;
-      font-size: 1rem; color: var(--gray-400);
-      padding: .25rem; border-radius: 6px;
+      background: none; border: none; cursor: pointer; font-size: 1rem;
+      color: var(--gray-400); padding: .25rem; border-radius: 6px;
       transition: color .15s, background .15s;
     }
     .vt-item-del:hover { color: #dc2626; background: #fee2e2; }
+    .vt-empty { text-align: center; color: var(--gray-400); font-size: .88rem; padding: 2rem 1rem; }
 
-    .vt-empty {
-      text-align: center; color: var(--gray-400);
-      font-size: .88rem; padding: 2rem 1rem;
-    }
-
-    /* ── 차트 섹션 ── */
+    /* 차트 */
     .vt-chart-section {
       background: white; border: 1.5px solid var(--gray-200);
-      border-radius: var(--radius); padding: 1.5rem;
-      margin-bottom: 1.75rem;
+      border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.75rem;
     }
     [data-theme="dark"] .vt-chart-section { background: var(--surface); border-color: var(--border); }
     .vt-chart-wrap { max-width: 420px; margin: 0 auto; }
 
-    /* ── 상세 프로그레스 바 섹션 ── */
+    /* 상세 */
     .vt-detail-section {
       background: white; border: 1.5px solid var(--gray-200);
-      border-radius: var(--radius); padding: 1.5rem;
-      margin-bottom: 1.75rem;
+      border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.75rem;
     }
     [data-theme="dark"] .vt-detail-section { background: var(--surface); border-color: var(--border); }
-
     .vt-progress-list { display: flex; flex-direction: column; gap: 1rem; }
-    .vt-progress-item {}
-    .vt-prog-header {
-      display: flex; align-items: baseline; justify-content: space-between;
-      margin-bottom: .35rem;
-    }
+    .vt-prog-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: .35rem; }
     .vt-prog-name { font-size: .88rem; font-weight: 700; color: var(--gray-800); }
     [data-theme="dark"] .vt-prog-name { color: var(--text-primary); }
     .vt-prog-val  { font-size: .8rem; color: var(--gray-500); }
-    .vt-prog-bar-bg {
-      height: 10px; background: var(--gray-100); border-radius: 99px;
-      overflow: hidden; position: relative;
-    }
-    .vt-prog-bar-fill {
-      height: 100%; border-radius: 99px;
-      transition: width .5s ease;
-      max-width: 100%;
-    }
-    .vt-prog-pct {
-      font-size: .78rem; font-weight: 700;
-      margin-top: .25rem; text-align: right;
-    }
-    .pct-low     { color: var(--gray-400); }
-    .pct-ok      { color: #15803d; }
-    .pct-high    { color: #f59e0b; }
-    .pct-over    { color: #dc2626; }
+    .vt-prog-bar-bg { height: 10px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
+    .vt-prog-bar-fill { height: 100%; border-radius: 99px; transition: width .5s ease; max-width: 100%; }
+    .vt-prog-pct { font-size: .78rem; font-weight: 700; margin-top: .25rem; text-align: right; }
+    .pct-low  { color: var(--gray-400); }
+    .pct-ok   { color: #15803d; }
+    .pct-high { color: #f59e0b; }
+    .pct-over { color: #dc2626; }
 
-    /* ── 초기화 버튼 행 ── */
     .vt-actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
-
-    /* ── 파일 input 숨기기 ── */
     #vt-file-input { display: none; }
 
     @media (max-width: 600px) {
       .vt-hero { padding: 1.5rem 1.25rem; }
       .vt-hero h1 { font-size: 1.3rem; }
+      .vt-step-label { display: none; }
     }
   </style>
 </head>
@@ -185,29 +199,52 @@
 
 <div class="vt-wrap">
 
-  <!-- 히어로 -->
   <div class="vt-hero">
     <h1>💊 비타민 트래커</h1>
-    <p>제품 용기를 촬영하면 AI가 성분을 인식하고 하루 권장 섭취량(RDA) 대비 섭취량을 보여드립니다</p>
+    <p>바코드를 카메라에 비추면 즉시 성분을 검색합니다 · 바코드 없으면 사진으로 AI 분석</p>
   </div>
 
-  <!-- 카메라 / 업로드 -->
+  <!-- 스텝 인디케이터 -->
+  <div class="vt-steps" id="vt-steps">
+    <div class="vt-step active" id="step1">
+      <span class="vt-step-num">1</span>
+      <span class="vt-step-label">바코드 스캔</span>
+    </div>
+    <div class="vt-step-line"></div>
+    <div class="vt-step" id="step2">
+      <span class="vt-step-num">2</span>
+      <span class="vt-step-label">제품 검색</span>
+    </div>
+    <div class="vt-step-line"></div>
+    <div class="vt-step" id="step3">
+      <span class="vt-step-num">3</span>
+      <span class="vt-step-label">성분 로드</span>
+    </div>
+  </div>
+
+  <!-- 카메라 영역 -->
   <div class="vt-cam-area">
-    <video id="vt-video" autoplay playsinline></video>
+    <div class="vt-video-wrap" id="video-wrap">
+      <video id="vt-video" autoplay playsinline muted></video>
+      <div class="vt-scan-overlay" id="scan-overlay">
+        <div class="vt-scan-box"></div>
+        <div class="vt-scan-line"></div>
+      </div>
+    </div>
     <canvas id="vt-canvas"></canvas>
-    <img id="vt-preview" alt="촬영된 이미지" />
+    <img id="vt-preview" alt="촬영 이미지" />
     <input type="file" id="vt-file-input" accept="image/*" capture="environment" />
 
     <div class="vt-cam-btns">
-      <button class="vt-btn vt-btn-primary" id="btn-open-cam" onclick="openCamera()">📷 카메라 열기</button>
+      <button class="vt-btn vt-btn-primary" id="btn-barcode" onclick="startBarcodeMode()">📷 바코드 스캔</button>
+      <button class="vt-btn vt-btn-secondary" id="btn-photo" onclick="startPhotoMode()">🤖 AI 사진 분석</button>
       <button class="vt-btn vt-btn-secondary" onclick="document.getElementById('vt-file-input').click()">🖼️ 사진 선택</button>
       <button class="vt-btn vt-btn-primary" id="btn-capture" onclick="capturePhoto()" style="display:none">📸 촬영</button>
-      <button class="vt-btn vt-btn-danger" id="btn-stop-cam" onclick="stopCamera()" style="display:none">✕ 카메라 끄기</button>
+      <button class="vt-btn vt-btn-danger"  id="btn-stop"    onclick="stopAll()"     style="display:none">✕ 종료</button>
     </div>
-    <div class="vt-scan-status" id="vt-status">비타민 용기 라벨이 잘 보이도록 촬영하세요</div>
+    <div class="vt-scan-status" id="vt-status">바코드 스캔 또는 AI 사진 분석을 선택하세요</div>
   </div>
 
-  <!-- 스캔된 제품 목록 -->
   <div class="vt-actions">
     <button class="vt-btn vt-btn-danger" onclick="clearAll()">🗑️ 전체 초기화</button>
   </div>
@@ -215,242 +252,340 @@
   <div class="vt-scanned-section">
     <h2>📋 스캔된 제품 <span id="item-count-badge" style="font-size:.8rem;font-weight:600;color:var(--gray-400);"></span></h2>
     <div class="vt-scanned-list" id="scanned-list">
-      <div class="vt-empty" id="vt-empty-msg">아직 스캔된 제품이 없습니다.<br>비타민 용기를 촬영해보세요!</div>
+      <div class="vt-empty" id="vt-empty-msg">아직 스캔된 제품이 없습니다.<br>바코드를 스캔하거나 사진을 찍어보세요!</div>
     </div>
   </div>
 
-  <!-- 방사형 차트 -->
   <div class="vt-chart-section" id="vt-chart-section" style="display:none">
     <h2>📊 누적 섭취량 비교 (RDA %)</h2>
-    <div class="vt-chart-wrap">
-      <canvas id="vt-radar-chart"></canvas>
-    </div>
+    <div class="vt-chart-wrap"><canvas id="vt-radar-chart"></canvas></div>
   </div>
 
-  <!-- 상세 프로그레스 바 -->
   <div class="vt-detail-section" id="vt-detail-section" style="display:none">
     <h2>🔬 성분별 상세</h2>
     <div class="vt-progress-list" id="vt-progress-list"></div>
   </div>
 
-</div><!-- /vt-wrap -->
+</div>
 
 <script>
-/* ──────────────────────────────────────────────────────────
-   한국인 영양소 섭취기준 (KDRI 2020, 성인 기준 RDA/AI)
-   단위 통일: mg (mcg × 0.001 로 변환)
-────────────────────────────────────────────────────────── */
+/* ── RDA 기준 (KDRI 2020) ── */
 const RDA = {
-  "비타민A":   { rda: 700,       unit: "mcg" },   // mcg RAE
-  "비타민B1":  { rda: 1.2,       unit: "mg"  },
-  "비타민B2":  { rda: 1.4,       unit: "mg"  },
-  "비타민B3":  { rda: 16,        unit: "mg"  },   // 나이아신
-  "나이아신":  { rda: 16,        unit: "mg"  },
-  "비타민B5":  { rda: 5,         unit: "mg"  },   // 판토텐산
-  "판토텐산":  { rda: 5,         unit: "mg"  },
-  "비타민B6":  { rda: 1.5,       unit: "mg"  },
-  "비타민B7":  { rda: 0.03,      unit: "mg"  },   // 비오틴 30mcg
-  "비오틴":    { rda: 0.03,      unit: "mg"  },
-  "비타민B9":  { rda: 0.4,       unit: "mg"  },   // 엽산 400mcg
-  "엽산":      { rda: 0.4,       unit: "mg"  },
-  "비타민B12": { rda: 0.0024,    unit: "mg"  },   // 2.4mcg
-  "비타민C":   { rda: 100,       unit: "mg"  },
-  "비타민D":   { rda: 0.015,     unit: "mg"  },   // 15mcg = 600IU
-  "비타민E":   { rda: 12,        unit: "mg"  },   // mg α-TE
-  "비타민K":   { rda: 0.075,     unit: "mg"  },   // 75mcg
-  "칼슘":      { rda: 800,       unit: "mg"  },
-  "마그네슘":  { rda: 350,       unit: "mg"  },
-  "철":        { rda: 12,        unit: "mg"  },   // 남성 기준
-  "철분":      { rda: 12,        unit: "mg"  },
-  "아연":      { rda: 10,        unit: "mg"  },
-  "셀레늄":    { rda: 0.055,     unit: "mg"  },   // 55mcg
-  "구리":      { rda: 0.8,       unit: "mg"  },
-  "망간":      { rda: 4,         unit: "mg"  },
-  "요오드":    { rda: 0.15,      unit: "mg"  },   // 150mcg
-  "크롬":      { rda: 0.03,      unit: "mg"  },   // 30mcg
-  "몰리브덴":  { rda: 0.025,     unit: "mg"  },   // 25mcg
-  "인":        { rda: 700,       unit: "mg"  },
-  "칼륨":      { rda: 3500,      unit: "mg"  },
-  "오메가3":   { rda: 500,       unit: "mg"  },   // EPA+DHA AI
-  "EPA":       { rda: 500,       unit: "mg"  },
-  "DHA":       { rda: 500,       unit: "mg"  },
-  "루테인":    { rda: 10,        unit: "mg"  },   // 비공식 권장
-  "코엔자임Q10":{ rda: 100,      unit: "mg"  },
-  "콜라겐":    { rda: 2500,      unit: "mg"  },
+  "비타민A":  {rda:700,   unit:"mcg"}, "비타민B1": {rda:1.2,   unit:"mg"},
+  "비타민B2": {rda:1.4,   unit:"mg"},  "비타민B3": {rda:16,    unit:"mg"},
+  "나이아신": {rda:16,    unit:"mg"},  "비타민B5": {rda:5,     unit:"mg"},
+  "판토텐산": {rda:5,     unit:"mg"},  "비타민B6": {rda:1.5,   unit:"mg"},
+  "비타민B7": {rda:0.03,  unit:"mg"},  "비오틴":   {rda:0.03,  unit:"mg"},
+  "비타민B9": {rda:0.4,   unit:"mg"},  "엽산":     {rda:0.4,   unit:"mg"},
+  "비타민B12":{rda:0.0024,unit:"mg"},  "비타민C":  {rda:100,   unit:"mg"},
+  "비타민D":  {rda:0.015, unit:"mg"},  "비타민E":  {rda:12,    unit:"mg"},
+  "비타민K":  {rda:0.075, unit:"mg"},  "칼슘":     {rda:800,   unit:"mg"},
+  "마그네슘": {rda:350,   unit:"mg"},  "철":       {rda:12,    unit:"mg"},
+  "철분":     {rda:12,    unit:"mg"},  "아연":     {rda:10,    unit:"mg"},
+  "셀레늄":   {rda:0.055, unit:"mg"},  "구리":     {rda:0.8,   unit:"mg"},
+  "망간":     {rda:4,     unit:"mg"},  "요오드":   {rda:0.15,  unit:"mg"},
+  "크롬":     {rda:0.03,  unit:"mg"},  "인":       {rda:700,   unit:"mg"},
+  "칼륨":     {rda:3500,  unit:"mg"},  "오메가3":  {rda:500,   unit:"mg"},
 };
 
-/* IU 변환 테이블 (단위: mg 기준) */
-const IU_TO_MG = {
-  "비타민A":  0.0003,  // 1 IU ≈ 0.3 mcg = 0.0003 mg
-  "비타민D":  0.000025,// 1 IU = 0.025 mcg = 0.000025 mg
-  "비타민E":  0.00067, // 1 IU ≈ 0.67 mg
+/* Open Food Facts nutriment key → 한국어 */
+const OFF_MAP = {
+  "vitamin-a":"비타민A", "retinol":"비타민A",
+  "vitamin-b1":"비타민B1", "thiamine":"비타민B1",
+  "vitamin-b2":"비타민B2", "riboflavin":"비타민B2",
+  "vitamin-b3":"비타민B3", "niacin":"나이아신",
+  "vitamin-b5":"비타민B5", "pantothenic-acid":"판토텐산",
+  "vitamin-b6":"비타민B6", "pyridoxine":"비타민B6",
+  "vitamin-b7":"비오틴", "biotin":"비오틴",
+  "vitamin-b9":"엽산", "folate":"엽산", "folic-acid":"엽산",
+  "vitamin-b12":"비타민B12", "cobalamin":"비타민B12",
+  "vitamin-c":"비타민C", "ascorbic-acid":"비타민C",
+  "vitamin-d":"비타민D",
+  "vitamin-e":"비타민E", "tocopherol":"비타민E",
+  "vitamin-k":"비타민K",
+  "calcium":"칼슘", "magnesium":"마그네슘",
+  "iron":"철분", "zinc":"아연", "selenium":"셀레늄",
+  "copper":"구리", "manganese":"망간", "iodine":"요오드",
+  "chromium":"크롬", "phosphorus":"인", "potassium":"칼륨",
+  "omega-3-fat":"오메가3",
 };
+
+const IU_TO_MG = {"비타민A":0.0003,"비타민D":0.000025,"비타민E":0.00067};
 
 function toMg(name, amount, unit) {
-  const u = (unit || "").toLowerCase().trim();
-  let v = parseFloat(amount) || 0;
-  if (u === "mg") return v;
-  if (u === "mcg" || u === "μg" || u === "ug") return v * 0.001;
-  if (u === "g")  return v * 1000;
-  if (u === "iu") {
-    const factor = IU_TO_MG[name] || 0.001;
-    return v * factor;
-  }
-  return v; // fallback
+  const u = (unit||"").toLowerCase().trim();
+  let v = parseFloat(amount)||0;
+  if (u==="mg")  return v;
+  if (u==="mcg"||u==="μg"||u==="ug") return v*0.001;
+  if (u==="g")   return v*1000;
+  if (u==="iu")  return v*(IU_TO_MG[name]||0.001);
+  return v;
+}
+function calcPctFromMg(name, mg) {
+  const e = RDA[name]; if(!e) return 0;
+  const rdaMg = toMg(name, e.rda, e.unit); if(!rdaMg) return 0;
+  return Math.round((mg/rdaMg)*100);
 }
 
-function calcPercent(name, amount, unit) {
-  const entry = RDA[name];
-  if (!entry) return null;
-  const mg = toMg(name, amount, unit);
-  const rdaMg = toMg(name, entry.rda, entry.unit);
-  if (!rdaMg) return null;
-  return Math.round((mg / rdaMg) * 100);
-}
-
-/* ──────────────────────────────────────────────────────────
-   localStorage 상태 관리
-────────────────────────────────────────────────────────── */
+/* ── localStorage ── */
 const STORAGE_KEY = "vt_vitamins";
+function loadItems() { try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||[];}catch{return[];} }
+function saveItems(items) { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
 
-function loadItems() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-  catch { return []; }
+/* ── 스텝 UI ── */
+function setStep(n) {
+  [1,2,3].forEach(i => {
+    const el = document.getElementById("step"+i);
+    el.className = "vt-step" + (i<n?" done":i===n?" active":"");
+  });
 }
 
-function saveItems(items) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-}
-
-/* ──────────────────────────────────────────────────────────
-   카메라 / 이미지 처리
-────────────────────────────────────────────────────────── */
+/* ── 카메라 / 바코드 ── */
 let stream = null;
+let barcodeReader = null;
+let scanMode = null; // 'barcode' | 'photo'
 
-async function openCamera() {
+async function startBarcodeMode() {
+  scanMode = "barcode";
+  setStep(1);
+  setStatus("카메라를 시작합니다...", "loading");
   try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+    stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"},audio:false});
     const video = document.getElementById("vt-video");
     video.srcObject = stream;
     video.style.display = "block";
-    document.getElementById("btn-open-cam").style.display = "none";
-    document.getElementById("btn-capture").style.display = "";
-    document.getElementById("btn-stop-cam").style.display = "";
-    document.getElementById("vt-preview").style.display = "none";
-    setStatus("카메라가 준비되었습니다. 라벨을 비추고 촬영하세요.", "");
+    document.getElementById("scan-overlay").classList.add("active");
+    document.getElementById("btn-barcode").style.display = "none";
+    document.getElementById("btn-photo").style.display = "none";
+    document.getElementById("btn-stop").style.display = "";
+    setStatus("📦 바코드를 박스 안에 맞춰주세요...", "loading");
+
+    if (typeof ZXing !== "undefined") {
+      barcodeReader = new ZXing.BrowserMultiFormatReader();
+      barcodeReader.decodeFromVideoDevice(undefined, "vt-video", (result, err) => {
+        if (result) {
+          const barcode = result.getText();
+          barcodeReader.reset(); barcodeReader = null;
+          stopAll();
+          lookupBarcode(barcode);
+        }
+      });
+    } else {
+      setStatus("바코드 라이브러리 로드 실패 — 촬영 모드로 전환합니다.", "error");
+      switchToPhotoCapture();
+    }
   } catch {
     setStatus("카메라 접근 실패 — 사진 선택을 이용해주세요.", "error");
+    showDefaultBtns();
   }
 }
 
-function stopCamera() {
-  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-  const video = document.getElementById("vt-video");
-  video.style.display = "none";
-  document.getElementById("btn-open-cam").style.display = "";
+async function startPhotoMode() {
+  scanMode = "photo";
+  setStep(1);
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"},audio:false});
+    const video = document.getElementById("vt-video");
+    video.srcObject = stream;
+    video.style.display = "block";
+    document.getElementById("btn-barcode").style.display = "none";
+    document.getElementById("btn-photo").style.display = "none";
+    document.getElementById("btn-capture").style.display = "";
+    document.getElementById("btn-stop").style.display = "";
+    setStatus("라벨이 잘 보이도록 맞추고 촬영하세요.", "");
+  } catch {
+    setStatus("카메라 접근 실패 — 사진 선택을 이용해주세요.", "error");
+    showDefaultBtns();
+  }
+}
+
+function switchToPhotoCapture() {
+  document.getElementById("btn-capture").style.display = "";
+  setStatus("📸 촬영 버튼을 눌러주세요.", "");
+}
+
+function stopAll() {
+  if (barcodeReader) { try{barcodeReader.reset();}catch{} barcodeReader = null; }
+  if (stream) { stream.getTracks().forEach(t=>t.stop()); stream = null; }
+  document.getElementById("vt-video").style.display = "none";
+  document.getElementById("scan-overlay").classList.remove("active");
+  showDefaultBtns();
+}
+
+function showDefaultBtns() {
+  document.getElementById("btn-barcode").style.display = "";
+  document.getElementById("btn-photo").style.display = "";
   document.getElementById("btn-capture").style.display = "none";
-  document.getElementById("btn-stop-cam").style.display = "none";
+  document.getElementById("btn-stop").style.display = "none";
 }
 
 async function capturePhoto() {
   const video = document.getElementById("vt-video");
   const canvas = document.getElementById("vt-canvas");
-  canvas.width  = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext("2d").drawImage(video, 0, 0);
+  canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+  canvas.getContext("2d").drawImage(video,0,0);
   const b64 = resizeCanvas(canvas, 1024);
-  stopCamera();
+  stopAll();
   showPreview(b64);
-  await scanImage(b64);
+  await scanImageAI(b64);
 }
 
 document.getElementById("vt-file-input").addEventListener("change", async function() {
-  const file = this.files[0];
-  if (!file) return;
+  const file = this.files[0]; if(!file) return;
   const reader = new FileReader();
   reader.onload = async e => {
-    const b64raw = e.target.result; // data:image/...;base64,...
-    const canvas = document.getElementById("vt-canvas");
     const img = new Image();
     img.onload = async () => {
+      const canvas = document.getElementById("vt-canvas");
       canvas.width = img.width; canvas.height = img.height;
-      canvas.getContext("2d").drawImage(img, 0, 0);
+      canvas.getContext("2d").drawImage(img,0,0);
       const b64 = resizeCanvas(canvas, 1024);
       showPreview(b64);
-      await scanImage(b64);
+      // 바코드 먼저 시도
+      setStep(1); setStatus("🔍 이미지에서 바코드 검색 중...", "loading");
+      const barcode = await detectBarcodeFromCanvas(canvas);
+      if (barcode) { await lookupBarcode(barcode); }
+      else { await scanImageAI(b64); }
     };
-    img.src = b64raw;
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
   this.value = "";
 });
 
+async function detectBarcodeFromCanvas(canvas) {
+  if (typeof ZXing === "undefined") return null;
+  try {
+    const reader = new ZXing.BrowserMultiFormatReader();
+    const img = canvas.toDataURL();
+    const result = await reader.decodeFromImageUrl(img);
+    return result ? result.getText() : null;
+  } catch { return null; }
+}
+
 function resizeCanvas(canvas, maxSize) {
-  let { width: w, height: h } = canvas;
-  if (w > maxSize || h > maxSize) {
-    const r = Math.min(maxSize / w, maxSize / h);
-    w = Math.round(w * r); h = Math.round(h * r);
-  }
+  let {width:w, height:h} = canvas;
+  if (w>maxSize||h>maxSize) { const r=Math.min(maxSize/w,maxSize/h); w=Math.round(w*r); h=Math.round(h*r); }
   const tmp = document.createElement("canvas");
-  tmp.width = w; tmp.height = h;
-  tmp.getContext("2d").drawImage(canvas, 0, 0, w, h);
-  return tmp.toDataURL("image/jpeg", 0.82);
+  tmp.width=w; tmp.height=h;
+  tmp.getContext("2d").drawImage(canvas,0,0,w,h);
+  return tmp.toDataURL("image/jpeg",0.82);
 }
 
 function showPreview(b64) {
   const img = document.getElementById("vt-preview");
-  img.src = b64;
-  img.style.display = "block";
+  img.src = b64; img.style.display = "block";
 }
 
-/* ──────────────────────────────────────────────────────────
-   API 호출 → 아이템 저장
-────────────────────────────────────────────────────────── */
-async function scanImage(b64) {
-  setStatus("🔍 AI가 라벨을 분석 중입니다...", "loading");
-  const btnCapture = document.getElementById("btn-capture");
-  if (btnCapture) btnCapture.disabled = true;
-
+/* ── Open Food Facts 바코드 조회 ── */
+async function lookupBarcode(barcode) {
+  setStep(2);
+  setStatus(`🔎 바코드 ${barcode} — 제품 검색 중...`, "loading");
   try {
-    const res = await fetch("/api/scan-vitamin", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ image: b64 }),
-    });
+    const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
     const data = await res.json();
-    if (data.error) { setStatus("오류: " + data.error, "error"); return; }
 
-    const nutrients = data.nutrients || [];
-    if (!nutrients.length) {
-      setStatus(data.warning || "성분을 인식하지 못했습니다. 다시 촬영해보세요.", "error");
+    if (data.status !== 1) {
+      setStatus(`제품 DB에 없습니다 (${barcode}) — AI로 검색합니다...`, "loading");
+      await lookupByNameAI(barcode);
       return;
     }
 
-    const label = data.source === "search"
-      ? `🌐 "${data.product_name}" 검색으로 ${nutrients.length}가지 성분 확인`
-      : `✅ 라벨에서 ${nutrients.length}가지 성분 인식 완료`;
+    const product = data.product;
+    const productName = product.product_name || product.product_name_en || `바코드 ${barcode}`;
+    setStep(3);
+    setStatus(`✅ "${productName}" 찾음 — 성분 로드 중...`, "loading");
 
-    const items = loadItems();
-    items.push({ id: Date.now(), thumb: b64, nutrients, product_name: data.product_name || "" });
-    saveItems(items);
-    renderAll();
-    setStatus(label, "success");
+    const nutrients = parseOFFNutriments(product);
+
+    if (nutrients.length) {
+      saveProduct(null, nutrients, productName, "barcode");
+      setStep(3);
+      setStatus(`✅ ${nutrients.length}가지 성분 로드 완료 (Open Food Facts)`, "success");
+    } else {
+      // 제품은 찾았지만 성분 데이터가 없음 → AI로 성분 조회
+      setStatus(`"${productName}" 찾음 — 성분 데이터 없음, AI로 조회합니다...`, "loading");
+      await lookupByNameAI(productName);
+    }
   } catch(e) {
-    setStatus("네트워크 오류가 발생했습니다.", "error");
-  } finally {
-    if (btnCapture) btnCapture.disabled = false;
+    setStatus("검색 오류 — AI로 다시 시도합니다...", "loading");
+    await lookupByNameAI(barcode);
   }
+}
+
+function parseOFFNutriments(product) {
+  const nm = product.nutriments || {};
+  const results = [];
+  for (const [key, koName] of Object.entries(OFF_MAP)) {
+    const val = nm[key] ?? nm[key+"_value"];
+    if (val == null || val === "") continue;
+    const unit = nm[key+"_unit"] || "mg";
+    const amount = parseFloat(val);
+    if (isNaN(amount) || amount <= 0) continue;
+    results.push({name: koName, amount, unit: unit.toLowerCase().replace("µg","mcg")});
+  }
+  // 중복 제거 (같은 한국어명이 여러 키에서 나올 수 있음)
+  const seen = new Set();
+  return results.filter(n => { if(seen.has(n.name)) return false; seen.add(n.name); return true; });
+}
+
+/* ── AI 성분 검색 (백엔드 Gemini) ── */
+async function lookupByNameAI(productName) {
+  setStep(2);
+  setStatus(`🤖 AI가 "${productName}" 성분 검색 중...`, "loading");
+  try {
+    const res = await fetch("/api/scan-vitamin", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({product_name: productName}),
+    });
+    const data = await res.json();
+    if (data.error) { setStatus("오류: "+data.error, "error"); return; }
+    const nutrients = data.nutrients||[];
+    if (!nutrients.length) { setStatus(data.warning||"성분을 찾지 못했습니다.", "error"); return; }
+    setStep(3);
+    saveProduct(null, nutrients, data.product_name||productName, "ai");
+    setStatus(`✅ AI 검색으로 ${nutrients.length}가지 성분 확인`, "success");
+  } catch { setStatus("네트워크 오류가 발생했습니다.", "error"); }
+}
+
+/* ── AI 이미지 분석 (기존 방식) ── */
+async function scanImageAI(b64) {
+  setStep(1);
+  setStatus("🤖 AI가 이미지를 분석 중입니다...", "loading");
+  try {
+    const res = await fetch("/api/scan-vitamin", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({image: b64}),
+    });
+    const data = await res.json();
+    if (data.error) { setStatus("오류: "+data.error, "error"); return; }
+    const nutrients = data.nutrients||[];
+    if (!nutrients.length) { setStatus(data.warning||"성분을 인식하지 못했습니다.", "error"); return; }
+    setStep(3);
+    saveProduct(b64, nutrients, data.product_name||"", data.source||"ai");
+    const label = data.source==="search"
+      ? `🌐 "${data.product_name}" — ${nutrients.length}가지 성분`
+      : `✅ 라벨에서 ${nutrients.length}가지 성분 인식`;
+    setStatus(label, "success");
+  } catch { setStatus("네트워크 오류가 발생했습니다.", "error"); }
+}
+
+function saveProduct(thumb, nutrients, product_name, source) {
+  const items = loadItems();
+  items.push({id:Date.now(), thumb, nutrients, product_name, source});
+  saveItems(items);
+  renderAll();
 }
 
 function setStatus(msg, cls) {
   const el = document.getElementById("vt-status");
   el.textContent = msg;
-  el.className = "vt-scan-status" + (cls ? " " + cls : "");
+  el.className = "vt-scan-status"+(cls?" "+cls:"");
 }
 
-/* ──────────────────────────────────────────────────────────
-   렌더링
-────────────────────────────────────────────────────────── */
+/* ── 렌더링 ── */
 let radarChart = null;
 
 function renderAll() {
@@ -462,205 +597,123 @@ function renderAll() {
 }
 
 function renderList(items) {
-  const list = document.getElementById("scanned-list");
+  const list  = document.getElementById("scanned-list");
   const empty = document.getElementById("vt-empty-msg");
-  const badge = document.getElementById("item-count-badge");
-  badge.textContent = items.length ? `(${items.length}개)` : "";
+  document.getElementById("item-count-badge").textContent = items.length ? `(${items.length}개)` : "";
+  if (!items.length) { list.innerHTML=""; list.appendChild(empty); return; }
+  if (empty.parentNode===list) list.removeChild(empty);
 
-  if (!items.length) {
-    list.innerHTML = "";
-    list.appendChild(empty);
-    return;
-  }
-  if (empty.parentNode === list) list.removeChild(empty);
-
-  list.innerHTML = items.map((item, idx) => {
-    const pills = item.nutrients.map(n =>
-      `<span class="vt-nutrient-pill">${n.name} ${n.amount}${n.unit}</span>`
-    ).join("");
-    const thumbHtml = item.thumb
-      ? `<img class="vt-item-thumb" src="${item.thumb}" alt="" loading="lazy" />`
+  const srcLabel = s => s==="barcode"?"📦 바코드":s==="ai"?"🤖 AI":"🌐 검색";
+  list.innerHTML = items.map((item,idx) => {
+    const pills = item.nutrients.map(n=>
+      `<span class="vt-nutrient-pill">${n.name} ${n.amount}${n.unit}</span>`).join("");
+    const thumb = item.thumb
+      ? `<img class="vt-item-thumb" src="${item.thumb}" alt="" loading="lazy"/>`
       : `<div class="vt-item-no-thumb">💊</div>`;
-    const nameLabel = item.product_name || `제품 ${idx + 1}`;
-    return `
-      <div class="vt-item-card">
-        ${thumbHtml}
-        <div class="vt-item-info">
-          <div class="vt-item-name">${nameLabel}</div>
-          <div class="vt-item-nutrients">${pills}</div>
-        </div>
-        <button class="vt-item-del" onclick="deleteItem(${item.id})" title="삭제">✕</button>
-      </div>`;
+    return `<div class="vt-item-card">
+      ${thumb}
+      <div class="vt-item-info">
+        <div class="vt-item-name">${item.product_name||"제품 "+(idx+1)}</div>
+        <div class="vt-item-src">${srcLabel(item.source)}</div>
+        <div class="vt-item-nutrients">${pills}</div>
+      </div>
+      <button class="vt-item-del" onclick="deleteItem(${item.id})">✕</button>
+    </div>`;
   }).join("");
 }
 
 function aggregateNutrients(items) {
   const map = {};
-  items.forEach(item => {
-    item.nutrients.forEach(n => {
-      if (!map[n.name]) map[n.name] = { amount: 0, unit: n.unit };
-      map[n.name].amount += toMg(n.name, n.amount, n.unit); // store in mg
-    });
-  });
-  return map; // { name: { amount(mg), unit } }
+  items.forEach(item => item.nutrients.forEach(n => {
+    if (!map[n.name]) map[n.name] = {amount:0};
+    map[n.name].amount += toMg(n.name, n.amount, n.unit);
+  }));
+  return map;
 }
 
 function renderChart(totals) {
-  const chartSection = document.getElementById("vt-chart-section");
-  const names = Object.keys(totals);
-  if (!names.length) { chartSection.style.display = "none"; return; }
-  chartSection.style.display = "";
-
-  // only include nutrients that have an RDA entry
-  const known = names.filter(n => RDA[n]);
-  if (!known.length) { chartSection.style.display = "none"; return; }
-
-  // limit to 12 nutrients for readability
-  const display = known.slice(0, 12);
-  const labels  = display;
-  const data    = display.map(n => {
-    const pct = calcPctFromMg(n, totals[n].amount);
-    return Math.min(pct, 200); // cap at 200%
-  });
-
-  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-  const textColor = isDark ? "#e5e7eb" : "#374151";
-  const gridColor = isDark ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.08)";
-
+  const sec = document.getElementById("vt-chart-section");
+  const known = Object.keys(totals).filter(n=>RDA[n]).slice(0,12);
+  if (!known.length) { sec.style.display="none"; return; }
+  sec.style.display="";
+  const isDark = document.documentElement.getAttribute("data-theme")==="dark";
+  const tc = isDark?"#e5e7eb":"#374151", gc = isDark?"rgba(255,255,255,.1)":"rgba(0,0,0,.08)";
+  const data = known.map(n=>Math.min(calcPctFromMg(n,totals[n].amount),200));
   const ctx = document.getElementById("vt-radar-chart").getContext("2d");
   if (radarChart) radarChart.destroy();
-  radarChart = new Chart(ctx, {
-    type: "radar",
-    data: {
-      labels,
-      datasets: [{
-        label: "섭취량 (RDA %)",
-        data,
-        backgroundColor: "rgba(29,78,216,.18)",
-        borderColor: "#1d4ed8",
-        borderWidth: 2,
-        pointBackgroundColor: data.map(v => v >= 100 ? "#dc2626" : "#1d4ed8"),
-        pointRadius: 4,
-      }],
-    },
-    options: {
-      responsive: true,
-      scales: {
-        r: {
-          min: 0, max: 200,
-          ticks: { stepSize: 50, color: textColor, backdropColor: "transparent", font: { size: 10 } },
-          grid: { color: gridColor },
-          angleLines: { color: gridColor },
-          pointLabels: { color: textColor, font: { size: 11, weight: "700" } },
-        },
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: ctx => ` ${ctx.raw}% of RDA`,
-          },
-        },
-      },
-    },
+  radarChart = new Chart(ctx,{
+    type:"radar",
+    data:{labels:known,datasets:[{
+      label:"섭취량 (RDA %)",data,
+      backgroundColor:"rgba(29,78,216,.18)",borderColor:"#1d4ed8",borderWidth:2,
+      pointBackgroundColor:data.map(v=>v>=100?"#dc2626":"#1d4ed8"),pointRadius:4,
+    }]},
+    options:{responsive:true,scales:{r:{
+      min:0,max:200,
+      ticks:{stepSize:50,color:tc,backdropColor:"transparent",font:{size:10}},
+      grid:{color:gc},angleLines:{color:gc},
+      pointLabels:{color:tc,font:{size:11,weight:"700"}},
+    }},plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>` ${c.raw}% of RDA`}}}},
   });
-}
-
-function calcPctFromMg(name, amountMg) {
-  const entry = RDA[name];
-  if (!entry) return 0;
-  const rdaMg = toMg(name, entry.rda, entry.unit);
-  if (!rdaMg) return 0;
-  return Math.round((amountMg / rdaMg) * 100);
 }
 
 function renderDetail(totals) {
-  const detailSection = document.getElementById("vt-detail-section");
+  const sec  = document.getElementById("vt-detail-section");
   const list = document.getElementById("vt-progress-list");
   const names = Object.keys(totals);
-  if (!names.length) { detailSection.style.display = "none"; return; }
-  detailSection.style.display = "";
-
-  const rows = names.map(n => {
-    const amtMg = totals[n].amount;
-    const pct   = calcPctFromMg(n, amtMg);
-    const rdaEntry = RDA[n];
-    const rdaLabel = rdaEntry
-      ? `/ ${rdaEntry.rda} ${rdaEntry.unit} 권장`
-      : "(RDA 정보 없음)";
-
-    // display original unit
-    let dispAmt;
-    if (rdaEntry && rdaEntry.unit === "mcg") dispAmt = `${(amtMg * 1000).toFixed(1)} mcg`;
-    else if (rdaEntry && rdaEntry.unit === "mg") dispAmt = `${amtMg < 1 ? amtMg.toFixed(3) : amtMg.toFixed(1)} mg`;
-    else dispAmt = `${amtMg.toFixed(2)} mg`;
-
-    const barColor = pct === null ? "#9ca3af"
-      : pct < 30  ? "#9ca3af"
-      : pct < 100 ? "#1d4ed8"
-      : pct < 150 ? "#22c55e"
-      : "#f59e0b";
-    const pctClass = pct === null ? "pct-low"
-      : pct < 30  ? "pct-low"
-      : pct < 100 ? "pct-ok"
-      : pct < 150 ? "pct-ok"
-      : pct < 200 ? "pct-high"
-      : "pct-over";
-    const pctStr = pct !== null ? `${pct}%` : "—";
-
-    return `
-      <div class="vt-progress-item">
-        <div class="vt-prog-header">
-          <span class="vt-prog-name">${n}</span>
-          <span class="vt-prog-val">${dispAmt} ${rdaLabel}</span>
-        </div>
-        <div class="vt-prog-bar-bg">
-          <div class="vt-prog-bar-fill" style="width:${Math.min(pct||0,100)}%;background:${barColor}"></div>
-        </div>
-        <div class="vt-prog-pct ${pctClass}">${pctStr}</div>
-      </div>`;
+  if (!names.length) { sec.style.display="none"; return; }
+  sec.style.display="";
+  list.innerHTML = names.map(n => {
+    const mg  = totals[n].amount;
+    const pct = calcPctFromMg(n, mg);
+    const e   = RDA[n];
+    const dispAmt = e?.unit==="mcg" ? `${(mg*1000).toFixed(1)} mcg`
+                  : mg<1 ? `${mg.toFixed(3)} mg` : `${mg.toFixed(1)} mg`;
+    const rdaLabel = e ? `/ ${e.rda} ${e.unit} 권장` : "(RDA 없음)";
+    const barColor = pct<30?"#9ca3af":pct<100?"#1d4ed8":pct<150?"#22c55e":"#f59e0b";
+    const pctClass = pct<30?"pct-low":pct<150?"pct-ok":pct<200?"pct-high":"pct-over";
+    return `<div class="vt-progress-item">
+      <div class="vt-prog-header">
+        <span class="vt-prog-name">${n}</span>
+        <span class="vt-prog-val">${dispAmt} ${rdaLabel}</span>
+      </div>
+      <div class="vt-prog-bar-bg">
+        <div class="vt-prog-bar-fill" style="width:${Math.min(pct,100)}%;background:${barColor}"></div>
+      </div>
+      <div class="vt-prog-pct ${pctClass}">${pct}%</div>
+    </div>`;
   }).join("");
-  list.innerHTML = rows;
 }
 
 function deleteItem(id) {
-  const items = loadItems().filter(i => i.id !== id);
-  saveItems(items);
+  saveItems(loadItems().filter(i=>i.id!==id));
   renderAll();
 }
 
 function clearAll() {
-  if (!confirm("스캔된 모든 제품을 초기화할까요?")) return;
-  saveItems([]);
-  renderAll();
-  setStatus("초기화되었습니다.", "");
+  if (!confirm("모든 제품을 초기화할까요?")) return;
+  saveItems([]); renderAll();
   document.getElementById("vt-preview").style.display = "none";
+  setStatus("초기화되었습니다.", "");
+  setStep(1);
 }
 
-/* ──────────────────────────────────────────────────────────
-   다크 모드 (공유)
-────────────────────────────────────────────────────────── */
+/* ── 다크 모드 ── */
 function toggleDarkMode() {
   const html = document.documentElement;
-  const isDark = html.getAttribute("data-theme") === "dark";
-  html.setAttribute("data-theme", isDark ? "light" : "dark");
-  document.getElementById("dark-mode-icon").textContent = isDark ? "🌙" : "☀️";
-  localStorage.setItem("darkMode", isDark ? "0" : "1");
-  if (radarChart) {
-    const items = loadItems();
-    renderChart(aggregateNutrients(items));
-  }
+  const isDark = html.getAttribute("data-theme")==="dark";
+  html.setAttribute("data-theme", isDark?"light":"dark");
+  document.getElementById("dark-mode-icon").textContent = isDark?"🌙":"☀️";
+  localStorage.setItem("darkMode", isDark?"0":"1");
+  if (radarChart) renderChart(aggregateNutrients(loadItems()));
 }
-
-(function initTheme() {
-  if (localStorage.getItem("darkMode") === "1") {
-    document.documentElement.setAttribute("data-theme", "dark");
-    const icon = document.getElementById("dark-mode-icon");
-    if (icon) icon.textContent = "☀️";
+(function(){
+  if (localStorage.getItem("darkMode")==="1") {
+    document.documentElement.setAttribute("data-theme","dark");
+    const ic = document.getElementById("dark-mode-icon"); if(ic) ic.textContent="☀️";
   }
 })();
 
-/* ── 초기 렌더 ── */
 renderAll();
 </script>
 </body>
