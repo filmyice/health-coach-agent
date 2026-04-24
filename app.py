@@ -192,7 +192,7 @@ def scan_vitamin():
         _dbg = f"PROJECT_ROOT={PROJECT_ROOT}, cwd={os.getcwd()}, .env exists={( PROJECT_ROOT / '.env').exists()}"
         return jsonify({"error": f"OPENAI_API_KEY가 설정되지 않았습니다. ({_dbg})"}), 500
 
-    def call_openai(messages, max_tokens=600, model="gpt-4o"):
+    def call_openai(messages, max_tokens=600, model="gpt-4o-mini"):
         payload = json.dumps({
             "model": model,
             "max_tokens": max_tokens,
