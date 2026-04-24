@@ -206,21 +206,24 @@ def scan_vitamin():
         }).encode("utf-8")
         last_err = None
         for model in models:
-            for attempt in range(2):
+            for attempt in range(3):
                 try:
                     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
                     req = urllib.request.Request(url, data=payload,
                         headers={"Content-Type": "application/json"}, method="POST")
-                    with urllib.request.urlopen(req, timeout=30) as resp:
+                    with urllib.request.urlopen(req, timeout=45) as resp:
                         body = json.loads(resp.read())
                     return body["candidates"][0]["content"]["parts"][0]["text"].strip()
                 except urllib.error.HTTPError as e:
                     last_err = e
-                    if e.code in (429, 503, 500):
-                        time.sleep(4)
+                    if e.code in (429, 500, 502, 503):
+                        time.sleep(5 * (attempt + 1))
                         continue
                     raise
-            # 429 계속되면 다음 모델 시도
+                except Exception as e:
+                    last_err = e
+                    time.sleep(3)
+                    continue
         raise last_err
 
     import re
