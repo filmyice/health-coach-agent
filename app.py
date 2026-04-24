@@ -171,45 +171,44 @@ def scan_vitamin():
     if not image_b64.startswith("data:"):
         image_b64 = "data:image/jpeg;base64," + image_b64
 
-    api_key = os.environ.get("OPENAI_API_KEY", "")
+    api_key = os.environ.get("GOOGLE_API_KEY", "")
     if not api_key:
-        # 여러 경로에서 .env 탐색
-        _candidates = [
-            PROJECT_ROOT / ".env",
-            Path(os.getcwd()) / ".env",
-            Path(__file__).parent / ".env",
-        ]
-        for _env_file in _candidates:
+        for _env_file in [PROJECT_ROOT / ".env", Path(__file__).parent / ".env"]:
             if _env_file.exists():
                 for _line in _env_file.read_text(encoding="utf-8-sig").splitlines():
                     _line = _line.strip()
-                    if _line.startswith("OPENAI_API_KEY="):
+                    if _line.startswith("GOOGLE_API_KEY="):
                         api_key = _line.split("=", 1)[1].strip().strip('"').strip("'")
                         break
             if api_key:
                 break
     if not api_key:
-        _dbg = f"PROJECT_ROOT={PROJECT_ROOT}, cwd={os.getcwd()}, .env exists={( PROJECT_ROOT / '.env').exists()}"
-        return jsonify({"error": f"OPENAI_API_KEY가 설정되지 않았습니다. ({_dbg})"}), 500
+        return jsonify({"error": "GOOGLE_API_KEY가 설정되지 않았습니다."}), 500
 
-    def call_openai(messages, max_tokens=600, model="gpt-4o-mini"):
+    # base64만 추출 (data:... prefix 제거)
+    if "," in image_b64:
+        image_b64_raw = image_b64.split(",", 1)[1]
+    else:
+        image_b64_raw = image_b64
+
+    def call_gemini(prompt_text, image_data=None, model="gemini-2.0-flash"):
+        parts = []
+        if image_data:
+            parts.append({"inline_data": {"mime_type": "image/jpeg", "data": image_data}})
+        parts.append({"text": prompt_text})
         payload = json.dumps({
-            "model": model,
-            "max_tokens": max_tokens,
-            "messages": messages,
+            "contents": [{"parts": parts}],
+            "generationConfig": {"maxOutputTokens": 1200, "temperature": 0.1},
         }).encode("utf-8")
-        req = urllib.request.Request(
-            "https://api.openai.com/v1/chat/completions",
-            data=payload,
-            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
-            method="POST",
-        )
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+        req = urllib.request.Request(url, data=payload,
+            headers={"Content-Type": "application/json"}, method="POST")
         with urllib.request.urlopen(req, timeout=30) as resp:
             body = json.loads(resp.read())
-        return body["choices"][0]["message"]["content"].strip()
+        return body["candidates"][0]["content"]["parts"][0]["text"].strip()
 
     def parse_json(text):
-        if text.startswith("```"):
+        if "```" in text:
             parts = text.split("```")
             text = parts[1] if len(parts) > 1 else text
             if text.startswith("json"):
@@ -217,7 +216,7 @@ def scan_vitamin():
         return json.loads(text.strip())
 
     try:
-        # ── Step 1: 이미지에서 성분표 직접 추출 시도 ──
+        # ── Step 1: 이미지에서 성분표 직접 추출 또는 제품명 인식 ──
         step1_prompt = (
             "이 비타민/영양제 사진을 분석해주세요.\n"
             "【작업 A】 Supplement Facts / 영양성분표가 보이면 모든 성분을 JSON 배열로 추출하세요.\n"
@@ -227,21 +226,12 @@ def scan_vitamin():
             "성분 배열 예시: "
             '[{"name":"비타민C","amount":1000,"unit":"mg"},{"name":"아연","amount":10,"unit":"mg"}]'
         )
-        text1 = call_openai([{
-            "role": "user",
-            "content": [
-                {"type": "image_url", "image_url": {"url": image_b64, "detail": "high"}},
-                {"type": "text", "text": step1_prompt},
-            ],
-        }])
-
+        text1 = call_gemini(step1_prompt, image_data=image_b64_raw)
         result1 = parse_json(text1)
 
-        # 성분 배열을 바로 받은 경우
         if isinstance(result1, list) and result1:
             return jsonify({"nutrients": result1, "source": "label"})
 
-        # 제품명을 받은 경우 → Step 2: 웹 검색으로 성분 조회
         product_name = ""
         if isinstance(result1, dict):
             product_name = result1.get("product_name", "")
@@ -249,20 +239,16 @@ def scan_vitamin():
         if not product_name:
             return jsonify({"nutrients": [], "warning": "제품명을 인식하지 못했습니다. 라벨이 잘 보이도록 다시 촬영해주세요."})
 
-        # ── Step 2: 제품명으로 성분 검색 (GPT 지식 + 웹 검색 활용) ──
+        # ── Step 2: 제품명으로 성분 조회 ──
         step2_prompt = (
-            f'"{product_name}" 영양제의 Supplement Facts(영양성분표) 정보를 찾아주세요.\n'
-            "제조사 공식 사이트나 iHerb, Examine.com 등의 정보를 기반으로 "
-            "1회 제공량 기준 모든 비타민·미네랄 성분과 함량을 JSON 배열로만 반환하세요.\n"
+            f'"{product_name}" 영양제의 Supplement Facts(영양성분표) 정보를 알려주세요.\n'
+            "iHerb, 제조사 공식 사이트 기준으로 1회 제공량의 모든 비타민·미네랄 성분과 함량을 "
+            "JSON 배열로만 반환하세요.\n"
             "형식: "
-            '[{"name":"비타민A","amount":750,"unit":"mcg"},{"name":"비타민C","amount":200,"unit":"mg"},...]\n'
-            "name은 반드시 한국어 성분명, amount는 숫자, unit은 mg/mcg/IU/g 중 하나.\n"
-            "모든 성분을 빠짐없이 포함하고, JSON 외 다른 텍스트는 절대 쓰지 마세요."
+            '[{"name":"비타민A","amount":750,"unit":"mcg"},{"name":"비타민C","amount":200,"unit":"mg"}]\n'
+            "name은 한국어 성분명, amount는 숫자, unit은 mg/mcg/IU/g 중 하나. JSON 외 텍스트 금지."
         )
-        text2 = call_openai(
-            [{"role": "user", "content": step2_prompt}],
-            max_tokens=1200,
-        )
+        text2 = call_gemini(step2_prompt)
         nutrients = parse_json(text2)
         if not isinstance(nutrients, list):
             nutrients = []
@@ -272,7 +258,7 @@ def scan_vitamin():
         err_body = e.read().decode("utf-8", errors="replace")
         return jsonify({"error": f"API 오류: {e.code}", "detail": err_body}), 502
     except (json.JSONDecodeError, KeyError):
-        return jsonify({"nutrients": [], "warning": "성분 인식 실패 — 뒷면 라벨을 촬영하거나 다시 시도해주세요."})
+        return jsonify({"nutrients": [], "warning": "성분 인식 실패 — 다시 촬영해주세요."})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
