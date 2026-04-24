@@ -407,7 +407,7 @@ function showPreview(b64) {
    API 호출 → 아이템 저장
 ────────────────────────────────────────────────────────── */
 async function scanImage(b64) {
-  setStatus("🔍 AI가 성분을 분석 중입니다...", "loading");
+  setStatus("🔍 AI가 라벨을 분석 중입니다...", "loading");
   const btnCapture = document.getElementById("btn-capture");
   if (btnCapture) btnCapture.disabled = true;
 
@@ -417,20 +417,24 @@ async function scanImage(b64) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ image: b64 }),
     });
-    const json = await res.json();
-    if (json.error) { setStatus("오류: " + json.error, "error"); return; }
+    const data = await res.json();
+    if (data.error) { setStatus("오류: " + data.error, "error"); return; }
 
-    const nutrients = json.nutrients || [];
+    const nutrients = data.nutrients || [];
     if (!nutrients.length) {
-      setStatus("성분을 인식하지 못했습니다. 라벨이 더 잘 보이도록 다시 촬영해보세요.", "error");
+      setStatus(data.warning || "성분을 인식하지 못했습니다. 다시 촬영해보세요.", "error");
       return;
     }
 
+    const label = data.source === "search"
+      ? `🌐 "${data.product_name}" 검색으로 ${nutrients.length}가지 성분 확인`
+      : `✅ 라벨에서 ${nutrients.length}가지 성분 인식 완료`;
+
     const items = loadItems();
-    items.push({ id: Date.now(), thumb: b64, nutrients });
+    items.push({ id: Date.now(), thumb: b64, nutrients, product_name: data.product_name || "" });
     saveItems(items);
     renderAll();
-    setStatus(`✅ ${nutrients.length}가지 성분 인식 완료!`, "success");
+    setStatus(label, "success");
   } catch(e) {
     setStatus("네트워크 오류가 발생했습니다.", "error");
   } finally {
@@ -477,11 +481,12 @@ function renderList(items) {
     const thumbHtml = item.thumb
       ? `<img class="vt-item-thumb" src="${item.thumb}" alt="" loading="lazy" />`
       : `<div class="vt-item-no-thumb">💊</div>`;
+    const nameLabel = item.product_name || `제품 ${idx + 1}`;
     return `
       <div class="vt-item-card">
         ${thumbHtml}
         <div class="vt-item-info">
-          <div class="vt-item-name">제품 ${idx + 1}</div>
+          <div class="vt-item-name">${nameLabel}</div>
           <div class="vt-item-nutrients">${pills}</div>
         </div>
         <button class="vt-item-del" onclick="deleteItem(${item.id})" title="삭제">✕</button>

@@ -13,7 +13,24 @@ from pathlib import Path
 
 from flask import Flask, jsonify, render_template, request
 
+# .env 파일이 있으면 환경변수로 로드
+def _load_dotenv():
+    env_path = PROJECT_ROOT / ".env"
+    if not env_path.exists():
+        return
+    with open(env_path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, val = line.partition("=")
+            key = key.strip()
+            val = val.strip().strip('"').strip("'")
+            if key and key not in os.environ:
+                os.environ[key] = val
+
 PROJECT_ROOT = Path(__file__).parent
+_load_dotenv()
 app = Flask(__name__)
 
 # Vercel 환경에서는 /tmp 아래에 작업 디렉토리를 만들어 사용
@@ -143,7 +160,6 @@ def vitamin_tracker():
 
 @app.route("/api/scan-vitamin", methods=["POST"])
 def scan_vitamin():
-    import base64
     import urllib.request
     import urllib.error
 
@@ -152,60 +168,94 @@ def scan_vitamin():
     if not image_b64:
         return jsonify({"error": "이미지가 없습니다."}), 400
 
-    # strip data-URI prefix if present
-    if "," in image_b64:
-        image_b64 = image_b64.split(",", 1)[1]
+    if not image_b64.startswith("data:"):
+        image_b64 = "data:image/jpeg;base64," + image_b64
 
-    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    api_key = os.environ.get("OPENAI_API_KEY", "")
     if not api_key:
-        return jsonify({"error": "ANTHROPIC_API_KEY가 설정되지 않았습니다."}), 500
+        return jsonify({"error": "OPENAI_API_KEY가 설정되지 않았습니다."}), 500
 
-    prompt = (
-        "이 사진은 비타민/영양제 제품 용기입니다. "
-        "라벨에서 영양 성분 정보를 추출해주세요. "
-        "다음 JSON 배열 형식으로만 답하고 다른 텍스트는 쓰지 마세요:\n"
-        '[{"name":"비타민C","amount":1000,"unit":"mg"},'
-        '{"name":"아연","amount":10,"unit":"mg"}]\n'
-        "name은 한국어 성분명, amount는 숫자, unit은 mg/mcg/IU/g 중 하나.\n"
-        "성분이 여럿이면 모두 포함하세요. 확인 불가 시 빈 배열 []을 반환하세요."
-    )
-
-    payload = json.dumps({
-        "model": "claude-haiku-4-5-20251001",
-        "max_tokens": 512,
-        "messages": [{
-            "role": "user",
-            "content": [
-                {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": image_b64}},
-                {"type": "text", "text": prompt},
-            ],
-        }],
-    }).encode("utf-8")
-
-    req = urllib.request.Request(
-        "https://api.anthropic.com/v1/messages",
-        data=payload,
-        headers={
-            "x-api-key": api_key,
-            "anthropic-version": "2023-06-01",
-            "content-type": "application/json",
-        },
-        method="POST",
-    )
-
-    try:
+    def call_openai(messages, max_tokens=600, model="gpt-4o"):
+        payload = json.dumps({
+            "model": model,
+            "max_tokens": max_tokens,
+            "messages": messages,
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            "https://api.openai.com/v1/chat/completions",
+            data=payload,
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            method="POST",
+        )
         with urllib.request.urlopen(req, timeout=30) as resp:
             body = json.loads(resp.read())
-        text = body["content"][0]["text"].strip()
-        nutrients = json.loads(text)
+        return body["choices"][0]["message"]["content"].strip()
+
+    def parse_json(text):
+        if text.startswith("```"):
+            parts = text.split("```")
+            text = parts[1] if len(parts) > 1 else text
+            if text.startswith("json"):
+                text = text[4:]
+        return json.loads(text.strip())
+
+    try:
+        # ── Step 1: 이미지에서 성분표 직접 추출 시도 ──
+        step1_prompt = (
+            "이 비타민/영양제 사진을 분석해주세요.\n"
+            "【작업 A】 Supplement Facts / 영양성분표가 보이면 모든 성분을 JSON 배열로 추출하세요.\n"
+            "【작업 B】 성분표가 없고 제품 앞면만 보이면, 브랜드명과 제품명을 정확히 읽어서 "
+            '{"product_name":"브랜드 제품명 전체"} 형식으로만 답하세요.\n'
+            "두 경우 모두 JSON만 반환하고 다른 텍스트는 절대 쓰지 마세요.\n"
+            "성분 배열 예시: "
+            '[{"name":"비타민C","amount":1000,"unit":"mg"},{"name":"아연","amount":10,"unit":"mg"}]'
+        )
+        text1 = call_openai([{
+            "role": "user",
+            "content": [
+                {"type": "image_url", "image_url": {"url": image_b64, "detail": "high"}},
+                {"type": "text", "text": step1_prompt},
+            ],
+        }])
+
+        result1 = parse_json(text1)
+
+        # 성분 배열을 바로 받은 경우
+        if isinstance(result1, list) and result1:
+            return jsonify({"nutrients": result1, "source": "label"})
+
+        # 제품명을 받은 경우 → Step 2: 웹 검색으로 성분 조회
+        product_name = ""
+        if isinstance(result1, dict):
+            product_name = result1.get("product_name", "")
+
+        if not product_name:
+            return jsonify({"nutrients": [], "warning": "제품명을 인식하지 못했습니다. 라벨이 잘 보이도록 다시 촬영해주세요."})
+
+        # ── Step 2: 제품명으로 성분 검색 (GPT 지식 + 웹 검색 활용) ──
+        step2_prompt = (
+            f'"{product_name}" 영양제의 Supplement Facts(영양성분표) 정보를 찾아주세요.\n'
+            "제조사 공식 사이트나 iHerb, Examine.com 등의 정보를 기반으로 "
+            "1회 제공량 기준 모든 비타민·미네랄 성분과 함량을 JSON 배열로만 반환하세요.\n"
+            "형식: "
+            '[{"name":"비타민A","amount":750,"unit":"mcg"},{"name":"비타민C","amount":200,"unit":"mg"},...]\n'
+            "name은 반드시 한국어 성분명, amount는 숫자, unit은 mg/mcg/IU/g 중 하나.\n"
+            "모든 성분을 빠짐없이 포함하고, JSON 외 다른 텍스트는 절대 쓰지 마세요."
+        )
+        text2 = call_openai(
+            [{"role": "user", "content": step2_prompt}],
+            max_tokens=1200,
+        )
+        nutrients = parse_json(text2)
         if not isinstance(nutrients, list):
             nutrients = []
-        return jsonify({"nutrients": nutrients})
+        return jsonify({"nutrients": nutrients, "source": "search", "product_name": product_name})
+
     except urllib.error.HTTPError as e:
         err_body = e.read().decode("utf-8", errors="replace")
         return jsonify({"error": f"API 오류: {e.code}", "detail": err_body}), 502
     except (json.JSONDecodeError, KeyError):
-        return jsonify({"nutrients": [], "warning": "성분 인식 실패 — 빈 결과 반환"})
+        return jsonify({"nutrients": [], "warning": "성분 인식 실패 — 뒷면 라벨을 촬영하거나 다시 시도해주세요."})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
