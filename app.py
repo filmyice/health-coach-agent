@@ -173,16 +173,24 @@ def scan_vitamin():
 
     api_key = os.environ.get("OPENAI_API_KEY", "")
     if not api_key:
-        # 환경변수 미설정 시 .env 파일에서 직접 읽기
-        env_file = PROJECT_ROOT / ".env"
-        if env_file.exists():
-            for line in env_file.read_text(encoding="utf-8").splitlines():
-                line = line.strip()
-                if line.startswith("OPENAI_API_KEY="):
-                    api_key = line.split("=", 1)[1].strip().strip('"').strip("'")
-                    break
+        # 여러 경로에서 .env 탐색
+        _candidates = [
+            PROJECT_ROOT / ".env",
+            Path(os.getcwd()) / ".env",
+            Path(__file__).parent / ".env",
+        ]
+        for _env_file in _candidates:
+            if _env_file.exists():
+                for _line in _env_file.read_text(encoding="utf-8-sig").splitlines():
+                    _line = _line.strip()
+                    if _line.startswith("OPENAI_API_KEY="):
+                        api_key = _line.split("=", 1)[1].strip().strip('"').strip("'")
+                        break
+            if api_key:
+                break
     if not api_key:
-        return jsonify({"error": "OPENAI_API_KEY가 설정되지 않았습니다."}), 500
+        _dbg = f"PROJECT_ROOT={PROJECT_ROOT}, cwd={os.getcwd()}, .env exists={( PROJECT_ROOT / '.env').exists()}"
+        return jsonify({"error": f"OPENAI_API_KEY가 설정되지 않았습니다. ({_dbg})"}), 500
 
     def call_openai(messages, max_tokens=600, model="gpt-4o"):
         payload = json.dumps({
