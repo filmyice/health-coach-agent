@@ -191,7 +191,9 @@ def scan_vitamin():
     else:
         image_b64_raw = image_b64
 
-    def call_gemini(prompt_text, image_data=None, model="gemini-2.0-flash"):
+    def call_gemini(prompt_text, image_data=None):
+        import time
+        models = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"]
         parts = []
         if image_data:
             parts.append({"inline_data": {"mime_type": "image/jpeg", "data": image_data}})
@@ -200,12 +202,24 @@ def scan_vitamin():
             "contents": [{"parts": parts}],
             "generationConfig": {"maxOutputTokens": 1200, "temperature": 0.1},
         }).encode("utf-8")
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
-        req = urllib.request.Request(url, data=payload,
-            headers={"Content-Type": "application/json"}, method="POST")
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            body = json.loads(resp.read())
-        return body["candidates"][0]["content"]["parts"][0]["text"].strip()
+        last_err = None
+        for model in models:
+            for attempt in range(2):
+                try:
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+                    req = urllib.request.Request(url, data=payload,
+                        headers={"Content-Type": "application/json"}, method="POST")
+                    with urllib.request.urlopen(req, timeout=30) as resp:
+                        body = json.loads(resp.read())
+                    return body["candidates"][0]["content"]["parts"][0]["text"].strip()
+                except urllib.error.HTTPError as e:
+                    last_err = e
+                    if e.code == 429:
+                        time.sleep(3)
+                        continue
+                    raise
+            # 429 계속되면 다음 모델 시도
+        raise last_err
 
     def parse_json(text):
         if "```" in text:
