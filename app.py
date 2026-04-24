@@ -193,7 +193,7 @@ def scan_vitamin():
 
     def call_gemini(prompt_text, image_data=None):
         import time
-        models = ["gemini-1.5-flash-latest", "gemini-1.5-flash", "gemini-1.5-pro-latest"]
+        models = ["gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-2.5-flash"]
         parts = []
         if image_data:
             parts.append({"inline_data": {"mime_type": "image/jpeg", "data": image_data}})
