@@ -221,49 +221,65 @@ def scan_vitamin():
             # 429 계속되면 다음 모델 시도
         raise last_err
 
-    def parse_json(text):
-        if "```" in text:
-            parts = text.split("```")
-            text = parts[1] if len(parts) > 1 else text
-            if text.startswith("json"):
-                text = text[4:]
-        return json.loads(text.strip())
+    import re
+
+    def extract_json(text):
+        """텍스트에서 JSON 배열 또는 객체를 추출"""
+        # 코드블록 제거
+        text = re.sub(r"```(?:json)?", "", text).strip()
+        # JSON 배열 찾기
+        m = re.search(r"\[.*\]", text, re.DOTALL)
+        if m:
+            return json.loads(m.group())
+        # JSON 객체 찾기
+        m = re.search(r"\{.*\}", text, re.DOTALL)
+        if m:
+            return json.loads(m.group())
+        raise ValueError("JSON not found")
 
     try:
-        # ── Step 1: 이미지에서 성분표 직접 추출 또는 제품명 인식 ──
-        step1_prompt = (
-            "이 비타민/영양제 사진을 분석해주세요.\n"
-            "【작업 A】 Supplement Facts / 영양성분표가 보이면 모든 성분을 JSON 배열로 추출하세요.\n"
-            "【작업 B】 성분표가 없고 제품 앞면만 보이면, 브랜드명과 제품명을 정확히 읽어서 "
-            '{"product_name":"브랜드 제품명 전체"} 형식으로만 답하세요.\n'
-            "두 경우 모두 JSON만 반환하고 다른 텍스트는 절대 쓰지 마세요.\n"
-            "성분 배열 예시: "
-            '[{"name":"비타민C","amount":1000,"unit":"mg"},{"name":"아연","amount":10,"unit":"mg"}]'
+        # ── Step 1: 이미지에서 제품명 인식 ──
+        name_prompt = (
+            "이 사진에서 비타민/영양제 제품의 브랜드명과 제품명을 읽어주세요.\n"
+            "영양성분표(Supplement Facts)가 보이면 성분도 함께 추출하세요.\n\n"
+            "반드시 아래 JSON 형식 중 하나로만 답하세요:\n"
+            "성분표 있을 때: [{\"name\":\"비타민C\",\"amount\":1000,\"unit\":\"mg\"}, ...]\n"
+            "성분표 없을 때: {\"product_name\":\"Thorne Basic Nutrients 2/Day\"}\n"
+            "JSON 외 다른 텍스트는 절대 쓰지 마세요."
         )
-        text1 = call_gemini(step1_prompt, image_data=image_b64_raw)
-        result1 = parse_json(text1)
+        text1 = call_gemini(name_prompt, image_data=image_b64_raw)
+        result1 = extract_json(text1)
 
+        # 성분표를 직접 읽은 경우
         if isinstance(result1, list) and result1:
             return jsonify({"nutrients": result1, "source": "label"})
 
+        # 제품명만 인식된 경우
         product_name = ""
         if isinstance(result1, dict):
-            product_name = result1.get("product_name", "")
+            product_name = result1.get("product_name", "").strip()
+
+        if not product_name:
+            # product_name 키가 없으면 텍스트에서 직접 추출 시도
+            m = re.search(r'"product_name"\s*:\s*"([^"]+)"', text1)
+            if m:
+                product_name = m.group(1).strip()
 
         if not product_name:
             return jsonify({"nutrients": [], "warning": "제품명을 인식하지 못했습니다. 라벨이 잘 보이도록 다시 촬영해주세요."})
 
         # ── Step 2: 제품명으로 성분 조회 ──
-        step2_prompt = (
-            f'"{product_name}" 영양제의 Supplement Facts(영양성분표) 정보를 알려주세요.\n'
-            "iHerb, 제조사 공식 사이트 기준으로 1회 제공량의 모든 비타민·미네랄 성분과 함량을 "
-            "JSON 배열로만 반환하세요.\n"
-            "형식: "
-            '[{"name":"비타민A","amount":750,"unit":"mcg"},{"name":"비타민C","amount":200,"unit":"mg"}]\n'
-            "name은 한국어 성분명, amount는 숫자, unit은 mg/mcg/IU/g 중 하나. JSON 외 텍스트 금지."
+        search_prompt = (
+            f'"{product_name}" 영양제의 정확한 Supplement Facts를 알려주세요.\n'
+            "iHerb 또는 제조사 공식 사이트의 1회 제공량 기준 성분표를 바탕으로 "
+            "모든 비타민·미네랄 성분명과 함량을 아래 JSON 배열 형식으로만 반환하세요:\n"
+            "[{\"name\":\"비타민A\",\"amount\":750,\"unit\":\"mcg\"},"
+            "{\"name\":\"비타민C\",\"amount\":200,\"unit\":\"mg\"}]\n"
+            "규칙: name=한국어 성분명, amount=숫자, unit=mg/mcg/IU/g 중 하나.\n"
+            "모든 성분 포함, JSON 배열 외 텍스트 금지."
         )
-        text2 = call_gemini(step2_prompt)
-        nutrients = parse_json(text2)
+        text2 = call_gemini(search_prompt)
+        nutrients = extract_json(text2)
         if not isinstance(nutrients, list):
             nutrients = []
         return jsonify({"nutrients": nutrients, "source": "search", "product_name": product_name})
@@ -271,10 +287,8 @@ def scan_vitamin():
     except urllib.error.HTTPError as e:
         err_body = e.read().decode("utf-8", errors="replace")
         return jsonify({"error": f"API 오류: {e.code}", "detail": err_body}), 502
-    except (json.JSONDecodeError, KeyError):
-        return jsonify({"nutrients": [], "warning": "성분 인식 실패 — 다시 촬영해주세요."})
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"처리 오류: {str(e)}", "raw": locals().get("text1", "") + " / " + locals().get("text2", "")}), 500
 
 
 if __name__ == "__main__":
