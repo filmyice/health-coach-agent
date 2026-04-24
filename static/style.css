@@ -2179,4 +2179,20 @@ details.nv2-supp-tip[open] .caution-chevron { transform: rotate(180deg); }
   padding: .1rem .4rem;
   border-radius: 4px;
 }
+
+/* ── 비타민 트래커 헤더 버튼 ── */
+.btn-vt-nav {
+  display: inline-flex; align-items: center; gap: .3rem;
+  padding: .4rem .85rem; border-radius: 8px;
+  background: #eff6ff; color: #1d4ed8;
+  border: 1.5px solid #bfdbfe;
+  font-size: .82rem; font-weight: 700;
+  text-decoration: none;
+  transition: background .15s, transform .1s;
+  white-space: nowrap;
+}
+.btn-vt-nav:hover { background: #dbeafe; transform: translateY(-1px); }
+[data-theme="dark"] .btn-vt-nav { background: #1e3a5f; color: #93c5fd; border-color: #1d4ed8; }
+[data-theme="dark"] .btn-vt-nav:hover { background: #1e3a8a; }
+@media (max-width: 480px) { .btn-vt-nav { font-size: .74rem; padding: .35rem .65rem; } }
 .banner-close:hover { opacity: 1; background: rgba(0,0,0,.06); }

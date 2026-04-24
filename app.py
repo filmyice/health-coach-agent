@@ -136,6 +136,80 @@ def run_pipeline():
             shutil.rmtree(work_dir, ignore_errors=True)
 
 
+@app.route("/vitamin-tracker")
+def vitamin_tracker():
+    return render_template("vitamin_tracker.html")
+
+
+@app.route("/api/scan-vitamin", methods=["POST"])
+def scan_vitamin():
+    import base64
+    import urllib.request
+    import urllib.error
+
+    data = request.get_json(force=True) or {}
+    image_b64 = data.get("image", "")
+    if not image_b64:
+        return jsonify({"error": "이미지가 없습니다."}), 400
+
+    # strip data-URI prefix if present
+    if "," in image_b64:
+        image_b64 = image_b64.split(",", 1)[1]
+
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    if not api_key:
+        return jsonify({"error": "ANTHROPIC_API_KEY가 설정되지 않았습니다."}), 500
+
+    prompt = (
+        "이 사진은 비타민/영양제 제품 용기입니다. "
+        "라벨에서 영양 성분 정보를 추출해주세요. "
+        "다음 JSON 배열 형식으로만 답하고 다른 텍스트는 쓰지 마세요:\n"
+        '[{"name":"비타민C","amount":1000,"unit":"mg"},'
+        '{"name":"아연","amount":10,"unit":"mg"}]\n'
+        "name은 한국어 성분명, amount는 숫자, unit은 mg/mcg/IU/g 중 하나.\n"
+        "성분이 여럿이면 모두 포함하세요. 확인 불가 시 빈 배열 []을 반환하세요."
+    )
+
+    payload = json.dumps({
+        "model": "claude-haiku-4-5-20251001",
+        "max_tokens": 512,
+        "messages": [{
+            "role": "user",
+            "content": [
+                {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": image_b64}},
+                {"type": "text", "text": prompt},
+            ],
+        }],
+    }).encode("utf-8")
+
+    req = urllib.request.Request(
+        "https://api.anthropic.com/v1/messages",
+        data=payload,
+        headers={
+            "x-api-key": api_key,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json",
+        },
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            body = json.loads(resp.read())
+        text = body["content"][0]["text"].strip()
+        nutrients = json.loads(text)
+        if not isinstance(nutrients, list):
+            nutrients = []
+        return jsonify({"nutrients": nutrients})
+    except urllib.error.HTTPError as e:
+        err_body = e.read().decode("utf-8", errors="replace")
+        return jsonify({"error": f"API 오류: {e.code}", "detail": err_body}), 502
+    except (json.JSONDecodeError, KeyError):
+        return jsonify({"nutrients": [], "warning": "성분 인식 실패 — 빈 결과 반환"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == "__main__":
     print("건강 코치 에이전트 서버 시작: http://localhost:8080")
     app.run(debug=False, port=8080, threaded=True)
